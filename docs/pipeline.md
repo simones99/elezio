@@ -38,11 +38,12 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 
 | Chiave | Variabile | Default |
 | --- | --- | --- |
-| `base_url` | `ELEZIO_LLM_BASE_URL` | `https://openrouter.ai/api/v1` |
+| `base_url` | `ELEZIO_LLM_BASE_URL` | `https://openrouter.ai/api/v1` (alternativa UE stretta: `https://api.mistral.ai/v1`) |
 | chiave | `ELEZIO_LLM_API_KEY` | nessuna (passi 5 e 6 disattivati) |
-| `modello_sintesi` | `ELEZIO_MODELLO_SINTESI` | `google/gemini-3.1-pro-preview` |
-| `modello_classificazione` | `ELEZIO_MODELLO_CLASSIFICAZIONE` | `google/gemini-3.8-flash` |
-| `modello_ocr` | `ELEZIO_MODELLO_OCR` | `google/gemini-3.8-flash` |
+| `modello_sintesi` | `ELEZIO_MODELLO_SINTESI` | `mistralai/mistral-large-4-0` |
+| `modello_classificazione` | `ELEZIO_MODELLO_CLASSIFICAZIONE` | `mistralai/ministral-14b-2512` |
+| `modello_ocr` | `ELEZIO_MODELLO_OCR` | `mistralai/mistral-medium-3-5` (multimodale) |
+| `provider` | `ELEZIO_LLM_PROVIDER` | `mistral` (su OpenRouter: `provider.order=["mistral"]`, `allow_fallbacks=false`) |
 | `classificatore` | `ELEZIO_CLASSIFICATORE` | `llm` (alternativa: `jev`) |
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
 | `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30` |
@@ -50,7 +51,9 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
 
-Default dei modelli: famiglia Gemini via OpenRouter, Pro per la sintesi e Flash per classificazione e OCR. Gli id sono quelli esposti da OpenRouter il 27 ottobre 2026 (`gemini-3.1-pro-preview` non è instradabile in regione UE su OpenRouter); si fissano definitivamente alla prima run, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Pro/Sonnet con contesto di almeno 32k; classificazione su un modello della fascia Flash/Haiku o un 8-14B locale. Mai usare alias come `gemini-pro-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
+Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Medium 3.5 (multimodale) per l'OCR di ripiego. Gli id sono quelli esposti da OpenRouter il 27 ottobre 2026; si fissano definitivamente alla prima run, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
+
+Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral, da verificare alla prima run; la stessa API offre OCR 4.1, che può sostituire il ripiego con modello multimodale.
 
 ## Passaggi e classificazione
 
