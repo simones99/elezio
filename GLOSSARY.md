@@ -32,6 +32,14 @@ _Avoid_: programma comune, programma di coalizione
 Un documento fonte ufficiale di un partito che non è un programma elettorale: manifesto, statuto, documento di indirizzo. Si usa quando il partito non ha un programma per l'elezione di riferimento.
 _Avoid_: manifesto (come termine generico), documento di partito
 
+**Copia canonica**:
+La copia depositata scelta come riferimento quando lo stesso documento fonte è stato depositato da più partiti con impaginazioni diverse. Solo la sua numerazione di pagina vale per le citazioni; le altre copie sono registrate come prova di deposito.
+_Avoid_: copia principale, originale
+
+**Testo estratto**:
+Il testo di un documento fonte ottenuto dalla copia canonica, per estrazione diretta o per OCR, con i confini di pagina conservati. È il riferimento contro cui si verifica ogni citazione. Non è pubblicato.
+_Avoid_: trascrizione, testo del PDF, OCR (come nome del risultato)
+
 **Tema**:
 Una delle 12 aree di policy fisse in cui v1 organizza i contenuti, con un nome canonico, una definizione di una riga e un ordine di presentazione. Ogni proposta appartiene a un solo tema: in caso di dubbio decide lo strumento che cambia (la legge, la voce di bilancio, l'ente che agisce), non l'obiettivo né il destinatario. Non esiste un tema "altro".
 _Avoid_: argomento, categoria, topic, area
@@ -83,6 +91,14 @@ _Avoid_: match, compatibilità, allineamento
 **Criterio di inclusione**:
 La regola pubblica che decide quali partiti sono in perimetro: più del 2 percento alle ultime elezioni politiche, oppure almeno 5 parlamentari in carica che dichiarano l'appartenenza al momento del rilascio. Per ogni partito si registra quale via lo ha incluso e quando è stata verificata.
 _Avoid_: soglia, lista dei partiti, eccezione
+
+**Passaggio**:
+Un paragrafo del testo estratto, con la sua pagina, a cui la pipeline assegna zero o più temi. Un passaggio può contenere più proposte; la regola "ogni proposta un solo tema" si applica alla sintesi, non al passaggio.
+_Avoid_: chunk, frammento, segmento
+
+**Verifica delle citazioni**:
+Il controllo che ogni citazione esista alla lettera, come sequenza contigua, nel testo estratto della fonte indicata e alla pagina indicata. Una citazione che non passa non entra in una scheda. Non dipende da nessun modello.
+_Avoid_: validazione, fact-check
 
 **Revisore**:
 La persona che verifica una scheda prima della pubblicazione. In v1 è il maintainer.
