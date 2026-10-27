@@ -1,0 +1,229 @@
+# I 12 temi di v1, nell'ordine di presentazione sul sito.
+#
+# Deciso nel ticket "I 12 temi di v1: nomi, definizioni, confini"
+# (https://github.com/simones99/elezio/issues/5). Termini in GLOSSARY.md,
+# schema in docs/schema-scheda.md.
+#
+# Regole:
+# - Ogni proposta appartiene a un solo tema. In caso di dubbio decide lo
+#   strumento che cambia (la legge, la voce di bilancio, l'ente che agisce),
+#   non l'obiettivo dichiarato né il destinatario. Gli esempi `dentro` e
+#   `altrove` di ogni tema sono i precedenti da seguire.
+# - Le sotto-questioni sono fisse, uguali per tutti i partiti e per tutte le
+#   elezioni. Guidano l'ordine della sintesi, la scelta del titolo della scheda
+#   e le affermazioni del quiz. Non sono schede separate. Una sotto-questione
+#   può restare vuota per un'elezione (Gaza non compare nei programmi 2022).
+#   Si aggiungono sotto-questioni solo prima dell'ingest di un'elezione, mai
+#   dopo.
+# - La sintesi di una scheda tocca solo le sotto-questioni che il partito
+#   tratta, nell'ordine in cui sono elencate qui. Non elenca i buchi.
+# - Niente tema "altro". Ciò che non rientra in nessun tema non entra in v1:
+#   cultura, sport, turismo, giovani come categoria, benessere animale,
+#   protezione civile. La pagina metodologia lo dichiara.
+# - Il nome ha al massimo tre parole piene; congiunzioni e virgole non contano.
+#   Lo slug è una parola, senza accenti.
+
+- id: fisco
+  nome: Fisco e conti pubblici
+  definizione: Tasse, riscossione e regole del bilancio dello Stato.
+  sotto_questioni:
+    - IRPEF e flat tax
+    - Cuneo fiscale
+    - Evasione e riscossione
+    - Patrimoniale e successioni
+    - Debito e regole UE di bilancio
+  dentro:
+    - Flat tax per le partite IVA
+    - Superbonus e bonus edilizi (sono crediti d'imposta)
+    - Pace fiscale e rottamazione delle cartelle
+  altrove:
+    - Caro bollette e prezzo dell'energia (ambiente)
+    - Incentivi alle assunzioni (lavoro)
+
+- id: lavoro
+  nome: Lavoro e pensioni
+  definizione: Contratti, salari, sicurezza sul lavoro e sistema previdenziale.
+  sotto_questioni:
+    - Salario minimo
+    - Precariato e contratti
+    - Sicurezza sul lavoro
+    - Età pensionabile e uscite anticipate
+    - Pensioni minime e pensioni dei giovani
+  dentro:
+    - Salario minimo legale
+    - Quota 41 e riforma della legge Fornero
+    - Politiche attive e centri per l'impiego
+  altrove:
+    - Reddito di cittadinanza e sussidi (famiglia)
+    - Cuneo fiscale (fisco)
+
+- id: imprese
+  nome: Imprese ed economia
+  definizione: Politica industriale, concorrenza, credito, agricoltura e innovazione produttiva.
+  sotto_questioni:
+    - PMI, burocrazia e partite IVA
+    - Politica industriale e Made in Italy
+    - Concorrenza e banche
+    - Agricoltura e pesca
+    - Innovazione digitale
+  dentro:
+    - Sostegno alle PMI e semplificazione
+    - Politica agricola e sovranità alimentare
+    - Incentivi a startup e innovazione
+  altrove:
+    - Flat tax per le partite IVA (fisco)
+    - Digitalizzazione della pubblica amministrazione (istituzioni)
+
+- id: sanita
+  nome: Sanità
+  definizione: Servizio sanitario nazionale, accesso alle cure e personale sanitario.
+  sotto_questioni:
+    - Finanziamento del SSN e liste d'attesa
+    - Medicina territoriale
+    - Personale sanitario
+    - Salute mentale
+    - Pubblico e privato convenzionato
+  dentro:
+    - Abolizione del numero chiuso a Medicina
+    - Case di comunità e medici di base
+    - Psicologo di base
+  altrove:
+    - Non autosufficienza e assistenza domiciliare (famiglia)
+    - Fine vita (giustizia)
+
+- id: scuola
+  nome: Scuola, università e ricerca
+  definizione: Istruzione dall'infanzia all'università, diritto allo studio e ricerca pubblica.
+  sotto_questioni:
+    - Docenti e stipendi
+    - Tempo pieno ed edilizia scolastica
+    - Diritto allo studio e tasse universitarie
+    - Ricerca
+    - Formazione professionale e ITS
+  dentro:
+    - Aumento degli stipendi dei docenti
+    - Tempo pieno in tutte le scuole primarie
+    - Borse di studio universitarie
+  altrove:
+    - Asili nido gratuiti (famiglia)
+    - Educazione civica sull'immigrazione (immigrazione)
+
+- id: famiglia
+  nome: Famiglia, natalità e welfare
+  definizione: Sostegno alle famiglie, natalità, povertà, disabilità e terzo settore.
+  sotto_questioni:
+    - Assegno unico e bonus natalità
+    - Nidi e congedi parentali
+    - Non autosufficienza e disabilità
+    - Povertà e sostegno al reddito
+    - Terzo settore
+  dentro:
+    - Asili nido gratuiti
+    - Reddito di cittadinanza e misure di sostegno al reddito
+    - Congedo di paternità
+  altrove:
+    - Detrazioni fiscali per i figli (fisco)
+    - Diritti delle famiglie LGBT+ (giustizia)
+
+- id: immigrazione
+  nome: Immigrazione e sicurezza
+  definizione: Ingressi, asilo, cittadinanza, integrazione e ordine pubblico.
+  sotto_questioni:
+    - Ingressi regolari e decreto flussi
+    - Asilo, sbarchi e ONG
+    - Cittadinanza
+    - Integrazione
+    - Forze dell'ordine e ordine pubblico
+  dentro:
+    - Ius scholae e ius soli
+    - Blocco navale e accordi con i paesi di partenza
+    - Assunzioni nelle forze dell'ordine
+  altrove:
+    - Antimafia (giustizia)
+    - Dissesto idrogeologico e protezione civile (ambiente)
+
+- id: ambiente
+  nome: Ambiente ed energia
+  definizione: Clima, fonti di energia, bollette, suolo e acqua.
+  sotto_questioni:
+    - Rinnovabili
+    - Nucleare
+    - Gas, bollette e autosufficienza energetica
+    - Clima e Green Deal
+    - Suolo, acqua e dissesto idrogeologico
+  dentro:
+    - Ritorno al nucleare
+    - Caro bollette e prezzo dell'energia
+    - Comunità energetiche
+  altrove:
+    - Trasporto pubblico e ferrovie (casa)
+    - Incentivi fiscali per l'efficienza energetica (fisco)
+
+- id: casa
+  nome: Casa, infrastrutture e trasporti
+  definizione: Abitare, grandi opere, mobilità e divari territoriali.
+  sotto_questioni:
+    - Affitti ed edilizia pubblica
+    - Prima casa e mutui
+    - Grandi opere
+    - Trasporto pubblico e ferrovie
+    - Mezzogiorno e aree interne
+  dentro:
+    - Ponte sullo Stretto
+    - Piano casa per i giovani
+    - Alta velocità al Sud
+  altrove:
+    - Superbonus e bonus edilizi (fisco)
+    - Decontribuzione Sud per le assunzioni (lavoro)
+
+- id: giustizia
+  nome: Giustizia e diritti civili
+  definizione: Processo, carceri, criminalità organizzata e diritti della persona.
+  sotto_questioni:
+    - Processo penale e carriere dei magistrati
+    - Carceri
+    - Antimafia
+    - Fine vita e autodeterminazione
+    - Diritti LGBT+
+    - Parità e violenza di genere
+  dentro:
+    - Separazione delle carriere
+    - Legalizzazione della cannabis
+    - Matrimonio egualitario
+  altrove:
+    - Ius scholae (immigrazione)
+    - Congedo di paternità (famiglia)
+
+- id: europa
+  nome: Europa, esteri e difesa
+  definizione: Unione europea, alleanze, guerre in corso e forze armate.
+  sotto_questioni:
+    - Russia e guerra in Ucraina
+    - Israele, Palestina e Medio Oriente
+    - Riforma dell'UE e bilancio comune
+    - NATO e spesa militare
+    - Difesa europea
+  dentro:
+    - Invio di armi all'Ucraina
+    - Riconoscimento dello Stato di Palestina
+    - Spesa militare al 2 percento del PIL
+  altrove:
+    - Asilo e redistribuzione dei migranti in UE (immigrazione)
+    - Regole UE di bilancio (fisco)
+
+- id: istituzioni
+  nome: Istituzioni e riforme
+  definizione: Forma di governo, autonomie, legge elettorale e pubblica amministrazione.
+  sotto_questioni:
+    - Premierato e presidenzialismo
+    - Autonomia differenziata
+    - Legge elettorale
+    - Parlamento e bicameralismo
+    - Pubblica amministrazione e digitalizzazione
+  dentro:
+    - Elezione diretta del Presidente del Consiglio
+    - Autonomia differenziata delle regioni
+    - Identità digitale e servizi pubblici online
+  altrove:
+    - Riforma della giustizia (giustizia)
+    - Innovazione digitale delle imprese (imprese)

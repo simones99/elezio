@@ -1,6 +1,6 @@
 # Schema dati: schede, partiti, documenti fonte, temi
 
-Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
+Ultimo aggiornamento: 27 ottobre 2026 (temi). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
 
 ## Layout dei file
 
@@ -82,7 +82,7 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 
 ## Tema (`temi.yaml`)
 
-Lista ordinata di 12 oggetti `{id, nome, definizione}`. Nomi e definizioni sono decisi dal ticket "I 12 temi di v1". L'ordine nel file è l'ordine di presentazione sul sito.
+Lista ordinata di 12 oggetti `{id, nome, definizione, sotto_questioni, dentro, altrove}`. L'ordine nel file è l'ordine di presentazione sul sito. `sotto_questioni` è la lista fissa (3-6 voci) che guida sintesi, titolo e quiz; `dentro` e `altrove` sono esempi di proposte che rientrano nel tema e di proposte simili che stanno in un altro tema, usati come precedenti per la regola "decide lo strumento che cambia". Nomi, definizioni e confini sono decisi dal ticket [I 12 temi di v1](https://github.com/simones99/elezio/issues/5); il file è [`contenuti/temi.yaml`](../contenuti/temi.yaml).
 
 ## Vincoli verificati in build
 
