@@ -47,7 +47,7 @@ Astro legge `../contenuti` con il loader `glob` del content layer; nessun file d
 | `partiti` | `contenuti/partiti/*.yaml` | campi di `docs/schema-scheda.md` |
 | `fonti` | `contenuti/fonti/*.yaml` | campi di `docs/schema-scheda.md` |
 | `schede` | `contenuti/schede/**/*.md` | frontmatter di `docs/schema-scheda.md`; slug di partito, tema ed elezione coerenti con il percorso |
-| `affermazioni` | `contenuti/quiz/` | deciso dal ticket sul quiz |
+| `affermazioni` | `contenuti/quiz/<elezione>/*.yaml` | campi di `docs/quiz.md` |
 
 Lo schema zod rifiuta la build su campi mancanti, enum sbagliati, slug non coerenti, `posizione: dichiarata` senza citazioni, `posizione: assente` con titolo. I controlli che richiedono il repo privato o incroci tra file stanno in `pipeline verifica`.
 

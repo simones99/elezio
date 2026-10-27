@@ -1,6 +1,6 @@
 # Schema dati: schede, partiti, documenti fonte, temi
 
-Ultimo aggiornamento: 27 ottobre 2026 (temi, campi della fonte per la pipeline). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
+Ultimo aggiornamento: 27 ottobre 2026 (temi, campi della fonte per la pipeline, `id` delle citazioni e `sigla` dei partiti per il quiz). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
 
 ## Layout dei file
 
@@ -39,6 +39,7 @@ Corpo del file: la sintesi, da 2 a 5 frasi in prosa semplice. Se la posizione è
 
 | Campo | Obbligatorio | Note |
 | --- | --- | --- |
+| `id` | se citata dal quiz | Slug stabile, unico nella scheda. Le risposte del partito nel quiz puntano a questo `id` (vedi `docs/quiz.md`). |
 | `fonte` | sì | Slug di un documento fonte che elenca questo partito tra i `partiti` e ha la stessa `elezione` della scheda. |
 | `pagina` | sì | Numero di pagina del PDF ufficiale (intero, oppure intervallo `12-13`). |
 | `testo` | sì | Testo alla lettera dal documento. La pipeline verifica che esista nel testo estratto della fonte. |
@@ -57,6 +58,7 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 | --- | --- | --- |
 | `id` | sì | Slug stabile, mai cambiato dopo la creazione (es. `fdi`, `pd`, `m5s`, `lega`, `fi`, `avs`, `azione`, `iv`, `piu-europa`, `futuro-nazionale`). |
 | `nome` | sì | Nome corrente. |
+| `sigla` | sì | Sigla corrente (es. FdI, PD, M5S), usata nel quiz e nei confronti. |
 | `nomi_precedenti` | no | Lista di `{nome, fino_al}`. |
 | `alias` | no | Lista di nomi alternativi e sigle usati per riconoscere il partito nei documenti. |
 | `logo` | sì | Percorso del contrassegno preso dalla sezione Elezioni trasparenti del Ministero. Non coperto dalla licenza dei dati. |
