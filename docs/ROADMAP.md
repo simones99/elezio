@@ -27,7 +27,7 @@ Uscita della fase: ADR scritti, glossario aggiornato, mappa senza ticket aperti 
 
 Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
 
-- Scaffolding del sito con lo stack deciso e il componente quiz riusato.
+- Scaffolding del sito: Astro in `sito/`, contenuti letti da `contenuti/`, Open Election Compass self-hostato in `/quiz/`, deploy su Cloudflare Pages (ADR 0006, `docs/stack.md`).
 - Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 120 schede, circa 20 ore.
 - Pagine: elenco partiti, pagina tema con schede, confronto tra 2-3 partiti, quiz, risultato del quiz, metodologia, crediti.
 - Analytics senza cookie con l'evento "quiz completato".
