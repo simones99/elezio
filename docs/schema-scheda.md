@@ -1,6 +1,6 @@
 # Schema dati: schede, partiti, documenti fonte, temi
 
-Ultimo aggiornamento: 27 ottobre 2026 (temi). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
+Ultimo aggiornamento: 27 ottobre 2026 (temi, campi della fonte per la pipeline). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
 
 ## Layout dei file
 
@@ -79,6 +79,8 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 | `pagine` | sì | Numero di pagine del PDF. |
 | `testo_estratto` | sì | Percorso del testo estratto (OCR se la copia depositata è una scansione), usato dalla pipeline per verificare le citazioni. Non pubblicato. |
 | `data_documento` | no | Data riportata sul documento, se presente. |
+| `copie_equivalenti` | no | Lista di `{url, hash, partito}` per le altre copie depositate dello stesso documento (es. le copie Lega e FI dell'accordo di centrodestra 2022). Prova di deposito; la numerazione di pagina valida è solo quella della copia canonica in `url`. |
+| `ocr` | se scansione | `tesseract` \| `llm`. Come è stato prodotto il testo estratto quando la copia canonica non ha livello di testo. Con `llm` si registra anche il modello in `ocr_modello`. |
 
 ## Tema (`temi.yaml`)
 

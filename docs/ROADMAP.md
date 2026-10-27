@@ -41,6 +41,7 @@ Risultato: sito aggiornato sui programmi 2027 entro pochi giorni dalla loro pubb
 
 - Playbook pronto prima (ticket dedicato nella mappa): per ogni partito, dove uscirà il programma, se usare la copia depositata o quella nativa del sito di partito, come gira la pipeline, quanto tempo serve per 120 schede. Finestra utile: dai 44 ai 32 giorni prima del voto.
 - Le schede 2022 restano visibili come storia, marcate chiaramente con l'elezione di riferimento; le schede 2027 le affiancano o le sostituiscono secondo lo schema deciso.
+- Revisione incrementale per tema nell'ordine di `contenuti/temi.yaml`, tutti i partiti insieme per ogni tema, con 10 ore a settimana nelle 2 settimane dopo la pubblicazione; il quiz si attiva quando i suoi temi sono tutti verificati (deciso in [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9), dettagli in `docs/pipeline.md`).
 - Aggiornare le affermazioni del quiz solo se una posizione cambia davvero.
 - Lancio: post pubblici, contatto con qualche giornalista o docente, misurazione dei quiz completati.
 
