@@ -30,6 +30,7 @@ Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
 - Scaffolding del sito: Astro in `sito/`, contenuti letti da `contenuti/`, Open Election Compass self-hostato in `/quiz/`, deploy su Cloudflare Pages (ADR 0006, `docs/stack.md`).
 - Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 120 schede, circa 20 ore.
 - Pagine: elenco partiti, pagina tema con schede, confronto tra 2-3 partiti, quiz, risultato del quiz, metodologia, crediti.
+- Quiz 2022: 24 affermazioni scritte a mano con le risposte dei partiti, circa 6-8 ore dopo la verifica delle schede (ADR 0007, `docs/quiz.md`).
 - Analytics senza cookie con l'evento "quiz completato".
 - Beta pubblica: condividere con 10-20 persone di fiducia, raccogliere correzioni nel registro pubblico.
 
@@ -41,8 +42,8 @@ Risultato: sito aggiornato sui programmi 2027 entro pochi giorni dalla loro pubb
 
 - Playbook pronto prima (ticket dedicato nella mappa): per ogni partito, dove uscirà il programma, se usare la copia depositata o quella nativa del sito di partito, come gira la pipeline, quanto tempo serve per 120 schede. Finestra utile: dai 44 ai 32 giorni prima del voto.
 - Le schede 2022 restano visibili come storia, marcate chiaramente con l'elezione di riferimento; le schede 2027 le affiancano o le sostituiscono secondo lo schema deciso.
-- Revisione incrementale per tema nell'ordine di `contenuti/temi.yaml`, tutti i partiti insieme per ogni tema, con 10 ore a settimana nelle 2 settimane dopo la pubblicazione; il quiz si attiva quando i suoi temi sono tutti verificati (deciso in [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9), dettagli in `docs/pipeline.md`).
-- Aggiornare le affermazioni del quiz solo se una posizione cambia davvero.
+- Revisione incrementale per tema nell'ordine di `contenuti/temi.yaml`, tutti i partiti insieme per ogni tema, con 10 ore a settimana nelle 2 settimane dopo la pubblicazione; il quiz 2027 sostituisce il 2022 quando ha almeno 20 affermazioni verificate (deciso in [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9), dettagli in `docs/pipeline.md`).
+- Quiz 2027: riusare o riscrivere le affermazioni 2022 e ricompilare ogni risposta del partito dalle schede 2027 (ADR 0007).
 - Lancio: post pubblici, contatto con qualche giornalista o docente, misurazione dei quiz completati.
 
 Se le elezioni vengono anticipate rispetto alla primavera 2027, la Fase 2 parte appena i programmi escono, con quello che c'è.

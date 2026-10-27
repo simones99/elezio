@@ -69,7 +69,7 @@ Riscrittura in linguaggio semplice della posizione, pensata per chi legge da tel
 _Avoid_: riassunto, spiegazione
 
 **Stato di verifica**:
-Dove si trova una scheda nel processo editoriale: bozza (non pubblicata), verificata (controllata dal revisore, pubblicabile), contestata (segnalazione aperta dopo la pubblicazione, resta online con avviso). Lo cambia solo il revisore.
+Dove si trova una scheda o una affermazione nel processo editoriale: bozza (non pubblicata), verificata (controllata dal revisore, pubblicabile), contestata (segnalazione aperta dopo la pubblicazione: la scheda resta online con avviso, l'affermazione esce dal quiz finché la segnalazione non è chiusa). Lo cambia solo il revisore.
 _Avoid_: status, flag, superata (non è uno stato)
 
 **Confronto**:
@@ -78,12 +78,24 @@ _Avoid_: comparazione, versus
 
 ## Quiz
 
+**Quiz**:
+L'insieme delle affermazioni di una elezione di riferimento, con le risposte dei partiti. Ogni elezione ha il suo quiz; quando esce quello della nuova elezione, il precedente non è più proposto. Nel quiz di una elezione entrano solo i partiti che hanno un programma, un programma esteso o un accordo di coalizione per quella elezione: un documento programmatico basta per le schede, non per il quiz.
+_Avoid_: test, questionario, bussola
+
 **Affermazione**:
-Una frase di policy a cui chi fa il quiz risponde con accordo o disaccordo. Ogni affermazione è legata a un tema e a una posizione per ciascun partito.
+Una frase di policy a cui chi fa il quiz risponde con accordo, neutro o disaccordo, oppure che salta. È legata a un tema e a una sotto-questione, e ha una risposta del partito per ciascun partito del quiz. Entra nel quiz solo se tutti quei partiti hanno una risposta.
 _Avoid_: domanda, tesi, statement
 
+**Risposta del partito**:
+Accordo o disaccordo di un partito su una affermazione, sempre sostenuto da una citazione presente nella scheda di quel partito sullo stesso tema. Non esiste risposta neutra del partito né risposta senza citazione: se la posizione non è netta, l'affermazione va riscritta o scartata.
+_Avoid_: posizione (nel contesto del quiz), voto, risposta inferita
+
+**Raggruppamento**:
+Più partiti che nel quiz compaiono come una sola riga, perché danno risposte identiche su tutte le affermazioni citando lo stesso documento fonte. Non si dichiara a mano: deriva dalle risposte. Senza raggruppamento la riga è il partito.
+_Avoid_: coalizione (nel contesto del quiz), lista, voce
+
 **Affinità**:
-Il punteggio che il quiz calcola tra le risposte di chi lo fa e le posizioni di ciascun partito. La formula è pubblica.
+Il punteggio che il quiz calcola tra le risposte di chi lo fa e le risposte di ciascun partito o raggruppamento. La formula è pubblica.
 _Avoid_: match, compatibilità, allineamento
 
 ## Processo
