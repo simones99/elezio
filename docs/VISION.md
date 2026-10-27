@@ -16,7 +16,7 @@ L'utente primario è l'elettore indeciso tra i 18 e i 35 anni, da telefono, che 
 
 Tre funzioni, niente altro:
 
-1. **Schede per tema.** Per ciascun partito in perimetro e ciascuno dei 12 temi, una scheda con sintesi semplice, proposta originale, citazione testuale, riferimento alla pagina del documento e stato di verifica.
+1. **Schede per tema.** Per ciascun partito in perimetro e ciascuno dei 12 temi, una scheda con titolo, sintesi semplice, citazioni testuali con riferimento al documento fonte e alla pagina, elezione di riferimento e stato di verifica. Schema in [docs/schema-scheda.md](schema-scheda.md).
 2. **Confronto tematico.** Le schede di due o tre partiti affiancate sullo stesso tema.
 3. **Quiz di orientamento.** Tra 20 e 25 affermazioni; le posizioni dei partiti derivano dalle stesse schede, con le stesse citazioni; il punteggio è spiegato in linguaggio semplice.
 
