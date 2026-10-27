@@ -1,6 +1,6 @@
 # elezio
 
-App/sito per le elezioni italiane: programmi elettorali, confronto tematico, quiz di orientamento, risultati e finanziamenti. La ricerca di settore è in `repository_open_source_politica_italiana.md`.
+App/sito per le elezioni italiane: programmi elettorali, confronto tematico, quiz di orientamento, risultati e finanziamenti. La ricerca di settore è in `ricerca/repository_open_source_politica_italiana.md` (locale, non versionato). Visione in `docs/VISION.md`, roadmap in `docs/ROADMAP.md`, mappa delle decisioni: GitHub issue #1 (`wayfinder:map`).
 
 ## Agent skills
 
