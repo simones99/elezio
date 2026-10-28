@@ -1,2 +1,6 @@
 seggio-originale.jpg
 urna-originale.jpg
+# #25: prove scartate in build (retino e dithering a piena risoluzione, 0,9-2 MB per 8 fotogrammi)
+t-retino/
+t-dither/
+t-liscio/

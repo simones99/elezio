@@ -9,6 +9,8 @@
   Font da ../10-scheda-confronto/. Foto: "EU Elections 2024 - Voting in Milan - 2" e "EU Elections 2024 - Voting in Italy - 4",
   European Parliament, CC BY 2.0, Wikimedia Commons; duotono inchiostro-carta e ritagli fatti per il prototipo.
   Testi simulati: il quiz e le schede non esistono ancora.
+  Ticket #25 (https://github.com/simones99/elezio/issues/25): ?tratt=liscio|grana|forte|poster|pixel|retino|granacss cambia il trattamento
+  dei fotogrammi della E. I primi cinque sono nel file (foto/trattamenti.py), retino e granacss sono filtri SVG sui fotogrammi lisci.
 -->
 <html lang="it">
 <head>
@@ -186,6 +188,8 @@ body[data-striscia="0"] .striscia{display:none}
 .vE .quadro img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%;opacity:0}
 .vE .quadro img.ferma{opacity:1}
 .vE .marchio-grande{color:var(--inchiostro)}
+body[data-tratt=pixel] .vE .quadro img{image-rendering:pixelated}
+body[data-tratt=retino] .vE .quadro{filter:url(#f-retino)}
 .vE .vai{position:absolute;left:var(--gutter);bottom:24px;background:var(--carta);color:var(--inchiostro);padding:11px 14px;display:flex;gap:10px;align-items:center;text-decoration:none}
 .vE .vai svg{width:16px;height:16px;transform:rotate(90deg)}
 .vE .dopo{padding:0 var(--gutter)}
@@ -222,11 +226,26 @@ body[data-striscia="0"] .striscia{display:none}
 .proto button{font:inherit;color:#fff;background:#262626;border:0;border-radius:9px;padding:6px 9px;cursor:pointer}
 .proto button[aria-pressed=true]{background:#fff;color:#0b0b0b}
 .proto .nome-v{font-weight:700;text-align:center;flex:1}
+.proto .tratt{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.proto .tratt button{padding:5px 8px}
+body:not([data-variant=E]) .proto .riga-tratt,body:not([data-variant=E]) .proto .peso-tratt{display:none}
 .proto small{display:block;color:#bdbdbd;margin-top:6px;font-size:12px;text-align:center}
 </style>
 </head>
 <body data-variant="A" data-striscia="1" data-foto="urna">
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-freccia" viewBox="0 0 20 20"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-freccia" viewBox="0 0 20 20"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <!-- #25 retino: tono percepito dal fotogramma liscio, soglia contro una trama di punti a 45 gradi (passo 5 px CSS), di nuovo in duotono -->
+  <filter id="f-retino" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feColorMatrix in="SourceGraphic" type="matrix" values="-1.451 0 0 0 1.322  -1.451 0 0 0 1.322  -1.451 0 0 0 1.322  0 0 0 1 0"/>
+    <feComponentTransfer result="x"><feFuncR type="gamma" amplitude=".9" exponent=".5"/><feFuncG type="gamma" amplitude=".9" exponent=".5"/><feFuncB type="gamma" amplitude=".9" exponent=".5"/></feComponentTransfer>
+    <feImage x="0" y="0" width="7" height="7" preserveAspectRatio="none" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23000'/%3E%3Cstop offset='1' stop-color='%23fff'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='7' height='7' fill='%23fff'/%3E%3Cg fill='url(%23g)' style='mix-blend-mode:darken'%3E%3Ccircle r='3.5'/%3E%3Ccircle cx='7' r='3.5'/%3E%3Ccircle cy='7' r='3.5'/%3E%3Ccircle cx='7' cy='7' r='3.5'/%3E%3Ccircle cx='3.5' cy='3.5' r='3.5'/%3E%3C/g%3E%3C/svg%3E"/>
+    <feTile result="d"/>
+    <feComposite in="d" in2="x" operator="arithmetic" k2="6" k3="-6" k4=".5"/>
+    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0 1"/><!-- arithmetic agisce anche sull'alfa (6-6+.5): lo rimette a 1 -->
+    <feComponentTransfer><feFuncR type="linear" slope=".827" intercept=".153"/><feFuncG type="linear" slope=".910" intercept=".063"/><feFuncB type="linear" slope=".937" intercept=".008"/></feComponentTransfer>
+  </filter>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" data-grane></svg>
 <main>
 
 <!-- A · Frontespizio: foto, promessa grande, indice dei temi come protagonista -->
@@ -343,7 +362,9 @@ body[data-striscia="0"] .striscia{display:none}
     <button type="button" data-azione="striscia">striscia Fase 2</button>
     <button type="button" data-azione="nascondi" aria-label="Nascondi la barra (tasto B per riaprirla)">×</button>
   </div>
-  <small>Prototipo #20 · home · prova anche da 900px in su</small>
+  <div class="riga riga-tratt"><span class="tratt"></span></div>
+  <small class="peso-tratt"></small>
+  <small>Prototipo #20 e #25 · home · prova anche da 900px in su</small>
 </div>
 
 <script>
@@ -407,14 +428,41 @@ body[data-striscia="0"] .striscia{display:none}
     document.querySelectorAll("[data-credito]").forEach(p => p.innerHTML = foto[f].credito);
   }
 
-  // Variante E: 8 fotogrammi del video del Parlamento europeo I257607 (foto/fotogrammi.py), scelti dallo scorrimento
+  // Variante E: 8 fotogrammi del video del Parlamento europeo I257607 (foto/fotogrammi.py), scelti dallo scorrimento.
+  // #25: trattamenti in foto/t-<nome>/ (foto/trattamenti.py); retino e granacss filtrano i fotogrammi lisci nel browser.
   const N = 8, FERMO = 2, fine = 88;
-  document.querySelector("[data-livelli]").innerHTML = Array.from({ length: N }, (_, n) => `<picture>
-      <source media="(min-width:900px)" type="image/avif" srcset="foto/v-16x9-780-${n}.avif 780w, foto/v-16x9-1200-${n}.avif 1200w" sizes="100vw">
-      <source media="(min-width:900px)" type="image/webp" srcset="foto/v-16x9-780-${n}.webp 780w, foto/v-16x9-1200-${n}.webp 1200w" sizes="100vw">
-      <source type="image/avif" srcset="foto/v-4x5-780-${n}.avif">
-      <img src="foto/v-4x5-780-${n}.webp" alt="${n === FERMO ? "Una mano infila una scheda elettorale piegata nella fessura di un'urna, in un seggio." : ""}"${n === FERMO ? ' class="ferma"' : ""} style="--a:${(fine * n / N).toFixed(1)}%;--b:${(fine * (n + 1) / N).toFixed(1)}%" width="780" height="975" decoding="async">
+  const tratti = {
+    liscio: ["liscio (oggi)", "27 KB AVIF · 62 KB WebP"],
+    grana: ["grana", "63 KB AVIF · 210 KB WebP · grana diversa a ogni fotogramma"],
+    forte: ["contrasto + grana", "51 KB AVIF · 126 KB WebP"],
+    poster: ["posterizzato", "32 KB AVIF · 80 KB WebP · 4 toni piatti"],
+    pixel: ["dithering", "12 KB WebP senza perdita · file da 195 px ingrandito a pixel netti"],
+    retino: ["retino CSS", "27 KB AVIF + filtro SVG · nel file pesava 2 MB"],
+    granacss: ["grana CSS", "27 KB AVIF + filtro SVG · grana generata dal browser"],
+  };
+  const alt = "Una mano infila una scheda elettorale piegata nella fessura di un'urna, in un seggio.";
+  document.querySelector("[data-grane]").innerHTML = Array.from({ length: N }, (_, n) => `
+    <filter id="f-grana-${n}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="1.209 0 0 0 -.185  1.209 0 0 0 -.185  1.209 0 0 0 -.185  0 0 0 1 0" result="l"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="${n + 1}" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 1" result="r"/>
+      <feComposite in="l" in2="r" operator="arithmetic" k2="1" k3=".42" k4="-.21"/>
+      <feComponentTransfer><feFuncR type="linear" slope=".827" intercept=".153"/><feFuncG type="linear" slope=".910" intercept=".063"/><feFuncB type="linear" slope=".937" intercept=".008"/></feComponentTransfer>
+    </filter>`).join("");
+  function disegnaE(t) {
+    const cart = ["liscio", "retino", "granacss"].includes(t) ? "foto/" : `foto/t-${t}/`;
+    const pic = n => t === "pixel" ? `<picture>
+      <source media="(min-width:900px)" srcset="${cart}v-16x9-400-${n}.webp">
+      <img src="${cart}v-4x5-195-${n}.webp"` : `<picture>
+      <source media="(min-width:900px)" type="image/avif" srcset="${cart}v-16x9-780-${n}.avif 780w, ${cart}v-16x9-1200-${n}.avif 1200w" sizes="100vw">
+      <source media="(min-width:900px)" type="image/webp" srcset="${cart}v-16x9-780-${n}.webp 780w, ${cart}v-16x9-1200-${n}.webp 1200w" sizes="100vw">
+      <source type="image/avif" srcset="${cart}v-4x5-780-${n}.avif">
+      <img src="${cart}v-4x5-780-${n}.webp"`;
+    document.querySelector("[data-livelli]").innerHTML = Array.from({ length: N }, (_, n) => `${pic(n)} alt="${n === FERMO ? alt : ""}"${n === FERMO ? ' class="ferma"' : ""} style="--a:${(fine * n / N).toFixed(1)}%;--b:${(fine * (n + 1) / N).toFixed(1)}%${t === "granacss" ? `;filter:url(#f-grana-${n})` : ""}" width="780" height="975" decoding="async">
     </picture>`).join("");
+    document.querySelector("[data-livelli]").dataset.tratt = t;
+  }
+  document.querySelector(".tratt").innerHTML = Object.entries(tratti).map(([k, [n]]) => `<button type="button" data-tratt="${k}">${n}</button>`).join("");
   document.querySelector("[data-credito-e]").innerHTML = 'Video <a href="https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607">Parlamento europeo</a> · © Unione europea, 2024 · fotogrammi in duotono';
 
   const nomi = { A: "Frontespizio, indice dei temi", B: "Il quiz in copertina", C: "Scatole", D: "Pagina divisa", E: "Lo scorrimento vota" };
@@ -424,14 +472,18 @@ body[data-striscia="0"] .striscia{display:none}
     variant: varianti.includes(p.get("variant")) ? p.get("variant") : "A",
     foto: p.get("foto") === "seggio" ? "seggio" : "urna",
     striscia: p.get("striscia") === "0" ? "0" : "1",
+    tratt: p.get("tratt") in tratti ? p.get("tratt") : "liscio",
   };
   function applica() {
     Object.assign(document.body.dataset, stato);
-    history.replaceState(null, "", `?variant=${stato.variant}&foto=${stato.foto}&striscia=${stato.striscia}${location.hash}`);
+    history.replaceState(null, "", `?variant=${stato.variant}&foto=${stato.foto}&striscia=${stato.striscia}&tratt=${stato.tratt}${location.hash}`);
     document.querySelector(".nome-v").textContent = stato.variant + " · " + nomi[stato.variant];
     document.querySelectorAll(".proto [data-foto]").forEach(b => b.setAttribute("aria-pressed", b.dataset.foto === stato.foto));
     document.querySelector('.proto [data-azione="striscia"]').setAttribute("aria-pressed", stato.striscia === "1");
     if (!document.querySelector(`[data-cop] picture img[src*="${stato.foto}-"]`)) disegnaFoto(stato.foto);
+    if (document.querySelector("[data-livelli]").dataset.tratt !== stato.tratt) disegnaE(stato.tratt);
+    document.querySelectorAll(".proto [data-tratt]").forEach(b => b.setAttribute("aria-pressed", b.dataset.tratt === stato.tratt));
+    document.querySelector(".peso-tratt").textContent = "Telefono, 8 fotogrammi: " + tratti[stato.tratt][1];
   }
   function sposta(d) { stato.variant = varianti[(varianti.indexOf(stato.variant) + d + varianti.length) % varianti.length]; scrollTo(0, 0); applica(); }
   document.querySelector(".proto").addEventListener("click", e => {
@@ -440,6 +492,7 @@ body[data-striscia="0"] .striscia{display:none}
     if (b.dataset.azione === "next") sposta(1);
     if (b.dataset.azione === "striscia") { stato.striscia = stato.striscia === "1" ? "0" : "1"; applica(); }
     if (b.dataset.foto) { stato.foto = b.dataset.foto; applica(); }
+    if (b.dataset.tratt) { stato.tratt = b.dataset.tratt; applica(); }
     if (b.dataset.azione === "nascondi") document.querySelector(".proto").hidden = true;
   });
   addEventListener("keydown", e => {
