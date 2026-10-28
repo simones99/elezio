@@ -5,7 +5,7 @@ src = ImageOps.grayscale(Image.open(os.path.join(d, 'originale.jpg')))
 duo = ImageOps.colorize(src, black='#271002', white='#FAF8F1')
 W, H = duo.size
 fx, fy = 0.5, 0.47  # punto di fuga del corridoio
-tagli = {'3x1': 3/1, '4x3': 4/3, '16x9': 16/9, '16x7': 16/7}
+tagli = {'3x1': 3/1, '4x3': 4/3, '16x9': 16/9, '16x7': 16/7, '21x9': 21/9, '9x16': 9/16, '4x5': 4/5}
 for nome, r in tagli.items():
     if W / H > r:
         h = H; w = int(h * r)

@@ -2,7 +2,7 @@
 <!--
   PROTOTIPO USA E GETTA, ticket #15 (https://github.com/simones99/elezio/issues/15).
   Pagina tema Sanità della variante D del prototipo #10, con la copertina in tre posizioni,
-  commutabili con ?copertina=A|B|C, con la barra in basso o con le frecce.
+  commutabili con ?copertina=A|B|C|D|E|F (D, E, F col titolo dentro la foto), con la barra in basso o con le frecce.
   Senza JavaScript si vede la posizione A. Font e contrassegni vengono da ../10-scheda-confronto/.
   Foto: "Ospedale Santa Maria della Misericordia, interno, corridoio ambulatori quinto piano (Rovigo) 01",
   Threecharlie, CC BY-SA 4.0, Wikimedia Commons; duotono inchiostro-carta e ritagli fatti per il prototipo.
@@ -280,6 +280,56 @@ body[data-cop=A] .cop-A,body[data-cop=B] .cop-B,body[data-cop=C] .cop-C{display:
   .cop-C .credito{padding:0 var(--gutter)}
 }
 
+/* ---------- Titolo dentro la foto: D, E, F (prototipo #15) ---------- */
+.tf{display:none}
+body[data-cop=D] .tf-D{display:block}
+body[data-cop=E] .tf-E,body[data-cop=F] .tf-F{display:contents}
+body:is([data-cop=D],[data-cop=E],[data-cop=F]) .testa-tema{display:none}
+.tf h1{font-family:var(--capitali);font-weight:500;font-size:clamp(50px,13vw,104px);line-height:.95;letter-spacing:.01em;text-transform:uppercase;color:var(--carta)}
+.tf picture{display:block;height:100%}
+.tf img{width:100%;height:100%;object-fit:cover}
+.tf .credito{padding:0}
+/* D */
+.tfD-fig{position:relative;margin:0;height:min(64svh,620px)}
+.tfD-fig h1{position:absolute;left:var(--gutter);right:var(--gutter);bottom:24px}
+.tf-D>.credito{padding:0 var(--gutter)}
+.tf-D .capo{padding-top:22px}
+/* E e F: fondo fermo, la pagina ci scorre sopra */
+.tf-fondo{position:sticky;top:0;height:calc(100svh - 66px);z-index:0}
+.tf-fondo h1{position:absolute;left:var(--gutter);right:var(--gutter);bottom:max(34px,15svh)}
+body:is([data-cop=E],[data-cop=F]) section>:not(.tf){position:relative;z-index:1}
+.tf-primo{position:relative;z-index:1;background:var(--carta)}
+.tf-primo .def,.tf-primo .nota{margin-left:clamp(0px,8vw,180px)}
+/* E: un foglio unico e opaco */
+.tf-E .tf-primo{padding-top:22px}
+body[data-cop=E] .vd-blocco{margin:0;padding:34px var(--gutter) 0;background:var(--carta)}
+body[data-cop=E] .va-elenco,body[data-cop=E] .fine{background:var(--carta)}
+body[data-cop=E] .fine{padding-bottom:40px!important}
+/* F su telefono: blocchi di carta staccati, la foto si vede tra uno e l'altro */
+@media (max-width:899px){
+  .tf-F .tf-fondo h1{bottom:auto;top:34px}
+  .tf-F .tf-primo{margin:-34svh var(--gutter) 0;padding:20px 18px 18px}
+  .tf-F .tf-primo .def,.tf-F .tf-primo .nota{margin-left:0}
+  .tf-F .tf-primo .def{margin-top:0}
+  .tf-F .tf-primo .credito{margin-top:12px}
+  body[data-cop=F] .vd-blocco{margin:40px var(--gutter) 0;padding:18px 14px;background:var(--carta)}
+  body[data-cop=F] .va-elenco{padding:0 var(--gutter)}
+  body[data-cop=F] .va-scheda{background:var(--carta);margin-top:40px;padding:24px 18px 26px;border-top:0}
+  body[data-cop=F] .fine{margin:40px var(--gutter) 0;padding:6px 18px 24px!important;background:var(--carta)}
+}
+/* F da 900px: foto ferma a sinistra col titolo, tutto il contenuto scorre a destra */
+@media (min-width:900px){
+  .tfD-fig h1{bottom:34px}
+  body[data-cop=F][data-variant=D][data-vista=tema] main>section[data-v=D][data-vista=tema]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);--gutter:48px}
+  body[data-cop=F] section>*{grid-column:2}
+  .tf-F .tf-fondo{grid-column:1;grid-row:1/span 4;height:calc(100vh - 0px);align-self:start}
+  .tf-F .tf-fondo h1{font-size:clamp(50px,7vw,96px)}
+  .tf-F .tf-primo{padding-top:44px}
+  .tf-F .tf-primo .def,.tf-F .tf-primo .nota{margin-left:0}
+  .tf-F .tf-primo .credito{margin-top:14px}
+  body[data-cop=F] .va-elenco{display:block}
+}
+
 /* ---------- Barra del prototipo (non fa parte del design) ---------- */
 .proto{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:10;width:min(420px,calc(100vw - 16px));background:#0b0b0b;color:#fff;border-radius:16px;padding:8px 10px;font:12.5px/1.3 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .proto .riga{display:flex;align-items:center;justify-content:space-between;gap:6px}
@@ -320,6 +370,33 @@ body[data-cop=A] .cop-A,body[data-cop=B] .cop-B,body[data-cop=C] .cop-C{display:
   <figure class="cop cop-A"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-4x3-390.avif 390w, foto/sanita-4x3-780.avif 780w, foto/sanita-4x3-1200.avif 1200w" sizes="44vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-4x3-390.webp 390w, foto/sanita-4x3-780.webp 780w, foto/sanita-4x3-1200.webp 1200w" sizes="44vw"><source type="image/avif" srcset="foto/sanita-3x1-390.avif 390w, foto/sanita-3x1-780.avif 780w, foto/sanita-3x1-1200.avif 1200w" sizes="100vw"><img src="foto/sanita-3x1-780.webp" srcset="foto/sanita-3x1-390.webp 390w, foto/sanita-3x1-780.webp 780w, foto/sanita-3x1-1200.webp 1200w" sizes="100vw" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="1200" height="400" loading="lazy" decoding="async"></picture><figcaption class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</figcaption></figure>
   <figure class="cop cop-B"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-16x7-390.avif 390w, foto/sanita-16x7-780.avif 780w, foto/sanita-16x7-1200.avif 1200w" sizes="90vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-16x7-390.webp 390w, foto/sanita-16x7-780.webp 780w, foto/sanita-16x7-1200.webp 1200w" sizes="90vw"><source type="image/avif" srcset="foto/sanita-4x3-390.avif 390w, foto/sanita-4x3-780.avif 780w, foto/sanita-4x3-1200.avif 1200w" sizes="92vw"><img src="foto/sanita-4x3-780.webp" srcset="foto/sanita-4x3-390.webp 390w, foto/sanita-4x3-780.webp 780w, foto/sanita-4x3-1200.webp 1200w" sizes="92vw" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="1200" height="900" loading="lazy" decoding="async"></picture><figcaption class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</figcaption></figure>
   <figure class="cop cop-C"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-3x1-390.avif 390w, foto/sanita-3x1-780.avif 780w, foto/sanita-3x1-1200.avif 1200w" sizes="100vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-3x1-390.webp 390w, foto/sanita-3x1-780.webp 780w, foto/sanita-3x1-1200.webp 1200w" sizes="100vw"><source type="image/avif" srcset="foto/sanita-16x9-390.avif 390w, foto/sanita-16x9-780.avif 780w, foto/sanita-16x9-1200.avif 1200w" sizes="calc(100vw - 40px)"><img src="foto/sanita-16x9-780.webp" srcset="foto/sanita-16x9-390.webp 390w, foto/sanita-16x9-780.webp 780w, foto/sanita-16x9-1200.webp 1200w" sizes="calc(100vw - 40px)" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="1200" height="675" loading="lazy" decoding="async"></picture><figcaption class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</figcaption></figure>
+  </div>
+  <!-- D: titolo dentro una fascia alta; il resto della pagina come prima -->
+  <div class="tf tf-D">
+    <figure class="tfD-fig"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-21x9-390.avif 390w, foto/sanita-21x9-780.avif 780w, foto/sanita-21x9-1200.avif 1200w" sizes="100vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-21x9-390.webp 390w, foto/sanita-21x9-780.webp 780w, foto/sanita-21x9-1200.webp 1200w" sizes="100vw"><source type="image/avif" srcset="foto/sanita-4x5-390.avif 390w, foto/sanita-4x5-780.avif 780w" sizes="100vw"><img src="foto/sanita-4x5-780.webp" srcset="foto/sanita-4x5-390.webp 390w, foto/sanita-4x5-780.webp 780w" sizes="100vw" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="780" height="975" loading="lazy" decoding="async"></picture><h1>Sanità</h1></figure>
+    <p class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</p>
+    <div class="capo">
+      <p class="def">Servizio sanitario nazionale, accesso alle cure e personale sanitario.</p>
+      <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+    </div>
+  </div>
+  <!-- E: copertina a schermo intero col titolo, il foglio della pagina le scorre sopra -->
+  <div class="tf tf-E">
+    <div class="tf-fondo"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-16x9-390.avif 390w, foto/sanita-16x9-780.avif 780w, foto/sanita-16x9-1200.avif 1200w" sizes="100vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-16x9-390.webp 390w, foto/sanita-16x9-780.webp 780w, foto/sanita-16x9-1200.webp 1200w" sizes="100vw"><source type="image/avif" srcset="foto/sanita-9x16-390.avif 390w, foto/sanita-9x16-780.avif 780w" sizes="100vw"><img src="foto/sanita-9x16-780.webp" srcset="foto/sanita-9x16-390.webp 390w, foto/sanita-9x16-780.webp 780w" sizes="100vw" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="780" height="975" loading="lazy" decoding="async"></picture><h1>Sanità</h1></div>
+    <div class="capo tf-primo">
+      <p class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</p>
+      <p class="def">Servizio sanitario nazionale, accesso alle cure e personale sanitario.</p>
+      <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+    </div>
+  </div>
+  <!-- F: foto sempre presente; da 900px ferma a sinistra, su telefono sotto blocchi di carta -->
+  <div class="tf tf-F">
+    <div class="tf-fondo"><picture><source type="image/avif" media="(min-width:900px)" srcset="foto/sanita-4x5-390.avif 390w, foto/sanita-4x5-780.avif 780w" sizes="42vw"><source type="image/webp" media="(min-width:900px)" srcset="foto/sanita-4x5-390.webp 390w, foto/sanita-4x5-780.webp 780w" sizes="42vw"><source type="image/avif" srcset="foto/sanita-9x16-390.avif 390w, foto/sanita-9x16-780.avif 780w" sizes="100vw"><img src="foto/sanita-9x16-780.webp" srcset="foto/sanita-9x16-390.webp 390w, foto/sanita-9x16-780.webp 780w" sizes="100vw" alt="Il corridoio degli ambulatori di un ospedale pubblico: porte aperte ai lati, una bacheca, in fondo una persona lontana." width="780" height="975" loading="lazy" decoding="async"></picture><h1>Sanità</h1></div>
+    <div class="capo tf-primo">
+      <p class="def">Servizio sanitario nazionale, accesso alle cure e personale sanitario.</p>
+      <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+      <p class="credito">Foto <a href="https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg">Threecharlie</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it">CC BY-SA 4.0</a> · Wikimedia Commons · duotono</p>
+    </div>
   </div>
   <div class="vd-blocco" hidden>
     <div class="vd-mappa" data-partiti="avs,azione,m5s,esempio" role="table" aria-label="Chi parla di cosa sulla sanità"></div>
@@ -374,7 +451,7 @@ body[data-cop=A] .cop-A,body[data-cop=B] .cop-B,body[data-cop=C] .cop-C{display:
       </details>
     </li>
   </ol>
-  <div style="padding:8px var(--gutter) 0"><a class="azione" href="?variant=D&amp;vista=confronto"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Confronta due partiti sulla sanità</span></a></div>
+  <div class="fine" style="padding:8px var(--gutter) 0"><a class="azione" href="?variant=D&amp;vista=confronto"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Confronta due partiti sulla sanità</span></a></div>
 </section>
 
 </main>
@@ -401,7 +478,7 @@ body[data-cop=A] .cop-A,body[data-cop=B] .cop-B,body[data-cop=C] .cop-C{display:
 
 <script>
 (() => {
-  const nomi = { A: "Fascia, riquadro a destra", B: "Riquadro rientrato", C: "Lastra, striscia al vivo" };
+  const nomi = { A: "Fascia, riquadro a destra", B: "Riquadro rientrato", C: "Lastra, striscia al vivo", D: "Titolo nella fascia", E: "Schermo intero, il foglio scorre sopra", F: "Foto sempre presente" };
   const varianti = Object.keys(nomi);
   const p = new URLSearchParams(location.search);
   let cop = varianti.includes(p.get("copertina")) ? p.get("copertina") : "A";
