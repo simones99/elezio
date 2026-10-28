@@ -17,8 +17,10 @@ Contrasto del titolo in carta sul 10% più chiaro della zona del titolo: urna, f
 seggio, nessuna zona sopra 2,3:1 (la parete azzurra diventa chiara nel duotono): non passa la regola dei 3:1.
 Le altre 34 foto della categoria "Polling stations in Italy" hanno licenza propria del Parlamento europeo: escluse.
 
-e-* (variante E): la foto urna divisa in tre livelli da livelli.py, solo per provare l'animazione.
-- e-fondo: urna e tenda senza scheda né mano; la tenda è ricostruita a specchio dalle pieghe vicine, il palo prolungato, l'urna interpolata per righe.
-- e-scheda: la scheda ritagliata; l'angolo coperto dal pollice è ricostruito con lo speculare dell'angolo sinistro (testo a specchio).
-- e-mano: la mano ritagliata.
-È un ritocco oltre il duotono, fuori dalla regola di DESIGN.md: per il sito vero servono fotogrammi o un video veri.
+v-* (variante E): 8 fotogrammi del video "European elections 2024 - Ambiance shots of polling station near the Colosseum
+in the historical city center of Rome (Italy)", Parlamento europeo, rif. I257607, © Unione europea, 2024.
+Pagina: https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607
+Condizioni: nota legale del Parlamento europeo (https://www.europarl.europa.eu/legal-notice/): riuso e opere derivate ammessi citando la fonte.
+Presi il 2026-10-28 dal file Full HD, tra 2:47,6 e 2:50,8 (fotogrammi 5, 10, 13, 14, 15, 16, 17, 20 a 6,25 fps; fotogrammi.py).
+Modifiche: scala di grigi, duotono lineare #271002 -> #FAF8F1, ritaglio sotto la fila dei simboli di partito del manifesto delle liste (y >= 340).
+Titolo in inchiostro sulla fascia alta chiara: 5,4-5,8:1 sul 10% più scuro. Peso: 8 fotogrammi 4:5 a 780 px, 27 KB in AVIF, 62 KB in WebP.

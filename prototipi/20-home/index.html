@@ -3,7 +3,8 @@
   PROTOTIPO USA E GETTA, ticket #20 (https://github.com/simones99/elezio/issues/20).
   Domanda: come è fatta la home, su telefono e da 900px, con la copertina del seggio?
   Cinque varianti sulla stessa pagina, commutabili con ?variant=A|B|C|D|E, con la barra in basso o con le frecce (× nasconde la barra, B la riapre).
-  E: lo scorrimento infila la scheda nell'urna (CSS scroll-driven animations); senza supporto, come in Firefox, o con prefers-reduced-motion la foto resta ferma.
+  E: lo scorrimento sceglie uno di 8 fotogrammi del video del Parlamento europeo I257607 (© Unione europea, 2024; CSS scroll-driven animations);
+  senza supporto, come in Firefox, o con prefers-reduced-motion resta fermo il terzo fotogramma.
   ?foto=urna|seggio cambia la foto (seggio non passa la regola del contrasto 3:1, vedi foto/duotono.py), ?striscia=0 nasconde il segnaposto della Fase 2.
   Font da ../10-scheda-confronto/. Foto: "EU Elections 2024 - Voting in Milan - 2" e "EU Elections 2024 - Voting in Italy - 4",
   European Parliament, CC BY 2.0, Wikimedia Commons; duotono inchiostro-carta e ritagli fatti per il prototipo.
@@ -181,9 +182,10 @@ body[data-striscia="0"] .striscia{display:none}
 }
 /* E: lo scorrimento infila la scheda nell'urna. Senza supporto o con meno movimento: foto ferma come A. */
 .vE .palco{position:relative;height:min(64svh,620px);overflow:hidden;background:var(--inchiostro);container-type:size}
-.vE .quadro{--w:max(100cqw,calc(100cqh * 4 / 5));--fessura:68.29%;--corsa:52%;position:absolute;top:0;width:var(--w);aspect-ratio:4/5;left:clamp(calc(100cqw - var(--w)),calc(50cqw - .557 * var(--w)),0px)}
-.vE .quadro img{position:absolute;inset:0;width:100%;height:100%}
-.vE .clip{position:absolute;inset:0;clip-path:inset(0 0 calc(100% - var(--fessura)) 0)}
+.vE .quadro{position:absolute;inset:0}
+.vE .quadro img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:40% 50%;opacity:0}
+.vE .quadro img.ferma{opacity:1}
+.vE .marchio-grande{color:var(--inchiostro)}
 .vE .vai{position:absolute;left:var(--gutter);bottom:24px;background:var(--carta);color:var(--inchiostro);padding:11px 14px;display:flex;gap:10px;align-items:center;text-decoration:none}
 .vE .vai svg{width:16px;height:16px;transform:rotate(90deg)}
 .vE .dopo{padding:0 var(--gutter)}
@@ -196,18 +198,19 @@ body[data-striscia="0"] .striscia{display:none}
 @media (min-width:900px){
   .vE{--gutter:max(48px,calc((100vw - 1120px)/2))}
   .vE .palco{height:min(72svh,760px)}
-  .vE .quadro{--w:max(100cqw,calc(100cqh * 16 / 9));--fessura:80.74%;--corsa:61%;aspect-ratio:16/9;left:clamp(calc(100cqw - var(--w)),calc(50cqw - .53 * var(--w)),0px)}
+  .vE .quadro img{object-position:50% 50%}
   .vE .marchio-grande{font-size:clamp(96px,11vw,176px);top:32px}
   .vE .indice ol{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
 }
-@keyframes e-svanisce{to{opacity:0;transform:translate(3%,-2%)}}
-@keyframes e-scende{to{transform:translateY(var(--corsa))}}
+@keyframes e-mostra{from,to{opacity:1}}
 @media (prefers-reduced-motion:no-preference){
   @supports (animation-timeline:view()){
     .vE .scena{height:230svh;view-timeline:--urna block}
     .vE .palco{position:sticky;top:0;height:100svh}
-    .vE .l-mano{animation:e-svanisce linear both;animation-timeline:--urna;animation-range:contain 0% contain 26%}
-    .vE .l-scheda{animation:e-scende cubic-bezier(.45,0,.7,1) both;animation-timeline:--urna;animation-range:contain 20% contain 82%}
+    /* un fotogramma per finestra di scorrimento; il primo vale anche prima, l'ultimo resta dopo */
+    .vE .quadro img,.vE .quadro img.ferma{opacity:0;animation:e-mostra linear none;animation-timeline:--urna;animation-range:contain var(--a) contain var(--b)}
+    .vE .quadro picture:first-child img{animation-fill-mode:backwards}
+    .vE .quadro picture:last-child img{animation-fill-mode:forwards}
   }
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -404,14 +407,15 @@ body[data-striscia="0"] .striscia{display:none}
     document.querySelectorAll("[data-credito]").forEach(p => p.innerHTML = foto[f].credito);
   }
 
-  // Variante E: tre livelli della foto dell'urna (foto/livelli.py), stessi ritagli per tutti
-  const livello = (nome, alt) => `<picture>
-      <source media="(min-width:900px)" srcset="foto/e-${nome}-16x9-780.webp 780w, foto/e-${nome}-16x9-1200.webp 1200w" sizes="100vw">
-      <img class="l-${nome}" src="foto/e-${nome}-4x5-780.webp" srcset="foto/e-${nome}-4x5-390.webp 390w, foto/e-${nome}-4x5-780.webp 780w" sizes="100vw" alt="${alt}" decoding="async">
-    </picture>`;
-  document.querySelector("[data-livelli]").innerHTML = livello("fondo", foto.urna.alt) +
-    `<div class="clip">${livello("scheda", "")}</div>` + livello("mano", "");
-  document.querySelector("[data-credito-e]").innerHTML = foto.urna.credito + " · livelli separati per l'animazione";
+  // Variante E: 8 fotogrammi del video del Parlamento europeo I257607 (foto/fotogrammi.py), scelti dallo scorrimento
+  const N = 8, FERMO = 2, fine = 88;
+  document.querySelector("[data-livelli]").innerHTML = Array.from({ length: N }, (_, n) => `<picture>
+      <source media="(min-width:900px)" type="image/avif" srcset="foto/v-16x9-780-${n}.avif 780w, foto/v-16x9-1200-${n}.avif 1200w" sizes="100vw">
+      <source media="(min-width:900px)" type="image/webp" srcset="foto/v-16x9-780-${n}.webp 780w, foto/v-16x9-1200-${n}.webp 1200w" sizes="100vw">
+      <source type="image/avif" srcset="foto/v-4x5-780-${n}.avif">
+      <img src="foto/v-4x5-780-${n}.webp" alt="${n === FERMO ? "Una mano infila una scheda elettorale piegata nella fessura di un'urna, in un seggio." : ""}"${n === FERMO ? ' class="ferma"' : ""} style="--a:${(fine * n / N).toFixed(1)}%;--b:${(fine * (n + 1) / N).toFixed(1)}%" width="780" height="975" decoding="async">
+    </picture>`).join("");
+  document.querySelector("[data-credito-e]").innerHTML = 'Video <a href="https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607">Parlamento europeo</a> · © Unione europea, 2024 · fotogrammi in duotono';
 
   const nomi = { A: "Frontespizio, indice dei temi", B: "Il quiz in copertina", C: "Scatole", D: "Pagina divisa", E: "Lo scorrimento vota" };
   const varianti = Object.keys(nomi);
