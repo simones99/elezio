@@ -1,0 +1,386 @@
+<!doctype html>
+<!--
+  PROTOTIPO USA E GETTA, ticket #20 (https://github.com/simones99/elezio/issues/20).
+  Domanda: come è fatta la home, su telefono e da 900px, con la copertina del seggio?
+  Quattro varianti strutturali sulla stessa pagina, commutabili con ?variant=A|B|C|D, con la barra in basso o con le frecce.
+  ?foto=urna|seggio cambia la foto (seggio non passa la regola del contrasto 3:1, vedi foto/duotono.py), ?striscia=0 nasconde il segnaposto della Fase 2.
+  Font da ../10-scheda-confronto/. Foto: "EU Elections 2024 - Voting in Milan - 2" e "EU Elections 2024 - Voting in Italy - 4",
+  European Parliament, CC BY 2.0, Wikimedia Commons; duotono inchiostro-carta e ritagli fatti per il prototipo.
+  Testi simulati: il quiz e le schede non esistono ancora.
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>elezio (prototipo home)</title>
+<style>
+@font-face{font-family:"Archivo";src:url(../10-scheda-confronto/fonts/archivo-var-latin.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Cinzel";src:url(../10-scheda-confronto/fonts/cinzel-var-latin.woff2) format("woff2");font-weight:400 900;font-display:swap}
+:root{--carta:#FAF8F1;--inchiostro:#271002;--inchiostro-2:#5C4636;--pietra-2:#ECE7DF;--linea:rgba(39,16,2,.18);--capitali:"Cinzel",serif;--testo:"Archivo",sans-serif;--gutter:20px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--carta);color:var(--inchiostro);-webkit-text-size-adjust:100%}
+body{background:var(--carta);color:var(--inchiostro);font-family:var(--testo);font-stretch:108%;font-size:16.5px;line-height:1.55;font-variant-numeric:tabular-nums;padding-bottom:120px}
+::selection{background:var(--inchiostro);color:var(--carta)}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--inchiostro);outline-offset:3px}
+img{display:block}
+ol,ul{list-style:none}
+main>section{display:none}
+body[data-variant=A] section[data-v=A],body[data-variant=B] section[data-v=B],body[data-variant=C] section[data-v=C],body[data-variant=D] section[data-v=D]{display:block}
+body[data-striscia="0"] .striscia{display:none}
+
+/* Elementi comuni */
+.cop{position:relative;overflow:hidden;background:var(--inchiostro)}
+.cop picture,.cop img{width:100%;height:100%}
+.cop img{object-fit:cover;object-position:50% 0}
+.cop .marchio-grande{position:absolute;left:var(--gutter);top:22px;color:var(--carta);font-family:var(--capitali);font-weight:500;font-size:clamp(56px,17vw,120px);line-height:.9;letter-spacing:.02em}
+.credito{font-size:12px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:var(--inchiostro-2);margin-top:8px;padding:0 var(--gutter)}
+.credito a{color:var(--inchiostro-2)}
+.meta{font-size:12.5px;font-stretch:118%;letter-spacing:.05em;text-transform:uppercase;color:var(--inchiostro-2)}
+.link-caps{font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase}
+.tondo{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--inchiostro);color:var(--carta);flex:none}
+.tondo svg{width:20px;height:20px}
+.azione{display:flex;align-items:center;gap:14px;text-decoration:none}
+.azione .link-caps{border-bottom:1px solid currentColor}
+.promessa{font-weight:700;font-stretch:112%;font-size:clamp(25px,6.6vw,46px);line-height:1.12;letter-spacing:-.005em;text-wrap:balance;max-width:22ch}
+.lead{font-size:17px;max-width:52ch;color:var(--inchiostro)}
+.striscia{border:1px dashed var(--inchiostro-2);padding:12px 14px;font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:var(--inchiostro-2)}
+.striscia b{color:var(--inchiostro)}
+.sezione-tit{font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--inchiostro)}
+.piede{margin-top:56px;padding:22px var(--gutter) 0;border-top:1px solid var(--linea);display:flex;flex-wrap:wrap;gap:12px 22px}
+.piede a{font-size:12.5px;font-stretch:118%;letter-spacing:.05em;text-transform:uppercase;color:var(--inchiostro-2)}
+.piede p{flex-basis:100%;font-size:13px;color:var(--inchiostro-2)}
+.regole li{display:grid;grid-template-columns:34px 1fr;padding:14px 0;border-bottom:1px solid var(--linea)}
+.regole li span:first-child{font-family:var(--capitali);font-weight:600}
+.regole b{display:block;font-stretch:112%}
+.regole li p{color:var(--inchiostro-2);font-size:15px}
+
+/* Indice dei temi: righe numerate */
+.indice li a{display:grid;grid-template-columns:40px 1fr 24px;align-items:baseline;gap:0 4px;padding:15px 0 16px;border-bottom:1px solid var(--linea);text-decoration:none}
+.indice .n{font-size:12.5px;font-stretch:118%;letter-spacing:.05em;color:var(--inchiostro-2)}
+.indice .nome{font-family:var(--capitali);font-weight:500;font-size:21px;line-height:1.15;letter-spacing:.02em}
+.indice .def{grid-column:2;font-size:14.5px;color:var(--inchiostro-2);margin-top:3px;max-width:52ch}
+.indice svg{width:18px;height:18px;align-self:center;grid-row:1/3;grid-column:3}
+.indice a:hover .nome{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+
+/* A: frontespizio, indice dei temi come protagonista */
+.vA .cop{height:min(64svh,620px)}
+.vA .dopo{padding:0 var(--gutter)}
+.vA .promessa{margin-top:30px}
+.vA .lead{margin-top:14px}
+.vA .elez{margin-top:16px}
+.vA .striscia{margin-top:26px}
+.vA .azioni{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+.vA .temi{margin-top:52px}
+.vA .quiz-banda{margin-top:52px;padding:30px 0;border-top:1px solid var(--inchiostro);border-bottom:1px solid var(--inchiostro)}
+.vA .quiz-banda h2{font-weight:700;font-stretch:112%;font-size:clamp(22px,5vw,32px);line-height:1.15}
+.vA .quiz-banda p{margin:8px 0 22px;color:var(--inchiostro-2);max-width:48ch}
+.vA .come{margin-top:52px}
+@media (min-width:900px){
+  .vA{--gutter:max(48px,calc((100vw - 1120px)/2))}
+  .vA .cop{height:min(72svh,760px)}
+  .vA .cop .marchio-grande{font-size:clamp(96px,11vw,176px);top:32px}
+  .vA .apertura{display:grid;grid-template-columns:7fr 5fr;gap:56px;align-items:end}
+  .vA .azioni{margin-top:0}
+  .vA .indice ol{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+  .vA .pari{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+  .vA .quiz-banda,.vA .come{margin-top:64px}
+}
+
+/* B: il quiz in copertina */
+.vB .cop{height:min(52svh,460px)}
+.vB .dopo{padding:0 var(--gutter)}
+.vB .promessa{font-size:clamp(22px,5.6vw,34px);margin-top:24px;max-width:26ch}
+.vB .striscia{margin-top:22px}
+.vB .quiz{margin:26px calc(-1 * var(--gutter)) 0;padding:34px var(--gutter) 36px;background:var(--inchiostro);color:var(--carta)}
+.vB .quiz .meta{color:rgba(250,248,241,.72)}
+.vB .quiz h2{font-weight:700;font-stretch:112%;font-size:clamp(30px,8.4vw,60px);line-height:1.04;margin-top:12px;max-width:16ch;text-wrap:balance}
+.vB .quiz p{margin-top:14px;max-width:44ch;color:rgba(250,248,241,.85)}
+.vB .quiz .azione{margin-top:26px}
+.vB .quiz .tondo{background:var(--carta);color:var(--inchiostro)}
+.vB .temi{margin-top:44px}
+.vB .elenco{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--linea)}
+.vB .elenco a{display:flex;align-items:flex-start;min-height:64px;padding:12px 10px 12px 0;border-bottom:1px solid var(--linea);font-family:var(--capitali);font-weight:500;font-size:16px;line-height:1.2;letter-spacing:.02em;text-decoration:none}
+.vB .elenco li:nth-child(odd) a{border-right:1px solid var(--linea)}
+.vB .elenco li:nth-child(even) a{padding-left:12px}
+.vB .come{margin-top:44px}
+@media (min-width:900px){
+  .vB{--gutter:max(48px,calc((100vw - 1120px)/2))}
+  .vB .cop{height:min(58svh,560px)}
+  .vB .cop .marchio-grande{font-size:clamp(96px,11vw,170px);top:30px}
+  .vB .quiz{display:grid;grid-template-columns:7fr 5fr;gap:56px;align-items:end}
+  .vB .quiz .azione{margin-top:0}
+  .vB .elenco{grid-template-columns:repeat(4,1fr)}
+  .vB .elenco li a{border-right:1px solid var(--linea);padding-left:12px}
+  .vB .elenco li:nth-child(4n) a{border-right:0}
+  .vB .pari{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+}
+
+/* C: scatole */
+.vC .griglia{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--inchiostro);border-left:1px solid var(--linea);margin:0 var(--gutter)}
+.vC .box{border-right:1px solid var(--linea);border-bottom:1px solid var(--linea);min-height:132px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;position:relative}
+.vC .box .n{font-size:12px;font-stretch:118%;letter-spacing:.05em;color:var(--inchiostro-2)}
+.vC .box .nome{font-family:var(--capitali);font-weight:500;font-size:17px;line-height:1.15;letter-spacing:.02em}
+.vC a.box:hover{background:var(--pietra-2)}
+.vC .box-cop{grid-column:1/-1;padding:0;min-height:0;height:min(60svh,540px)}
+.vC .box-cop .cop{height:100%}
+.vC .box-cop .marchio-grande{left:14px;top:14px}
+.vC .box-prom{grid-column:1/-1;min-height:0;padding:20px 12px 22px}
+.vC .box-prom .promessa{font-size:clamp(22px,5.8vw,40px)}
+.vC .box-prom .meta{margin-top:14px}
+.vC .box-strisc{grid-column:1/-1;min-height:0;padding:10px 12px}
+.vC .box-strisc .striscia{border:0;padding:0}
+.vC .box-quiz{grid-column:1/-1;background:var(--inchiostro);color:var(--carta);min-height:170px;padding:16px 12px}
+.vC .box-quiz .n{color:rgba(250,248,241,.72)}
+.vC .box-quiz .q{font-weight:700;font-stretch:112%;font-size:clamp(24px,6.4vw,40px);line-height:1.08;max-width:16ch}
+.vC .box-quiz .link-caps{border-bottom:1px solid currentColor;align-self:flex-start}
+.vC .box-come{grid-column:1/-1;min-height:0}
+.vC .box-come .regole li:last-child{border-bottom:0}
+.vC .credito{padding:8px var(--gutter) 0}
+.vC .testata-c{display:flex;justify-content:space-between;padding:14px var(--gutter)}
+@media (min-width:900px){
+  .vC{--gutter:max(48px,calc((100vw - 1120px)/2))}
+  .vC .griglia{grid-template-columns:repeat(4,1fr)}
+  .vC .box{min-height:170px;padding:16px}
+  .vC .box .nome{font-size:21px}
+  .vC .box-cop{grid-column:1/4;grid-row:1/3;height:auto;min-height:540px}
+  .vC .box-cop .marchio-grande{font-size:clamp(96px,10vw,150px);left:20px;top:20px}
+  .vC .box-prom{grid-column:4;grid-row:1;padding:16px}
+  .vC .box-prom .promessa{font-size:24px}
+  .vC .box-quiz{grid-column:4;grid-row:2;min-height:0}
+  .vC .box-quiz .q{font-size:28px}
+  .vC .box-cop{padding:0}
+  .vC .box-strisc{grid-column:1/-1;min-height:0;padding:12px 16px}
+  .vC .box-come{grid-column:span 4}
+  .vC .box-come .regole{display:grid;grid-template-columns:repeat(3,1fr);gap:0 32px}
+  .vC .box-come .regole li{border-bottom:0}
+}
+
+/* D: pagina divisa come le pagine tema; su telefono la foto riempie lo schermo */
+.vD .cop{height:100svh}
+.vD .giu{position:absolute;left:var(--gutter);bottom:22px;color:var(--carta);display:flex;align-items:center;gap:10px;font-size:12.5px;font-stretch:118%;letter-spacing:.05em;text-transform:uppercase;text-decoration:none}
+.vD .giu svg{width:18px;height:18px;transform:rotate(90deg)}
+.vD .colonna{padding:0 var(--gutter)}
+.vD .promessa{margin-top:30px}
+.vD .striscia{margin-top:24px}
+.vD .lead{margin-top:14px}
+.vD .azione{margin-top:26px}
+.vD .temi{margin-top:48px}
+.vD .come{margin-top:48px}
+@media (min-width:900px){
+  .vD .divisa{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+  .vD .sinistra{position:sticky;top:0;height:100svh}
+  .vD .cop{height:100%}
+  .vD .cop .marchio-grande{font-size:clamp(80px,8.4vw,140px);left:40px;top:32px}
+  .vD .giu{display:none}
+  .vD .colonna{--gutter:48px;padding:56px 48px 0}
+  .vD .credito{padding:0;margin:0 0 24px}
+  .vD .promessa{margin-top:0;font-size:clamp(30px,3.4vw,46px)}
+  .vD .piede{padding-left:0;padding-right:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Barra del prototipo, fuori dal design */
+.proto{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:10;width:min(440px,calc(100vw - 16px));background:#0b0b0b;color:#fff;border-radius:16px;padding:8px 10px;font:12.5px/1.3 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.proto .riga{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.proto .riga+.riga{margin-top:6px}
+.proto button{font:inherit;color:#fff;background:#262626;border:0;border-radius:9px;padding:6px 9px;cursor:pointer}
+.proto button[aria-pressed=true]{background:#fff;color:#0b0b0b}
+.proto .nome-v{font-weight:700;text-align:center;flex:1}
+.proto small{display:block;color:#bdbdbd;margin-top:6px;font-size:12px;text-align:center}
+</style>
+</head>
+<body data-variant="A" data-striscia="1" data-foto="urna">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-freccia" viewBox="0 0 20 20"><path d="M3 10h13M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol></svg>
+<main>
+
+<!-- A · Frontespizio: foto, promessa grande, indice dei temi come protagonista -->
+<section data-v="A" class="vA" aria-label="Variante A">
+  <div class="cop" data-cop="4x5|21x9"><h1 class="marchio-grande">Elezio</h1></div>
+  <p class="credito" data-credito></p>
+  <div class="dopo">
+    <div class="apertura">
+      <div>
+        <p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p>
+        <p class="lead">Per ogni tema, cosa propone ciascun partito in una riga, la citazione alla lettera e la pagina del programma depositato al Ministero dell'Interno.</p>
+        <p class="meta elez">Politiche 2022 · beta</p>
+      </div>
+      <div class="azioni">
+        <a class="azione" href="#temi-a"><span class="tondo"><svg aria-hidden="true" style="transform:rotate(90deg)"><use href="#i-freccia"/></svg></span><span class="link-caps">Leggi per tema</span></a>
+        <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Fai il quiz</span></a>
+      </div>
+    </div>
+    <div class="striscia" data-striscia-testo></div>
+    <div class="temi indice" id="temi-a"><h2 class="sezione-tit">I 12 temi</h2><ol data-temi="indice"></ol></div>
+    <div class="quiz-banda pari">
+      <h2>Quale programma è più vicino a quello che pensi?</h2>
+      <div><p>24 affermazioni, circa cinque minuti. Il risultato si calcola sul tuo telefono e non viene salvato da nessuna parte.</p>
+      <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Inizia il quiz</span></a></div>
+    </div>
+    <div class="come"><h2 class="sezione-tit">Come lavora elezio</h2><ol class="regole" data-regole></ol></div>
+  </div>
+  <nav class="piede" data-piede aria-label="Pagine di servizio"></nav>
+</section>
+
+<!-- B · Il quiz in copertina: foto più bassa, il quiz è il blocco forte, i temi un elenco compatto -->
+<section data-v="B" class="vB" aria-label="Variante B">
+  <div class="cop" data-cop="4x5|21x9"><h1 class="marchio-grande">Elezio</h1></div>
+  <p class="credito" data-credito></p>
+  <div class="dopo">
+    <p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p>
+    <div class="striscia" data-striscia-testo></div>
+    <div class="quiz">
+      <div><p class="meta">Quiz · Politiche 2022</p>
+      <h2>Quale programma è più vicino a quello che pensi?</h2>
+      <p>24 affermazioni, circa cinque minuti. Il risultato si calcola sul tuo telefono e non viene salvato.</p></div>
+      <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Inizia il quiz</span></a>
+    </div>
+    <div class="temi"><h2 class="sezione-tit">Oppure leggi per tema</h2><ol class="elenco" data-temi="elenco"></ol></div>
+    <div class="come pari"><div><h2 class="sezione-tit">Come lavora elezio</h2><ol class="regole" data-regole></ol></div></div>
+  </div>
+  <nav class="piede" data-piede aria-label="Pagine di servizio"></nav>
+</section>
+
+<!-- C · Scatole: tutta la home è una griglia a filetti; la foto è la scatola grande, il quiz quella scura -->
+<section data-v="C" class="vC" aria-label="Variante C">
+  <div class="testata-c"><span class="meta">Politiche 2022 · beta</span><a class="meta" href="#">Metodologia</a></div>
+  <div class="griglia">
+    <div class="box box-cop"><div class="cop" data-cop="4x5|16x9"><h1 class="marchio-grande">Elezio</h1></div></div>
+    <div class="box box-prom"><p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p><p class="meta">Citazione alla lettera e pagina del programma depositato</p></div>
+    <a class="box box-quiz" href="#"><span class="n">QUIZ · 24 AFFERMAZIONI</span><span class="q">Quale programma è più vicino a quello che pensi?</span><span class="link-caps">Inizia il quiz</span></a>
+    <div class="box box-strisc striscia-box"><div class="striscia" data-striscia-testo></div></div>
+    <!-- temi inseriti qui -->
+    <div class="box box-come" data-dopo-temi><ol class="regole" data-regole></ol></div>
+  </div>
+  <p class="credito" data-credito></p>
+  <nav class="piede" data-piede aria-label="Pagine di servizio"></nav>
+</section>
+
+<!-- D · Pagina divisa: foto a schermo intero su telefono, ferma a sinistra da 900px come nelle pagine tema -->
+<section data-v="D" class="vD" aria-label="Variante D">
+  <div class="divisa">
+    <div class="sinistra"><div class="cop" data-cop="4x5|2x3"><h1 class="marchio-grande">Elezio</h1><a class="giu" href="#col-d"><svg aria-hidden="true"><use href="#i-freccia"/></svg>Scorri</a></div></div>
+    <div class="colonna" id="col-d">
+      <p class="credito" data-credito></p>
+      <p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p>
+      <p class="lead">Cosa propone ciascun partito in una riga, la citazione alla lettera e la pagina del programma depositato. <span class="meta">Politiche 2022 · beta</span></p>
+      <div class="striscia" data-striscia-testo></div>
+      <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Fai il quiz · 24 affermazioni</span></a>
+      <div class="temi indice"><h2 class="sezione-tit">I 12 temi</h2><ol data-temi="indice"></ol></div>
+      <div class="come"><h2 class="sezione-tit">Come lavora elezio</h2><ol class="regole" data-regole></ol></div>
+      <nav class="piede" data-piede aria-label="Pagine di servizio"></nav>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="proto" role="region" aria-label="Commutatore del prototipo">
+  <div class="riga">
+    <button type="button" data-azione="prev" aria-label="Variante precedente">‹</button>
+    <span class="nome-v" aria-live="polite"></span>
+    <button type="button" data-azione="next" aria-label="Variante successiva">›</button>
+  </div>
+  <div class="riga">
+    <span>Foto</span>
+    <span style="display:flex;gap:4px"><button type="button" data-foto="urna">urna</button><button type="button" data-foto="seggio">seggio (non passa 3:1)</button></span>
+    <button type="button" data-azione="striscia">striscia Fase 2</button>
+  </div>
+  <small>Prototipo #20 · home · prova anche da 900px in su</small>
+</div>
+
+<script>
+(() => {
+  // Dati: nomi e definizioni da contenuti/temi.yaml (main, 28 ottobre 2026)
+  const temi = [
+    ["Fisco e conti pubblici", "Tasse, riscossione e regole del bilancio dello Stato."],
+    ["Lavoro e pensioni", "Contratti, salari, sicurezza sul lavoro e sistema previdenziale."],
+    ["Imprese ed economia", "Politica industriale, concorrenza, credito, agricoltura e innovazione produttiva."],
+    ["Sanità", "Servizio sanitario nazionale, accesso alle cure e personale sanitario."],
+    ["Scuola, università e ricerca", "Istruzione dall'infanzia all'università, diritto allo studio e ricerca pubblica."],
+    ["Famiglia, natalità e welfare", "Sostegno alle famiglie, natalità, povertà, disabilità e terzo settore."],
+    ["Immigrazione e sicurezza", "Ingressi, asilo, cittadinanza, integrazione e ordine pubblico."],
+    ["Ambiente ed energia", "Clima, fonti di energia, bollette, suolo e acqua."],
+    ["Casa, infrastrutture e trasporti", "Abitare, grandi opere, mobilità e divari territoriali."],
+    ["Giustizia e diritti civili", "Processo, carceri, criminalità organizzata e diritti della persona."],
+    ["Europa, esteri e difesa", "Unione europea, alleanze, guerre in corso e forze armate."],
+    ["Istituzioni e riforme", "Forma di governo, autonomie, legge elettorale e pubblica amministrazione."],
+  ];
+  const href = n => n === "Sanità" ? "../15-copertina-sanita/?copertina=F" : "#";
+  const nn = i => String(i + 1).padStart(2, "0");
+  const freccia = '<svg aria-hidden="true"><use href="#i-freccia"/></svg>';
+  document.querySelectorAll('[data-temi="indice"]').forEach(ol => ol.innerHTML = temi.map(([n, d], i) =>
+    `<li><a href="${href(n)}"><span class="n">${nn(i)}</span><span class="nome">${n}</span>${freccia}<span class="def">${d}</span></a></li>`).join(""));
+  document.querySelectorAll('[data-temi="elenco"]').forEach(ol => ol.innerHTML = temi.map(([n]) => `<li><a href="${href(n)}">${n}</a></li>`).join(""));
+  document.querySelector("[data-dopo-temi]").insertAdjacentHTML("beforebegin", temi.map(([n], i) =>
+    `<a class="box" href="${href(n)}"><span class="n">${nn(i)}</span><span class="nome">${n}</span></a>`).join(""));
+  const regole = [
+    ["Solo documenti ufficiali", "La fonte è il programma depositato al Ministero dell'Interno, registrato con link e impronta del file."],
+    ["Nessuna posizione senza citazione", "Ogni riga su un partito ha le parole esatte del programma e la pagina; se il programma non ne parla, lo diciamo."],
+    ["Verificato a mano", "Un modello linguistico prepara le bozze, una persona le controlla una per una prima della pubblicazione."],
+  ];
+  document.querySelectorAll("[data-regole]").forEach(ol => ol.innerHTML = regole.map(([t, d], i) =>
+    `<li><span>${["I", "II", "III"][i]}</span><div><b>${t}</b><p>${d}</p></div></li>`).join(""));
+  document.querySelectorAll("[data-piede]").forEach(n => n.innerHTML =
+    ["Metodologia", "Registro delle correzioni", "Segnala un errore", "Crediti", "Privacy", "Codice sorgente"].map(t => `<a href="#">${t}</a>`).join("") +
+    "<p>Sito indipendente, nessun partito lo finanzia. Codice AGPL-3.0, contenuti CC BY-SA 4.0.</p>");
+  document.querySelectorAll("[data-striscia-testo]").forEach(s => s.innerHTML =
+    "Segnaposto Fase 2 · <b>7 temi su 12 aggiornati ai programmi 2027</b> · gli altri mostrano ancora il 2022");
+
+  const foto = {
+    urna: { alt: "Una mano infila una scheda elettorale nella fessura di un'urna, davanti alle tende delle cabine.",
+      credito: 'Foto <a href="https://commons.wikimedia.org/wiki/File:EU_Elections_2024_-_Voting_in_Milan_-_2.jpg">Parlamento europeo</a> · <a href="https://creativecommons.org/licenses/by/2.0/deed.it">CC BY 2.0</a> · Wikimedia Commons · duotono' },
+    seggio: { alt: "Due cabine elettorali e un'urna del Ministero dell'Interno in un'aula scolastica adibita a seggio.",
+      credito: 'Foto <a href="https://commons.wikimedia.org/wiki/File:EU_Elections_2024_-_Voting_in_Italy_-_4.jpg">Parlamento europeo</a> · <a href="https://creativecommons.org/licenses/by/2.0/deed.it">CC BY 2.0</a> · Wikimedia Commons · duotono' },
+  };
+  const larghezze = { "4x5": [390, 780], "2x3": [390, 780], "16x9": [390, 780, 1200], "21x9": [390, 780, 1200] };
+  const src = (f, t, ext) => larghezze[t].map(w => `foto/${f}-${t}-${w}.${ext} ${w}w`).join(", ");
+  function disegnaFoto(f) {
+    document.querySelectorAll("[data-cop]").forEach(c => {
+      const [stretto, largo] = c.dataset.cop.split("|");
+      const largoSizes = largo === "2x3" ? "42vw" : "100vw";
+      c.querySelector("picture")?.remove();
+      c.insertAdjacentHTML("afterbegin", `<picture>
+        <source media="(min-width:900px)" type="image/avif" srcset="${src(f, largo, "avif")}" sizes="${largoSizes}">
+        <source media="(min-width:900px)" type="image/webp" srcset="${src(f, largo, "webp")}" sizes="${largoSizes}">
+        <source type="image/avif" srcset="${src(f, stretto, "avif")}" sizes="100vw">
+        <img src="foto/${f}-${stretto}-780.webp" srcset="${src(f, stretto, "webp")}" sizes="100vw" alt="${foto[f].alt}" width="780" height="975" decoding="async">
+      </picture>`);
+    });
+    document.querySelectorAll("[data-credito]").forEach(p => p.innerHTML = foto[f].credito);
+  }
+
+  const nomi = { A: "Frontespizio, indice dei temi", B: "Il quiz in copertina", C: "Scatole", D: "Pagina divisa" };
+  const varianti = Object.keys(nomi);
+  const p = new URLSearchParams(location.search);
+  const stato = {
+    variant: varianti.includes(p.get("variant")) ? p.get("variant") : "A",
+    foto: p.get("foto") === "seggio" ? "seggio" : "urna",
+    striscia: p.get("striscia") === "0" ? "0" : "1",
+  };
+  function applica() {
+    Object.assign(document.body.dataset, stato);
+    history.replaceState(null, "", `?variant=${stato.variant}&foto=${stato.foto}&striscia=${stato.striscia}${location.hash}`);
+    document.querySelector(".nome-v").textContent = stato.variant + " · " + nomi[stato.variant];
+    document.querySelectorAll(".proto [data-foto]").forEach(b => b.setAttribute("aria-pressed", b.dataset.foto === stato.foto));
+    document.querySelector('.proto [data-azione="striscia"]').setAttribute("aria-pressed", stato.striscia === "1");
+    if (!document.querySelector(`[data-cop] picture img[src*="${stato.foto}-"]`)) disegnaFoto(stato.foto);
+  }
+  function sposta(d) { stato.variant = varianti[(varianti.indexOf(stato.variant) + d + varianti.length) % varianti.length]; scrollTo(0, 0); applica(); }
+  document.querySelector(".proto").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.azione === "prev") sposta(-1);
+    if (b.dataset.azione === "next") sposta(1);
+    if (b.dataset.azione === "striscia") { stato.striscia = stato.striscia === "1" ? "0" : "1"; applica(); }
+    if (b.dataset.foto) { stato.foto = b.dataset.foto; applica(); }
+  });
+  addEventListener("keydown", e => {
+    if (e.target.closest("input,textarea,[contenteditable]")) return;
+    if (e.key === "ArrowLeft") sposta(-1);
+    if (e.key === "ArrowRight") sposta(1);
+  });
+  applica();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+urna-*: "EU Elections 2024 - Voting in Milan - 2"
+Pagina: https://commons.wikimedia.org/wiki/File:EU_Elections_2024_-_Voting_in_Milan_-_2.jpg
+Autore: European Parliament (Flickr https://www.flickr.com/photos/36612355@N08/53781521611/)
+Licenza: CC BY 2.0 (https://creativecommons.org/licenses/by/2.0/)
+Scattata: 2024-06-09.
+
+seggio-*: "EU Elections 2024 - Voting in Italy - 4"
+Pagina: https://commons.wikimedia.org/wiki/File:EU_Elections_2024_-_Voting_in_Italy_-_4.jpg
+Autore: European Parliament (Flickr https://www.flickr.com/photos/36612355@N08/53779400160/)
+Licenza: CC BY 2.0 (https://creativecommons.org/licenses/by/2.0/)
+Scattata: 2024-06-07.
+
+Prese il 2026-10-28, miniature 1920 px di Commons (originali non versionati).
+Modifiche: scala di grigi, duotono lineare #271002 -> #FAF8F1, ritagli 4:5, 2:3, 16:9, 21:9 (duotono.py).
+Formati: AVIF qualità 50, WebP qualità 72, larghezze 390, 780, 1200 px dove l'originale lo consente.
+Contrasto del titolo in carta sul 10% più chiaro della zona del titolo: urna, fascia alta a sinistra, 5,8-12,7:1;
+seggio, nessuna zona sopra 2,3:1 (la parete azzurra diventa chiara nel duotono): non passa la regola dei 3:1.
+Le altre 34 foto della categoria "Polling stations in Italy" hanno licenza propria del Parlamento europeo: escluse.
