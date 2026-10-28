@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-28T12:00:00Z",
+  "title": "Design System: elezio",
+  "extensions": {
+    "colorMeta": {
+      "inchiostro": { "role": "primary", "displayName": "Inchiostro bruno", "canonical": "#271002", "tonalRamp": ["#1A0A01", "#271002", "#3E2414", "#5C4636", "#7F6B5D", "#A69689", "#CFC4BA", "#EEE8E2"] },
+      "inchiostro-2": { "role": "neutral", "displayName": "Inchiostro attenuato", "canonical": "#5C4636", "tonalRamp": ["#2B1E15", "#3F2E22", "#5C4636", "#76604F", "#91806F", "#B0A293", "#D0C6BB", "#EDE8E2"] },
+      "carta": { "role": "neutral", "displayName": "Carta crema", "canonical": "#FAF8F1", "tonalRamp": ["#3A362C", "#5E584A", "#86806F", "#ADA796", "#CFCAB9", "#E6E2D6", "#F2EFE6", "#FAF8F1"] },
+      "pietra-2": { "role": "neutral", "displayName": "Pietra chiara", "canonical": "#ECE7DF", "tonalRamp": ["#36302A", "#59514A", "#7E766D", "#A39B91", "#C6BFB5", "#DED8CF", "#ECE7DF", "#F6F3EE"] },
+      "linea": { "role": "neutral", "displayName": "Filetto", "canonical": "rgba(39,16,2,.18)" },
+      "velo": { "role": "neutral", "displayName": "Velo", "canonical": "rgba(39,16,2,.42)" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Solo il nome del tema in testa alla pagina, maiuscolo." },
+      "headline": { "displayName": "Headline", "purpose": "Sotto-questione nella testa del pop-up, maiuscolo." },
+      "marchio": { "displayName": "Marchio", "purpose": "Il nome Elezio nella testata." },
+      "title": { "displayName": "Title", "purpose": "Titolo della scheda; 500 per la posizione assente, 17.5px nel confronto a colonne." },
+      "body": { "displayName": "Body", "purpose": "Sintesi, massimo 62ch, cifre tabellari." },
+      "body-lead": { "displayName": "Body lead", "purpose": "Definizione del tema sotto il titolo, massimo 52ch." },
+      "quote": { "displayName": "Quote", "purpose": "Testo della citazione tra caporali; 14.5px nella riga aperta della mappa." },
+      "sigla": { "displayName": "Sigla", "purpose": "Sigla del partito accanto al contrassegno; 12px nella testa della mappa." },
+      "label": { "displayName": "Label", "purpose": "Link e azioni testuali in maiuscolo, sottolineati." },
+      "meta": { "displayName": "Meta", "purpose": "Metadati della scheda e riga fonte della citazione, maiuscolo, inchiostro attenuato." },
+      "nota": { "displayName": "Nota", "purpose": "Nota sotto il titolo, legenda, istruzioni, sotto-questione sopra la citazione." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-uscita", "value": "cubic-bezier(.16,1,.3,1)", "purpose": "Unica curva del sistema: rotazione del più e entrata del pop-up." },
+      { "name": "durata-rotazione", "value": "0.25s-0.3s", "purpose": "Il più che diventa croce su citazioni e righe della mappa." },
+      { "name": "durata-pop", "value": "0.34s", "purpose": "Entrata del pop-up: salita del 40% su telefono, 18px con dissolvenza su schermi larghi." }
+    ],
+    "breakpoints": [
+      { "name": "telefono", "value": "390px", "purpose": "Riferimento di progetto." },
+      { "name": "largo", "value": "900px", "purpose": "Gutter max(48px, (100vw - 1120px)/2), schede su due colonne, pop-up centrato, mappa a colonne proporzionali." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Bottone tondo con etichetta",
+      "kind": "button",
+      "refersTo": "tondo",
+      "description": "Azione principale: disco inchiostro con freccia e link in maiuscoletto sottolineato.",
+      "html": "<a class=\"ds-azione\" href=\"#\"><span class=\"ds-tondo\"><svg viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M4 10h12M11 5l5 5-5 5\" stroke=\"currentColor\" stroke-width=\"1.6\" fill=\"none\"/></svg></span><span class=\"ds-link-caps\">Confronta due partiti sulla sanità</span></a>",
+      "css": ".ds-azione{display:flex;align-items:center;gap:14px;text-decoration:none;color:#271002;font-family:Archivo,sans-serif} .ds-tondo{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#271002;color:#FAF8F1;flex:none} .ds-tondo svg{width:20px;height:20px} .ds-link-caps{font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid currentColor} .ds-azione:focus-visible{outline:2px solid #271002;outline-offset:3px}"
+    },
+    {
+      "name": "Link in maiuscoletto",
+      "kind": "custom",
+      "refersTo": "link-caps",
+      "description": "Link e apertura delle citazioni, maiuscolo largo sottolineato.",
+      "html": "<a class=\"ds-link\" href=\"#\">Vai alla scheda completa</a>",
+      "css": ".ds-link{font-family:Archivo,sans-serif;font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;color:#271002;text-underline-offset:.22em;text-decoration-thickness:1px} .ds-link:focus-visible{outline:2px solid #271002;outline-offset:3px}"
+    },
+    {
+      "name": "Scelta dei partiti",
+      "kind": "chip",
+      "refersTo": "scelta-partito",
+      "description": "Chip ad angoli vivi per scegliere fino a tre partiti, in ordine alfabetico.",
+      "html": "<ul class=\"ds-scelta\"><li class=\"on\">AVS</li><li class=\"on\">Azione</li><li>FdI</li><li>M5S</li></ul>",
+      "css": ".ds-scelta{list-style:none;display:flex;flex-wrap:wrap;gap:8px;padding:0;font-family:Archivo,sans-serif} .ds-scelta li{font-size:13px;font-weight:600;font-stretch:118%;padding:7px 12px;border:1px solid rgba(39,16,2,.18);color:#5C4636} .ds-scelta li.on{background:#271002;color:#FAF8F1;border-color:#271002}"
+    },
+    {
+      "name": "Citazione",
+      "kind": "card",
+      "refersTo": "citazione",
+      "description": "Riquadro della prova: testo alla lettera tra caporali, documento e pagina linkata al PDF.",
+      "html": "<div class=\"ds-cit\"><p class=\"ds-sq\">Medicina territoriale</p><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class=\"ds-rif\"><span>Programma AVS 2022</span><a href=\"#page=30\">p. 30</a></p></div>",
+      "css": ".ds-cit{background:#ECE7DF;padding:16px 18px;color:#271002;font-family:Archivo,sans-serif;font-stretch:108%} .ds-cit blockquote{margin:0;font-size:16px;line-height:1.55} .ds-sq{margin:0 0 6px;font-size:12.5px;color:#5C4636} .ds-rif{display:flex;justify-content:space-between;gap:12px;margin:10px 0 0;font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:#5C4636} .ds-rif a{color:#271002;white-space:nowrap;text-underline-offset:.22em;text-decoration-thickness:1px} .ds-rif a:focus-visible{outline:2px solid #271002;outline-offset:3px}"
+    },
+    {
+      "name": "Scheda del partito",
+      "kind": "card",
+      "refersTo": "scheda",
+      "description": "Contrassegno e sigla, titolo, sintesi, metadati, link alle citazioni; senza riquadro, separata da un filetto.",
+      "html": "<article class=\"ds-scheda\"><div class=\"ds-chi\"><span class=\"ds-marca\" role=\"img\" aria-label=\"Contrassegno del partito\"></span><div><div class=\"ds-sigla\">AVS</div><div class=\"ds-nome\">Alleanza Verdi e Sinistra</div></div></div><h2 class=\"ds-titolo\">40 mila assunzioni nella sanità pubblica in tre anni</h2><p class=\"ds-sintesi\">Alleanza Verdi e Sinistra vuole potenziare i servizi sanitari sul territorio e assumere 40 mila operatori in tre anni.</p><div class=\"ds-etichetta\"><span>Programma depositato</span><span>Partito</span><span class=\"ds-stato\">Verificata</span></div></article>",
+      "css": ".ds-scheda{padding:32px 0 34px;border-top:1px solid rgba(39,16,2,.18);color:#271002;font-family:Archivo,sans-serif;font-stretch:108%;font-size:16.5px;line-height:1.55} .ds-chi{display:flex;align-items:center;gap:12px} .ds-marca{width:40px;height:40px;border-radius:50%;background:#ECE7DF;flex:none} .ds-sigla{font-weight:700;font-stretch:118%;font-size:15px;letter-spacing:.03em} .ds-nome{font-size:13px;color:#5C4636;line-height:1.3} .ds-titolo{font-weight:700;font-stretch:112%;font-size:21px;line-height:1.22;margin:16px 0 0;text-wrap:balance} .ds-sintesi{margin:10px 0 0;max-width:62ch} .ds-etichetta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:12px;font-size:12px;font-stretch:118%;letter-spacing:.05em;text-transform:uppercase;color:#5C4636} .ds-stato{color:#271002;font-weight:700}"
+    },
+    {
+      "name": "Mappa: segni di stato",
+      "kind": "custom",
+      "refersTo": "mappa-punto",
+      "description": "Punto pieno ne parla, cerchio vuoto non ne parla, cerchio tratteggiato da verificare, trattino nient'altro (solo in Altro nel tema). Mai colore.",
+      "html": "<div class=\"ds-mappa\"><button class=\"ds-punto\" aria-label=\"ne parla\"><svg viewBox=\"0 0 16 16\"><circle cx=\"8\" cy=\"8\" r=\"6.5\" fill=\"currentColor\"/></svg></button><button class=\"ds-punto\" aria-label=\"non ne parla\"><svg viewBox=\"0 0 16 16\"><circle cx=\"8\" cy=\"8\" r=\"6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg></button><button class=\"ds-punto\" aria-label=\"da verificare\"><svg viewBox=\"0 0 16 16\"><circle cx=\"8\" cy=\"8\" r=\"6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-dasharray=\"2 2\"/></svg></button><span class=\"ds-niente\" aria-label=\"nient'altro\">–</span></div>",
+      "css": ".ds-mappa{display:flex;align-items:center;gap:6px;color:#271002;font-family:Archivo,sans-serif} .ds-punto{all:unset;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%} .ds-punto svg{width:16px;height:16px} .ds-punto:hover{background:#ECE7DF} .ds-punto:focus-visible{outline:2px solid #271002} .ds-niente{width:44px;text-align:center;color:#5C4636}"
+    },
+    {
+      "name": "Pop-up della citazione",
+      "kind": "custom",
+      "refersTo": "pop-up",
+      "description": "Foglio dal basso su telefono, finestra centrata da 900px; testa fissa con contrassegno, sigla, sotto-questione in capitali e chiusura tonda.",
+      "html": "<div class=\"ds-pop\"><div class=\"ds-pop-testa\"><span class=\"ds-pop-marca\"></span><div><p class=\"ds-pop-sigla\">Azione</p><h2>Finanziamento e liste d'attesa</h2></div><button class=\"ds-pop-chiudi\" aria-label=\"Chiudi\"><svg viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M5 5l10 10M15 5L5 15\" stroke=\"currentColor\" stroke-width=\"1.6\" fill=\"none\"/></svg></button></div><div class=\"ds-pop-piede\"><a href=\"#\">Vai alla scheda completa</a></div></div>",
+      "css": ".ds-pop{background:#FAF8F1;color:#271002;width:min(560px,100%);font-family:Archivo,sans-serif;font-stretch:108%} .ds-pop-testa{display:flex;align-items:center;gap:12px;padding:22px 20px 14px;border-bottom:1px solid rgba(39,16,2,.18)} .ds-pop-marca{width:40px;height:40px;border-radius:50%;background:#ECE7DF;flex:none} .ds-pop-sigla{margin:0;font-weight:700;font-stretch:118%;font-size:14px} .ds-pop h2{margin:0;font-family:Cinzel,serif;font-weight:500;font-size:19px;line-height:1.15;text-transform:uppercase;letter-spacing:.02em} .ds-pop-chiudi{margin-left:auto;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:#271002;color:#FAF8F1;cursor:pointer} .ds-pop-chiudi svg{width:20px;height:20px} .ds-pop-chiudi:focus-visible{outline:2px solid #271002;outline-offset:3px} .ds-pop-piede{padding:18px 20px 26px} .ds-pop-piede a{font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;color:#271002}"
+    },
+    {
+      "name": "Testata",
+      "kind": "nav",
+      "refersTo": "testata",
+      "description": "Marchio in capitali a sinistra, percorso in maiuscoletto a destra, filetto sotto.",
+      "html": "<header class=\"ds-testata\"><a class=\"ds-marchio\" href=\"#\">Elezio</a><nav class=\"ds-percorso\" aria-label=\"Percorso\"><a href=\"#\">Politiche 2022</a> · Temi</nav></header>",
+      "css": ".ds-testata{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;border-bottom:1px solid rgba(39,16,2,.18);background:#FAF8F1;color:#271002} .ds-marchio{font-family:Cinzel,serif;font-weight:600;font-size:19px;letter-spacing:.14em;text-decoration:none;color:inherit} .ds-percorso{font-family:Archivo,sans-serif;font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:#5C4636} .ds-percorso a{color:#271002} .ds-testata a:focus-visible{outline:2px solid #271002;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "L'etichetta civica",
+    "overview": "La pagina di un'etichetta italiana di pregio applicata al dovere civico: capitali romane da iscrizione per i titoli, grottesco largo per il testo e l'interfaccia, inchiostro bruno su carta calda, tantissima aria. Il sistema è costruito per un elettore che legge da telefono in momenti brevi: una riga dice cosa propone un partito, un tocco mostra le parole esatte del programma e la pagina da cui vengono. L'unica immagine ammessa è il contrassegno ufficiale del partito, piccolo e inalterato; tutto il resto è tipografia, filetti e due toni di carta.\n\nLa gerarchia è piatta per principio: ogni partito riceve la stessa sequenza di elementi, lo stesso spazio e lo stesso peso, in ordine alfabetico. Un'assenza (\"il programma non tratta il tema\") occupa lo stesso posto e la stessa gerarchia di una posizione dichiarata. Lo stato di una posizione si legge da segni grafici (punto pieno, cerchio vuoto, cerchio tratteggiato, trattino), mai da un colore.\n\nRifiuti confermati: la griglia di card con accento blu dei siti civici, il grigio da modulistica della pubblica amministrazione, qualunque colore di partito nell'interfaccia, le fotografie.",
+    "keyCharacteristics": [
+      "Monocromia calda: un solo inchiostro bruno su carta crema, con un secondo tono di carta per le citazioni.",
+      "Capitali lapidarie (Cinzel) solo per titolo del tema, titolo del pop-up e marchio; tutto il resto in Archivo esteso.",
+      "Superfici piatte, angoli vivi; il tondo è riservato a contrassegni, punti della mappa e bottoni d'azione.",
+      "Etichette e link in maiuscoletto largo e spaziato; i link sono sottolineati.",
+      "Ogni citazione porta documento e pagina, con la pagina come link al PDF ufficiale.",
+      "Il contenuto è HTML statico; la mappa interattiva è un arricchimento."
+    ],
+    "rules": [
+      { "name": "The Neutralità Rule", "body": "Nessun colore di partito, mai: né negli accenti, né nei punti della mappa, né nelle chip, né negli stati. Il colore appare solo dentro il contrassegno ufficiale, che è un'immagine del partito e non dell'interfaccia.", "section": "colors" },
+      { "name": "The Un Inchiostro Rule", "body": "L'interfaccia ha un solo colore attivo, l'inchiostro bruno. Uno stato, una selezione o un'enfasi si esprimono con peso, forma, riempimento o inversione inchiostro su carta, non con una nuova tinta.", "section": "colors" },
+      { "name": "The Lapide Rule", "body": "Cinzel compare solo dove si nomina: tema, sotto-questione nel pop-up, marchio. Mai per testo corrente, metadati, bottoni o etichette.", "section": "typography" },
+      { "name": "The Grottesco Largo Rule", "body": "Archivo si usa sempre allargato (108% testo, 112% titoli, 118% etichette e sigle). Il maiuscolo spaziato è riservato a link, metadati e fonti; il testo di lettura resta in tondo minuscolo.", "section": "typography" },
+      { "name": "The Parità Rule", "body": "Ogni partito riceve la stessa sequenza di elementi, la stessa larghezza di colonna e lo stesso spazio, in ordine alfabetico. Nessun partito è evidenziato, ingrandito o messo per primo per altre ragioni.", "section": "layout" },
+      { "name": "The Senza JavaScript Rule", "body": "Schede, citazioni e confronto sono HTML leggibile senza script; le citazioni si aprono con details. Nel sito Astro la mappa è HTML statico generato dalle schede; nel prototipo la disegna JavaScript solo per non ripetere i dati a mano.", "section": "layout" },
+      { "name": "The Carta Piatta Rule", "body": "Nessuna ombra, nessuna sfumatura. Un livello si separa dall'altro con un tono di carta, un filetto o il velo.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usare solo inchiostro bruno, inchiostro attenuato, carta crema e pietra chiara; la carta resta #FAF8F1, valore fissato dall'utente.",
+      "Do identificare ogni partito con sigla scritta più contrassegno ufficiale, piccolo (30-40px) e inalterato, sempre con un'alternativa testuale.",
+      "Do elencare i partiti in ordine alfabetico, ovunque: schede, colonne della mappa, scelta del confronto.",
+      "Do esprimere lo stato di una posizione con un segno (punto pieno, cerchio vuoto, cerchio tratteggiato, trattino) e ripeterlo a parole in legenda ed etichetta accessibile.",
+      "Do mostrare ogni citazione nel riquadro pietra chiara, tra caporali «», con documento e \"p. N\" come link al PDF ufficiale a quella pagina.",
+      "Do dare a una posizione assente la stessa sequenza, lo stesso spazio e lo stesso posto in elenco di una posizione dichiarata.",
+      "Do aprire il pop-up come foglio dal basso su telefono e come finestra centrata da 900px in su.",
+      "Do tenere schede, citazioni e confronto leggibili senza JavaScript; la mappa interattiva è un arricchimento.",
+      "Do dare ad ogni elemento toccabile almeno 44px e il contorno di focus in inchiostro da 2px."
+    ],
+    "donts": [
+      "Don't usare colori di partito, né colori di stato (verde, rosso, giallo) per dire \"ne parla\" o \"non ne parla\".",
+      "Don't ritagliare, ricolorare, deformare o ingrandire un contrassegno, né usarlo nel marchio di elezio.",
+      "Don't usare ombre, sfumature o angoli arrotondati sui riquadri; il tondo è solo per contrassegni, punti e bottoni d'azione.",
+      "Don't usare Cinzel per testo corrente, metadati o bottoni, né Archivo alla larghezza normale.",
+      "Don't mettere fotografie o illustrazioni: l'unica immagine è il contrassegno.",
+      "Don't mostrare una citazione senza documento e pagina.",
+      "Don't usare il cerchio tratteggiato per altro che \"da verificare\"."
+    ]
+  }
+}
