@@ -1,0 +1,65 @@
+name: Segnalazione
+description: Una scheda o un'affermazione del quiz riporta in modo sbagliato quello che dice un documento fonte.
+title: "Segnalazione: <partito>, <tema>, <elezione>"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie. elezio riporta solo quello che i documenti fonte dicono, con citazione e pagina: qui si segnala dove non lo fa. Le issue non sono il posto per discutere quale partito abbia ragione ([codice di condotta](https://github.com/simones99/elezio/blob/main/CODE_OF_CONDUCT.md)).
+  - type: input
+    id: pagina
+    attributes:
+      label: Link alla pagina di elezio
+      description: La pagina del tema, del confronto o del quiz dove hai visto l'errore.
+    validations:
+      required: true
+  - type: input
+    id: partito
+    attributes:
+      label: Partito
+    validations:
+      required: true
+  - type: dropdown
+    id: elezione
+    attributes:
+      label: Elezione
+      options:
+        - Politiche 2022
+        - Politiche 2027
+    validations:
+      required: true
+  - type: dropdown
+    id: dove
+    attributes:
+      label: Dove sta l'errore
+      options:
+        - Citazione (non c'è nel documento, o la pagina è sbagliata)
+        - Sintesi (dice qualcosa che le citazioni non dicono)
+        - Tema (la proposta sta sotto il tema sbagliato)
+        - Posizione assente (il documento invece ne parla)
+        - Risposta del partito nel quiz
+        - Altro
+    validations:
+      required: true
+  - type: textarea
+    id: descrizione
+    attributes:
+      label: Cosa è sbagliato
+      description: Cosa riporta elezio e cosa dice invece il documento.
+    validations:
+      required: true
+  - type: textarea
+    id: fonte
+    attributes:
+      label: Riferimento nel documento fonte
+      description: Pagina e, se puoi, il testo esatto. Senza riferimento la segnalazione richiede più tempo.
+  - type: dropdown
+    id: chi
+    attributes:
+      label: Scrivi come
+      description: Facoltativo. Non cambia come viene trattata la segnalazione.
+      options:
+        - Lettore
+        - Giornalista o ricercatore
+        - Partito o suo rappresentante
+        - Preferisco non dirlo
