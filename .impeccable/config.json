@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "prototipi/10-scheda-confronto/index.html"
+        ],
+        "createdAt": "2026-10-28T10:24:21.831Z",
+        "reason": "user pinned moncalisse.com as the visual reference; #FAF8F1 is its measured page ground"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-10-28T10:42:06.308Z",
+        "reason": "spent decision-round sketches of rejected directions; they intentionally use other worlds' fonts and are not part of the elezio design system"
+      }
+    ]
+  }
+}
