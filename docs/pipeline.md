@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 28 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -86,7 +86,7 @@ Sottostringa esatta dopo normalizzazione di entrambi i lati: spazi e a capo coll
 
 ## Revisione
 
-Una PR per documento fonte (7 PR per il 2022, fino a 36 schede per l'accordo di centrodestra). Per ogni scheda il revisore:
+Per il 2022, una PR per documento fonte (7 PR, fino a 36 schede per l'accordo di centrodestra). Dal 2027, una PR per tema con tutti i partiti disponibili e le 2 affermazioni del quiz del tema (vedi [playbook-fase-2.md](playbook-fase-2.md)). Per ogni scheda il revisore:
 
 1. apre il PDF alla pagina citata e conferma che la citazione esiste e non è fuori contesto;
 2. conferma che la sintesi non aggiunge nulla oltre le citazioni;
@@ -99,7 +99,7 @@ Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 m
 
 `pipeline acquisisci --elezione 2027` legge il JSON della sezione Elezioni trasparenti del Ministero, riconosce i partiti in perimetro tramite `alias` del file partito, scarica, calcola hash, archivia, crea il YAML della fonte in bozza e lancia estrazione e OCR. Poi `pipeline classifica` e `pipeline bozze` senza intervento. L'umano conferma i YAML delle fonti e revisiona.
 
-Le 20 ore di revisione non stanno in 4 settimane a 5 ore: la pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i partiti insieme per ogni tema, e il maintainer dichiara 10 ore a settimana nelle 2 settimane dopo la pubblicazione dei programmi. Il quiz si attiva solo quando i temi delle sue affermazioni sono tutti verificati.
+La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i partiti disponibili insieme per ogni tema: una PR per tema con schede e affermazioni del quiz, il merge pubblica il tema. La pipeline gira su ogni programma appena il Ministero lo pubblica; la revisione parte quando sono pubblicati tutti i partiti in perimetro, o a T-32 se prima. Ore: circa 36 tra revisione, affermazioni, acquisizione e lancio, con 15 ore a settimana dichiarate da T-32 a T-15. Calendario, checklist di prontezza, ritardatari e taglio in [playbook-fase-2.md](playbook-fase-2.md).
 
 ## Costi
 
