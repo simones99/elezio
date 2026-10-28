@@ -24,6 +24,12 @@ Regole per aggiungere una voce:
 | Cinzel, di Natanael Gama | https://github.com/NDISCOVER/Cinzel | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per le capitali dei titoli | prototipo |
 | Archivo, di Omnibus-Type | https://github.com/Omnibus-Type/Archivo | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per il testo | prototipo |
 
+## Fotografie
+
+| Foto | Link | Licenza | Cosa è stato preso | Stato |
+| --- | --- | --- | --- | --- |
+| Corridoio ambulatori, Ospedale Santa Maria della Misericordia (Rovigo), di Threecharlie | https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg | CC BY-SA 4.0 | Miniatura da 1920 px, in duotono inchiostro-carta e ritagliata, come copertina di prova del tema Sanità | prototipo |
+
 ## Dati e documenti fonte
 
 | Fonte | Link | Condizioni | Cosa è stato preso | Stato |

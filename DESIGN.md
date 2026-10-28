@@ -143,11 +143,11 @@ components:
 
 **Creative North Star: "L'etichetta civica"**
 
-La pagina di un'etichetta italiana di pregio applicata al dovere civico: capitali romane da iscrizione per i titoli, grottesco largo per il testo e l'interfaccia, inchiostro bruno su carta calda, tantissima aria. Il sistema è costruito per un elettore che legge da telefono in momenti brevi: una riga dice cosa propone un partito, un tocco mostra le parole esatte del programma e la pagina da cui vengono. L'unica immagine ammessa è il contrassegno ufficiale del partito, piccolo e inalterato; tutto il resto è tipografia, filetti e due toni di carta.
+La pagina di un'etichetta italiana di pregio applicata al dovere civico: capitali romane da iscrizione per i titoli, grottesco largo per il testo e l'interfaccia, inchiostro bruno su carta calda, tantissima aria. Il sistema è costruito per un elettore che legge da telefono in momenti brevi: una riga dice cosa propone un partito, un tocco mostra le parole esatte del programma e la pagina da cui vengono. Le immagini sono due e non si mescolano: il contrassegno ufficiale del partito, piccolo e inalterato, che identifica; e la copertina della home e di ogni tema, una fotografia in duotono inchiostro su carta che dà atmosfera e non dice nulla sui partiti. Tutto il resto è tipografia, filetti e due toni di carta.
 
 La gerarchia è piatta per principio: ogni partito riceve la stessa sequenza di elementi, lo stesso spazio e lo stesso peso, in ordine alfabetico. Un'assenza ("il programma non tratta il tema") occupa lo stesso posto e la stessa gerarchia di una posizione dichiarata. Lo stato di una posizione si legge da segni grafici (punto pieno, cerchio vuoto, cerchio tratteggiato, trattino), mai da un colore.
 
-Rifiuti confermati: la griglia di card con accento blu dei siti civici, il grigio da modulistica della pubblica amministrazione, qualunque colore di partito nell'interfaccia, le fotografie.
+Rifiuti confermati: la griglia di card con accento blu dei siti civici, il grigio da modulistica della pubblica amministrazione, qualunque colore di partito nell'interfaccia, le fotografie a colori, le illustrazioni e le immagini generate.
 
 **Key Characteristics:**
 - Monocromia calda: un solo inchiostro bruno su carta crema, con un secondo tono di carta per le citazioni.
@@ -204,7 +204,7 @@ Una monocromia bruna su carta calda: un inchiostro, la sua versione attenuata, d
 
 Colonna singola su telefono (riferimento 390px), con margine laterale di 20px (gutter). Da 900px il margine diventa `max(48px, (100vw - 1120px) / 2)`, cioè un contenuto di circa 1120px centrato, e l'elenco delle schede passa a due colonne con 56px di spazio tra le colonne.
 
-Sequenza della pagina tema: testata sottile (marchio a sinistra, percorso in maiuscoletto a destra, filetto sotto); titolo del tema in display; definizione rientrata di `clamp(0px, 8vw, 180px)` sotto il titolo, poi la nota; la mappa "chi parla di cosa" con legenda e istruzioni; le schede dei partiti in ordine alfabetico; in fondo l'azione verso il confronto. La pagina confronto ripete testata e titolo, poi la scelta dei partiti, la mappa ristretta ai partiti scelti e le schede affiancate (due colonne con filetto verticale tra le colonne; con un terzo partito diventano una colonna sola impilata).
+Sequenza della pagina tema: testata sottile (marchio a sinistra, percorso in maiuscoletto a destra, filetto sotto); copertina con il titolo del tema in display dentro la foto (vedi Copertine; senza copertina il titolo sta su carta); definizione rientrata di `clamp(0px, 8vw, 180px)` sotto il titolo, poi la nota; la mappa "chi parla di cosa" con legenda e istruzioni; le schede dei partiti in ordine alfabetico; in fondo l'azione verso il confronto. La pagina confronto ripete testata e titolo, poi la scelta dei partiti, la mappa ristretta ai partiti scelti e le schede affiancate (due colonne con filetto verticale tra le colonne; con un terzo partito diventano una colonna sola impilata).
 
 Ritmo: le schede sono separate da un filetto e da 32-34px di aria sopra e sotto; dentro la scheda gli elementi stanno a 10-16px l'uno dall'altro; le azioni si staccano di 28px. La mappa è una griglia: colonna delle questioni flessibile, poi una colonna di 50px per partito su telefono; da 900px la colonna delle questioni prende almeno 200px e i partiti si dividono lo spazio restante in parti uguali. Ogni riga è alta almeno 54px.
 
@@ -212,6 +212,50 @@ Ritmo: le schede sono separate da un filetto e da 32-34px di aria sopra e sotto;
 **The Parità Rule.** Ogni partito riceve la stessa sequenza di elementi, la stessa larghezza di colonna e lo stesso spazio, in ordine alfabetico. Nessun partito è evidenziato, ingrandito o messo per primo per altre ragioni.
 
 **The Senza JavaScript Rule.** Schede, citazioni e confronto sono HTML leggibile senza script; le citazioni si aprono con `details`. Nel sito Astro la mappa è HTML statico generato dalle schede; nel prototipo la disegna JavaScript solo per non ripetere i dati a mano.
+
+## Copertine
+
+La copertina è una fotografia d'atmosfera (vedi `GLOSSARY.md`): non dice nulla su un partito o su una posizione e, tolta, la pagina non perde contenuto. Il titolo del tema sta dentro la foto, ma resta testo HTML. Criterio deciso nel ticket #15; prototipo in `prototipi/15-copertina-sanita/` sul branch `prototipo/10-scheda-confronto`.
+
+### Dove
+- **Sì:** home (un seggio elettorale: cabina, urna o tabella della sezione) e le 12 pagine tema, una copertina per tema.
+- **No:** pagina partito (un'immagine accanto a un partito diventa un'associazione), confronto, quiz, pop-up.
+- **Tutte o nessuna:** le copertine dei 12 temi si pubblicano insieme; un tema con la foto e uno senza sembrerebbero di importanza diversa. La home può arrivare prima. Le copertine non bloccano la beta.
+- **Stabile tra le elezioni:** la copertina appartiene al tema, non alla scheda né all'elezione.
+
+### Posizione nella pagina tema
+- **Telefono (sotto 900px):** fascia a tutta larghezza subito sotto la testata, alta `min(64svh, 620px)`, ritaglio 4:5 con `object-fit: cover`. Il titolo in display sta dentro la foto in basso a sinistra, in carta, a 24px dal bordo inferiore e con il margine laterale della pagina. Sotto la foto la riga di credito, poi definizione, nota, mappa e schede come senza copertina.
+- **Da 900px:** pagina divisa. La foto occupa la colonna sinistra (5 parti su 12), alta quanto lo schermo e ferma (`position: sticky`) mentre si scorre; il titolo è dentro la foto in basso a sinistra, `clamp(50px, 7vw, 96px)`. Nella colonna destra (7 parti) scorre tutto il contenuto: definizione, nota, credito, mappa, schede in una colonna sola, azione verso il confronto; il margine laterale scende a 48px.
+- Funziona senza JavaScript: solo CSS.
+
+### Cosa: soggetto e trattamento
+- **Soggetto:** "lo strumento, non il conflitto". Un luogo o un oggetto ordinario dove il tema accade (una corsia d'ospedale, un'aula, uno sportello, una banchina, un'aula di tribunale vuota, un traliccio).
+- **Esclusi:** volti riconoscibili (solo persone di spalle o lontane); leader e politici; eventi di cronaca (proteste, sbarchi, arresti, disastri, emergenze); simboli, bandiere, manifesti e sedi di partito.
+- **Test dell'opuscolo:** la foto potrebbe stare sull'opuscolo di uno qualunque dei partiti in perimetro senza che nessuno protesti. Se no, si cambia foto.
+- **Duotono:** scala di grigi mappata in modo lineare da inchiostro (`#271002`, le ombre) a carta (`#FAF8F1`, le luci), applicata in build. Nessun'altra tinta, nessun velo, nessuna sfumatura sopra la foto, nessuno schiarimento oltre il duotono.
+- **Zona scura per il titolo:** il titolo in carta deve avere almeno 3:1 di contrasto sul 10% più chiaro dei pixel della zona del titolo (terzo inferiore sinistro della foto) in entrambi i ritagli, 4:5 per il telefono e colonna sinistra per lo schermo largo. Se la foto non ha una zona abbastanza scura, si cambia foto: non si scurisce. La definizione e ogni altro testo non vanno mai sopra la foto.
+- **Alt:** descrive la scena in modo neutro, senza aggettivi di giudizio ("Il corridoio degli ambulatori di un ospedale pubblico…").
+
+### Fonti e provenienza
+- **Ammesse:** Wikimedia Commons con pubblico dominio, CC0, CC BY o CC BY-SA; foto del maintainer, rilasciate CC BY-SA 4.0 come i dati.
+- **Escluse:** licenze NC e ND (il duotono è una modifica), Unsplash e Pexels (licenza propria, provenienza fragile), archivi con condizioni proprie, immagini generate da AI.
+- **Registro:** ogni copertina è registrata in un file di contenuto in `contenuti/` con tema, file, autore, titolo, URL della fonte, licenza, data di presa, modifiche ("duotono, ritaglio"), alt. Senza registrazione completa la build la rifiuta; la pagina `/crediti` si genera dal registro.
+- **Credito visibile:** sotto ogni copertina una riga in stile meta (12px, larghezza 118%, maiuscolo, inchiostro attenuato): "Foto Autore · CC BY-SA 4.0 · Wikimedia Commons · duotono", con link alla pagina del file e alla licenza.
+- **Scelta e correzioni:** sceglie il maintainer applicando il test dell'opuscolo; una copertina contestata segue il registro delle correzioni come una scheda: si sostituisce e si annota.
+
+### Peso e caricamento
+- AVIF con fallback WebP tramite `<picture>`, `srcset` a 390, 780 e 1200 px quando l'originale lo consente; `width` e `height` sempre dichiarati.
+- Al massimo 80 KB per la copertina servita a un telefono; al massimo 250 KB per l'intera pagina tema su telefono, PDF linkati esclusi (i due font pesano circa 115 KB).
+- Nessuna priorità alta né preload sulla copertina: testo e font arrivano prima. `decoding="async"`.
+- Riferimento misurato sul prototipo: ritaglio 4:5 a 780 px, 16 KB in AVIF e 29 KB in WebP.
+
+### Anteprime social
+Copertine tipografiche generate in build, senza foto e senza contrassegni: il nome del tema in Cinzel su carta crema con il marchio elezio. Una per tema e una per la home; il confronto usa quella del suo tema, la pagina partito quella generica.
+
+### Named Rules
+**The Atmosfera Rule.** La copertina non porta contenuto: niente didascalie che argomentano, niente foto come prova, niente immagini accanto a un partito.
+
+**The Opuscolo Rule.** Una copertina che non potrebbe stare sull'opuscolo di qualunque partito in perimetro non entra nel sito.
 
 ## Elevation & Depth
 
@@ -295,6 +339,7 @@ Una sola curva, `cubic-bezier(.16,1,.3,1)`: rotazione del "più" (0.25-0.3s) ed 
 - **Don't** ritagliare, ricolorare, deformare o ingrandire un contrassegno, né usarlo nel marchio di elezio.
 - **Don't** usare ombre, sfumature o angoli arrotondati sui riquadri; il tondo è solo per contrassegni, punti e bottoni d'azione.
 - **Don't** usare Cinzel per testo corrente, metadati o bottoni, né Archivo alla larghezza normale.
-- **Don't** mettere fotografie o illustrazioni: l'unica immagine è il contrassegno.
+- **Don't** mettere fotografie fuori dalle copertine di home e temi, né illustrazioni o immagini generate da AI; niente foto a colori, veli o sfumature sopra la copertina.
+- **Don't** mettere una copertina su pagina partito, confronto o quiz, né pubblicare le copertine di alcuni temi soltanto.
 - **Don't** mostrare una citazione senza documento e pagina.
 - **Don't** usare il cerchio tratteggiato per altro che "da verificare".
