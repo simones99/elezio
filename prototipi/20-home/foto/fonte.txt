@@ -16,3 +16,9 @@ Formati: AVIF qualità 50, WebP qualità 72, larghezze 390, 780, 1200 px dove l'
 Contrasto del titolo in carta sul 10% più chiaro della zona del titolo: urna, fascia alta a sinistra, 5,8-12,7:1;
 seggio, nessuna zona sopra 2,3:1 (la parete azzurra diventa chiara nel duotono): non passa la regola dei 3:1.
 Le altre 34 foto della categoria "Polling stations in Italy" hanno licenza propria del Parlamento europeo: escluse.
+
+e-* (variante E): la foto urna divisa in tre livelli da livelli.py, solo per provare l'animazione.
+- e-fondo: urna e tenda senza scheda né mano; la tenda è ricostruita a specchio dalle pieghe vicine, il palo prolungato, l'urna interpolata per righe.
+- e-scheda: la scheda ritagliata; l'angolo coperto dal pollice è ricostruito con lo speculare dell'angolo sinistro (testo a specchio).
+- e-mano: la mano ritagliata.
+È un ritocco oltre il duotono, fuori dalla regola di DESIGN.md: per il sito vero servono fotogrammi o un video veri.

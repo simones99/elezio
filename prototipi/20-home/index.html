@@ -2,7 +2,8 @@
 <!--
   PROTOTIPO USA E GETTA, ticket #20 (https://github.com/simones99/elezio/issues/20).
   Domanda: come è fatta la home, su telefono e da 900px, con la copertina del seggio?
-  Quattro varianti strutturali sulla stessa pagina, commutabili con ?variant=A|B|C|D, con la barra in basso o con le frecce.
+  Cinque varianti sulla stessa pagina, commutabili con ?variant=A|B|C|D|E, con la barra in basso o con le frecce (× nasconde la barra, B la riapre).
+  E: lo scorrimento infila la scheda nell'urna (CSS scroll-driven animations); senza supporto, come in Firefox, o con prefers-reduced-motion la foto resta ferma.
   ?foto=urna|seggio cambia la foto (seggio non passa la regola del contrasto 3:1, vedi foto/duotono.py), ?striscia=0 nasconde il segnaposto della Fase 2.
   Font da ../10-scheda-confronto/. Foto: "EU Elections 2024 - Voting in Milan - 2" e "EU Elections 2024 - Voting in Italy - 4",
   European Parliament, CC BY 2.0, Wikimedia Commons; duotono inchiostro-carta e ritagli fatti per il prototipo.
@@ -26,7 +27,7 @@ a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
 img{display:block}
 ol,ul{list-style:none}
 main>section{display:none}
-body[data-variant=A] section[data-v=A],body[data-variant=B] section[data-v=B],body[data-variant=C] section[data-v=C],body[data-variant=D] section[data-v=D]{display:block}
+body[data-variant=A] section[data-v=A],body[data-variant=B] section[data-v=B],body[data-variant=C] section[data-v=C],body[data-variant=D] section[data-v=D],body[data-variant=E] section[data-v=E]{display:block}
 body[data-striscia="0"] .striscia{display:none}
 
 /* Elementi comuni */
@@ -178,6 +179,37 @@ body[data-striscia="0"] .striscia{display:none}
   .vD .promessa{margin-top:0;font-size:clamp(30px,3.4vw,46px)}
   .vD .piede{padding-left:0;padding-right:0}
 }
+/* E: lo scorrimento infila la scheda nell'urna. Senza supporto o con meno movimento: foto ferma come A. */
+.vE .palco{position:relative;height:min(64svh,620px);overflow:hidden;background:var(--inchiostro);container-type:size}
+.vE .quadro{--w:max(100cqw,calc(100cqh * 4 / 5));--fessura:68.29%;--corsa:52%;position:absolute;top:0;width:var(--w);aspect-ratio:4/5;left:clamp(calc(100cqw - var(--w)),calc(50cqw - .557 * var(--w)),0px)}
+.vE .quadro img{position:absolute;inset:0;width:100%;height:100%}
+.vE .clip{position:absolute;inset:0;clip-path:inset(0 0 calc(100% - var(--fessura)) 0)}
+.vE .vai{position:absolute;left:var(--gutter);bottom:24px;background:var(--carta);color:var(--inchiostro);padding:11px 14px;display:flex;gap:10px;align-items:center;text-decoration:none}
+.vE .vai svg{width:16px;height:16px;transform:rotate(90deg)}
+.vE .dopo{padding:0 var(--gutter)}
+.vE .promessa{margin-top:30px}
+.vE .lead{margin-top:14px}
+.vE .striscia{margin-top:24px}
+.vE .azione{margin-top:26px}
+.vE .temi{margin-top:48px;scroll-margin-top:16px}
+.vE .come{margin-top:48px}
+@media (min-width:900px){
+  .vE{--gutter:max(48px,calc((100vw - 1120px)/2))}
+  .vE .palco{height:min(72svh,760px)}
+  .vE .quadro{--w:max(100cqw,calc(100cqh * 16 / 9));--fessura:80.74%;--corsa:61%;aspect-ratio:16/9;left:clamp(calc(100cqw - var(--w)),calc(50cqw - .53 * var(--w)),0px)}
+  .vE .marchio-grande{font-size:clamp(96px,11vw,176px);top:32px}
+  .vE .indice ol{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+}
+@keyframes e-svanisce{to{opacity:0;transform:translate(3%,-2%)}}
+@keyframes e-scende{to{transform:translateY(var(--corsa))}}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .vE .scena{height:230svh;view-timeline:--urna block}
+    .vE .palco{position:sticky;top:0;height:100svh}
+    .vE .l-mano{animation:e-svanisce linear both;animation-timeline:--urna;animation-range:contain 0% contain 26%}
+    .vE .l-scheda{animation:e-scende cubic-bezier(.45,0,.7,1) both;animation-timeline:--urna;animation-range:contain 20% contain 82%}
+  }
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* Barra del prototipo, fuori dal design */
@@ -273,6 +305,27 @@ body[data-striscia="0"] .striscia{display:none}
   </div>
 </section>
 
+<!-- E · Lo scorrimento vota: la scheda scende nella fessura mentre si scorre, poi la pagina riprende come A -->
+<section data-v="E" class="vE" aria-label="Variante E">
+  <div class="scena">
+    <div class="palco cop">
+      <div class="quadro" data-livelli></div>
+      <h1 class="marchio-grande">Elezio</h1>
+      <a class="vai link-caps" href="#temi-e"><svg aria-hidden="true"><use href="#i-freccia"/></svg>Vai ai temi</a>
+    </div>
+  </div>
+  <p class="credito" data-credito-e></p>
+  <div class="dopo">
+    <p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p>
+    <p class="lead">Cosa propone ciascun partito in una riga, la citazione alla lettera e la pagina del programma depositato. <span class="meta">Politiche 2022 · beta</span></p>
+    <div class="striscia" data-striscia-testo></div>
+    <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Fai il quiz · 24 affermazioni</span></a>
+    <div class="temi indice" id="temi-e"><h2 class="sezione-tit">I 12 temi</h2><ol data-temi="indice"></ol></div>
+    <div class="come"><h2 class="sezione-tit">Come lavora elezio</h2><ol class="regole" data-regole></ol></div>
+  </div>
+  <nav class="piede" data-piede aria-label="Pagine di servizio"></nav>
+</section>
+
 </main>
 
 <div class="proto" role="region" aria-label="Commutatore del prototipo">
@@ -285,6 +338,7 @@ body[data-striscia="0"] .striscia{display:none}
     <span>Foto</span>
     <span style="display:flex;gap:4px"><button type="button" data-foto="urna">urna</button><button type="button" data-foto="seggio">seggio (non passa 3:1)</button></span>
     <button type="button" data-azione="striscia">striscia Fase 2</button>
+    <button type="button" data-azione="nascondi" aria-label="Nascondi la barra (tasto B per riaprirla)">×</button>
   </div>
   <small>Prototipo #20 · home · prova anche da 900px in su</small>
 </div>
@@ -350,7 +404,16 @@ body[data-striscia="0"] .striscia{display:none}
     document.querySelectorAll("[data-credito]").forEach(p => p.innerHTML = foto[f].credito);
   }
 
-  const nomi = { A: "Frontespizio, indice dei temi", B: "Il quiz in copertina", C: "Scatole", D: "Pagina divisa" };
+  // Variante E: tre livelli della foto dell'urna (foto/livelli.py), stessi ritagli per tutti
+  const livello = (nome, alt) => `<picture>
+      <source media="(min-width:900px)" srcset="foto/e-${nome}-16x9-780.webp 780w, foto/e-${nome}-16x9-1200.webp 1200w" sizes="100vw">
+      <img class="l-${nome}" src="foto/e-${nome}-4x5-780.webp" srcset="foto/e-${nome}-4x5-390.webp 390w, foto/e-${nome}-4x5-780.webp 780w" sizes="100vw" alt="${alt}" decoding="async">
+    </picture>`;
+  document.querySelector("[data-livelli]").innerHTML = livello("fondo", foto.urna.alt) +
+    `<div class="clip">${livello("scheda", "")}</div>` + livello("mano", "");
+  document.querySelector("[data-credito-e]").innerHTML = foto.urna.credito + " · livelli separati per l'animazione";
+
+  const nomi = { A: "Frontespizio, indice dei temi", B: "Il quiz in copertina", C: "Scatole", D: "Pagina divisa", E: "Lo scorrimento vota" };
   const varianti = Object.keys(nomi);
   const p = new URLSearchParams(location.search);
   const stato = {
@@ -373,11 +436,13 @@ body[data-striscia="0"] .striscia{display:none}
     if (b.dataset.azione === "next") sposta(1);
     if (b.dataset.azione === "striscia") { stato.striscia = stato.striscia === "1" ? "0" : "1"; applica(); }
     if (b.dataset.foto) { stato.foto = b.dataset.foto; applica(); }
+    if (b.dataset.azione === "nascondi") document.querySelector(".proto").hidden = true;
   });
   addEventListener("keydown", e => {
     if (e.target.closest("input,textarea,[contenteditable]")) return;
     if (e.key === "ArrowLeft") sposta(-1);
     if (e.key === "ArrowRight") sposta(1);
+    if (e.key === "b" || e.key === "B") document.querySelector(".proto").hidden = false;
   });
   applica();
 })();
