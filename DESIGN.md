@@ -237,10 +237,10 @@ La copertina è una fotografia d'atmosfera (vedi `GLOSSARY.md`): non dice nulla 
 - **Alt:** descrive la scena in modo neutro, senza aggettivi di giudizio ("Il corridoio degli ambulatori di un ospedale pubblico…").
 
 ### Fonti e provenienza
-- **Ammesse:** Wikimedia Commons con pubblico dominio, CC0, CC BY o CC BY-SA; foto del maintainer, rilasciate CC BY-SA 4.0 come i dati.
-- **Escluse:** licenze NC e ND (il duotono è una modifica), Unsplash e Pexels (licenza propria, provenienza fragile), archivi con condizioni proprie, immagini generate da AI.
+- **Ammesse:** Wikimedia Commons con pubblico dominio, CC0, CC BY o CC BY-SA; foto del maintainer, rilasciate CC BY-SA 4.0 come i dati; foto e video del Parlamento europeo sotto la sua [nota legale](https://www.europarl.europa.eu/legal-notice/), che ammette riuso e opere derivate citando la fonte ("© Unione europea, anno"), presi dal Multimedia Centre o da Commons.
+- **Escluse:** licenze NC e ND (il duotono è una modifica), Unsplash e Pexels (licenza propria, provenienza fragile), archivi con condizioni proprie (tranne il Parlamento europeo, ammesso sopra), immagini generate da AI.
 - **Registro:** ogni copertina è registrata in un file di contenuto in `contenuti/` con tema, file, autore, titolo, URL della fonte, licenza, data di presa, modifiche ("duotono, ritaglio"), alt. Senza registrazione completa la build la rifiuta; la pagina `/crediti` si genera dal registro.
-- **Credito visibile:** sotto ogni copertina una riga in stile meta (12px, larghezza 118%, maiuscolo, inchiostro attenuato): "Foto Autore · CC BY-SA 4.0 · Wikimedia Commons · duotono", con link alla pagina del file e alla licenza.
+- **Credito visibile:** sotto ogni copertina una riga in stile meta (12px, larghezza 118%, maiuscolo, inchiostro attenuato): "Foto Autore · CC BY-SA 4.0 · Wikimedia Commons · duotono", con link alla pagina del file e alla licenza. Per il Parlamento europeo: "Video Parlamento europeo · © Unione europea, 2024 · fotogrammi in duotono", con link alla pagina dell'elemento.
 - **Scelta e correzioni:** sceglie il maintainer applicando il test dell'opuscolo; una copertina contestata segue il registro delle correzioni come una scheda: si sostituisce e si annota.
 
 ### Peso e caricamento
