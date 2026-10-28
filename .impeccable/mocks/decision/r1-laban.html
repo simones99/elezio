@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:390px;height:844px;overflow:hidden}
+body{background:#fff;color:#111;font-family:"Hanken Grotesk",sans-serif}
+.top{display:flex;justify-content:space-between;padding:12px 16px;font-size:13px;border-bottom:1px solid #111}
+.top b{font-size:20px;font-weight:800}
+h1{font-size:44px;font-weight:800;text-align:center;padding:14px 16px 4px;letter-spacing:-.02em}
+.pair{display:grid;grid-template-columns:1fr 2px 1fr;align-items:end;padding:6px 16px 10px}
+.pair div{display:flex;gap:8px;align-items:center;font-weight:800;font-size:22px}
+.pair div:last-child{justify-content:flex-end}
+.pair span.l{width:26px;height:26px;border-radius:50%;border:2px solid #111}
+.score{position:relative;display:grid;grid-template-columns:1fr 112px 1fr;margin:0 16px;border-top:2px solid #111}
+.score:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:#111;transform:translateX(-1px)}
+.r{display:contents}
+.r .a,.r .b{padding:8px 10px;display:flex;align-items:center}
+.r .a{justify-content:flex-end}
+.lbl{font-size:12px;font-weight:600;text-align:center;padding:10px 12px;background:#fff;position:relative;z-index:1;line-height:1.25}
+.blk{height:14px;background:#111}
+.hatch{height:14px;background:repeating-linear-gradient(45deg,#111 0 2px,transparent 2px 5px);border:1.5px solid #111}
+.dot{height:14px;border:2px dotted #8C8C8C}
+.r.now .a,.r.now .b,.r.now .lbl{background:#E2E2E2}
+.read{margin:14px 16px;border-top:2px solid #111;padding-top:10px;font-size:16px;line-height:1.5;max-width:60ch}
+.read b{font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.read p{margin-top:6px}
+</style></head><body>
+<div class="top"><b>elezio</b><span>Politiche 2022 › Confronto</span></div>
+<h1>Sanità</h1>
+<div class="pair"><div><span class="l"></span>M5S</div><i></i><div>AVS<span class="l"></span></div></div>
+<div class="score">
+<div class="r"><div class="a"><div class="blk" style="width:80%"></div></div><div class="lbl">Finanziamento e liste d'attesa</div><div class="b"><div class="blk" style="width:55%"></div></div></div>
+<div class="r now"><div class="a"><div class="blk" style="width:40%"></div></div><div class="lbl">Medicina territoriale</div><div class="b"><div class="blk" style="width:90%"></div></div></div>
+<div class="r"><div class="a"><div class="dot" style="width:30%"></div></div><div class="lbl">Personale sanitario</div><div class="b"><div class="blk" style="width:65%"></div></div></div>
+<div class="r"><div class="a"><div class="hatch" style="width:50%"></div></div><div class="lbl">Salute mentale</div><div class="b"><div class="dot" style="width:30%"></div></div></div>
+<div class="r"><div class="a"><div class="dot" style="width:30%"></div></div><div class="lbl">Pubblico e privato</div><div class="b"><div class="blk" style="width:35%"></div></div></div>
+</div>
+<div class="read"><b>Medicina territoriale · AVS · p. 21</b><p>Citazione alla lettera dal programma depositato, aperta toccando il blocco sul rigo.</p></div>
+</body></html>

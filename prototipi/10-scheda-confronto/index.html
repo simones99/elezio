@@ -1,0 +1,865 @@
+<!doctype html>
+<!--
+  PROTOTIPO USA E GETTA, ticket #10 (https://github.com/simones99/elezio/issues/10).
+  Tre varianti della pagina tema e del confronto, commutabili con ?variant=A|B|C,
+  ?vista=tema|confronto, ?terzo=azione e ?mondo=l|g (lapidario o grottesco),
+  oppure con la barra in basso e le frecce.
+  Senza JavaScript si vede la variante A, pagina tema: il contenuto è tutto HTML statico.
+  Citazioni: alla lettera dai programmi depositati al Ministero per le politiche 2022.
+  Titoli, sintesi e stati di verifica: scritti per il prototipo, non verificati.
+  Il partito "Esempio" è fittizio e serve solo a mostrare la posizione assente.
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sanità · elezio (prototipo)</title>
+<style>
+@font-face{font-family:"Archivo";src:url(fonts/archivo-var-latin.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:"Cinzel";src:url(fonts/cinzel-var-latin.woff2) format("woff2");font-weight:400 900;font-display:swap}
+
+:root{
+  --carta:#FAF8F1;
+  --inchiostro:#271002;
+  --inchiostro-2:#5C4636;
+  --pietra:#DED8CF;
+  --pietra-2:#ECE7DF;
+  --linea:rgba(39,16,2,.18);
+  --capitali:"Cinzel",serif;
+  --testo:"Archivo",sans-serif;
+  --gutter:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--carta);color:var(--inchiostro);-webkit-text-size-adjust:100%}
+body{background:var(--carta);color:var(--inchiostro);min-height:100vh;font-family:var(--testo);font-stretch:108%;font-size:16.5px;line-height:1.55;font-variant-numeric:tabular-nums;padding-bottom:150px}
+::selection{background:var(--inchiostro);color:var(--carta)}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--inchiostro);outline-offset:3px}
+img{display:block}
+html{scrollbar-color:var(--inchiostro-2) var(--carta)}
+
+/* Testata condivisa */
+.testata{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px var(--gutter);border-bottom:1px solid var(--linea)}
+.marchio{font-family:var(--capitali);font-weight:600;font-size:19px;letter-spacing:.14em;text-decoration:none}
+.percorso{font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:var(--inchiostro-2);text-align:right}
+.percorso a{color:var(--inchiostro)}
+
+/* Varianti: una sola sezione visibile */
+main>section{display:none}
+body[data-variant=A][data-vista=tema] section[data-v=A][data-vista=tema],
+body[data-variant=A][data-vista=confronto] section[data-v=A][data-vista=confronto],
+body[data-variant=B][data-vista=tema] section[data-v=B][data-vista=tema],
+body[data-variant=B][data-vista=confronto] section[data-v=B][data-vista=confronto],
+body[data-variant=C][data-vista=tema] section[data-v=C][data-vista=tema],
+body[data-variant=C][data-vista=confronto] section[data-v=C][data-vista=confronto],
+body[data-variant=D][data-vista=tema] section[data-v=D][data-vista=tema],
+body[data-variant=D][data-vista=confronto] section[data-v=D][data-vista=confronto]{display:block}
+.terzo{display:none}
+body[data-terzo] .terzo{display:revert}
+body[data-terzo] .senza-terzo{display:none}
+
+/* Elementi comuni del mondo */
+.capo{padding:44px var(--gutter) 8px}
+.capo h1{font-family:var(--capitali);font-weight:500;font-size:clamp(50px,13vw,104px);line-height:.95;letter-spacing:.01em;text-transform:uppercase}
+.capo .def{margin:18px 0 0 clamp(0px,8vw,180px);max-width:52ch;font-size:17px}
+.capo .nota{margin:10px 0 0 clamp(0px,8vw,180px);font-size:13px;color:var(--inchiostro-2)}
+.chi{display:flex;align-items:center;gap:12px}
+.chi img{width:40px;height:40px;border-radius:50%;flex:none}
+.chi .sigla{font-weight:700;font-stretch:118%;font-size:15px;letter-spacing:.03em}
+.chi .nome{font-size:13px;color:var(--inchiostro-2);line-height:1.3}
+.segno{width:40px;height:40px;border-radius:50%;border:1px solid var(--inchiostro-2);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--inchiostro-2);flex:none}
+.etichetta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;font-stretch:118%;letter-spacing:.05em;text-transform:uppercase;color:var(--inchiostro-2);margin-top:12px}
+.etichetta .stato{color:var(--inchiostro);font-weight:700}
+.titolo{font-weight:700;font-stretch:112%;font-size:21px;line-height:1.22;margin-top:16px;text-wrap:balance}
+.sintesi{margin-top:10px;max-width:62ch}
+.link-caps{font-size:13px;font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase}
+.citazione{background:var(--pietra-2);padding:16px 18px;margin-top:12px}
+.citazione blockquote{font-size:16px;line-height:1.55}
+.citazione .rif{display:flex;justify-content:space-between;gap:12px;margin-top:10px;font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:var(--inchiostro-2)}
+.citazione .rif a{color:var(--inchiostro)}
+.citazione .rif>:last-child,.vb-scheda .grande .rif>:last-child{white-space:nowrap}
+.citazione .sq{font-size:12.5px;color:var(--inchiostro-2);margin-bottom:6px}
+.tondo{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--inchiostro);color:var(--carta);flex:none}
+.tondo svg{width:20px;height:20px}
+.azione{display:flex;align-items:center;gap:14px;text-decoration:none;margin-top:28px}
+.azione span{border-bottom:1px solid currentColor}
+.esempio{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--inchiostro-2);padding:2px 6px;color:var(--inchiostro-2)}
+
+/* ---------- Variante A: sintesi prima ---------- */
+.va-elenco{list-style:none;padding:24px var(--gutter) 0}
+.va-scheda{padding:32px 0 34px;border-top:1px solid var(--linea)}
+.va-scheda details{margin-top:16px}
+.va-scheda summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.va-scheda summary::-webkit-details-marker{display:none}
+.va-scheda summary .link-caps{border-bottom:1px solid currentColor}
+.va-scheda summary svg{width:14px;height:14px;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.va-scheda details[open] summary svg{transform:rotate(45deg)}
+.va-assente .titolo{font-weight:500}
+.va-ordine{padding:0 var(--gutter);margin-top:26px;font-size:13px;color:var(--inchiostro-2)}
+.va-cmp{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:28px var(--gutter) 0;border-top:1px solid var(--inchiostro)}
+.va-cmp>div{padding:18px 12px 24px 0}
+.va-cmp>div+div{padding-left:12px;border-left:1px solid var(--linea)}
+.va-cmp .titolo{font-size:17.5px}
+.va-cmp .sintesi{font-size:15px}
+body[data-terzo] .va-cmp{grid-template-columns:1fr}
+body[data-terzo] .va-cmp>div{padding:20px 0 26px;border-left:0;border-top:1px solid var(--linea)}
+.va-scelta{padding:0 var(--gutter);margin-top:22px}
+.va-scelta p{font-size:13px;color:var(--inchiostro-2);margin-bottom:10px}
+.va-scelta ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.va-scelta li{font-size:13px;font-weight:600;font-stretch:118%;padding:7px 12px;border:1px solid var(--linea);color:var(--inchiostro-2)}
+.va-scelta li.on{background:var(--inchiostro);color:var(--carta);border-color:var(--inchiostro)}
+
+/* ---------- Variante B: citazione prima ---------- */
+.vb-elenco{list-style:none;padding:20px 0 0}
+.vb-scheda{padding:36px var(--gutter) 40px;border-top:1px solid var(--linea)}
+.vb-scheda .grande{background:var(--pietra);padding:26px 22px 22px;margin:18px calc(var(--gutter) * -1) 0}
+.vb-scheda .grande blockquote{font-size:20px;line-height:1.45;font-stretch:104%}
+.vb-scheda .grande blockquote::before{content:"«";font-family:var(--capitali);font-size:46px;line-height:0;display:block;height:26px;margin-bottom:6px}
+.vb-scheda .grande .rif{margin-top:16px;font-size:12.5px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.vb-scheda .poi{margin-top:18px}
+.vb-scheda .poi summary{cursor:pointer;list-style:none}
+.vb-scheda .poi summary::-webkit-details-marker{display:none}
+.vb-vuota{border:1px dashed var(--inchiostro-2);padding:26px 22px;margin-top:18px;text-align:center}
+.vb-vuota strong{display:block;font-family:var(--capitali);font-weight:500;font-size:26px;letter-spacing:.02em;text-transform:uppercase}
+.vb-vuota p{font-size:15px;margin-top:8px}
+.vb-sq{padding:30px var(--gutter) 6px;border-top:1px solid var(--linea)}
+.vb-sq h2{font-family:var(--capitali);font-weight:500;font-size:24px;line-height:1.1;text-transform:uppercase;letter-spacing:.02em}
+.vb-voce{display:grid;grid-template-columns:44px 1fr;gap:12px;margin-top:20px}
+.vb-voce img{width:36px;height:36px;border-radius:50%}
+.vb-voce .chi-s{font-size:12.5px;font-weight:700;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase}
+.vb-voce blockquote{font-size:16px;margin-top:4px}
+.vb-voce .p{font-size:12.5px;color:var(--inchiostro-2);margin-top:4px}
+.vb-voce .no{color:var(--inchiostro-2);font-size:15px;margin-top:4px}
+
+/* ---------- Variante C: mappa delle sotto-questioni ---------- */
+.vc-mappa{margin:30px var(--gutter) 0;border-top:1px solid var(--inchiostro)}
+.vc-mappa table{width:100%;border-collapse:collapse;font-size:14px}
+.vc-mappa th,.vc-mappa td{padding:12px 6px;border-bottom:1px solid var(--linea);text-align:center;vertical-align:middle}
+.vc-mappa th:first-child,.vc-mappa td:first-child{text-align:left;padding-left:0;width:44%}
+.vc-mappa thead th{font-size:12px;font-weight:700;font-stretch:118%;letter-spacing:.04em}
+.vc-mappa thead img{width:30px;height:30px;border-radius:50%;margin:0 auto 4px}
+.vc-mappa a{display:inline-grid;place-items:center;width:32px;height:32px}
+.vc-mappa svg{width:16px;height:16px}
+.vc-leg{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--inchiostro-2);margin-top:12px}
+.vc-leg span{display:inline-flex;align-items:center;gap:6px}
+.vc-leg svg{width:12px;height:12px}
+.vc-fuori td{font-size:13px;color:var(--inchiostro-2)}
+.vc-schede{padding:12px var(--gutter) 0}
+.vc-scheda{padding:30px 0;border-top:1px solid var(--linea)}
+.vc-scheda h3{font-family:var(--capitali);font-weight:500;font-size:17px;text-transform:uppercase;letter-spacing:.03em;margin-top:22px}
+.vc-scheda h3:first-of-type{margin-top:20px}
+.vc-binari{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:26px var(--gutter) 12px;scroll-padding:0 var(--gutter)}
+.vc-pannello{flex:0 0 86%;scroll-snap-align:start;background:var(--pietra-2);padding:22px 18px 26px}
+.vc-pannello h3{font-family:var(--capitali);font-weight:500;font-size:15px;text-transform:uppercase;letter-spacing:.03em;margin-top:22px;padding-top:14px;border-top:1px solid var(--linea)}
+.vc-pannello blockquote{font-size:15px;margin-top:6px}
+.vc-pannello .p{font-size:12.5px;color:var(--inchiostro-2);margin-top:4px}
+.vc-pannello .no{font-size:14px;color:var(--inchiostro-2);margin-top:6px}
+.vc-suggerimento{padding:0 var(--gutter);font-size:13px;color:var(--inchiostro-2)}
+
+/* ---------- Variante D: pagina A con la mappa di C ---------- */
+.vd-blocco{margin:34px var(--gutter) 0}
+.vd-mappa{--n:4;display:grid;grid-template-columns:minmax(0,1fr) repeat(var(--n),50px);border-top:1px solid var(--inchiostro)}
+.vd-mappa[data-partiti="avs,m5s,azione"]{--n:2}
+body[data-terzo] .vd-mappa[data-partiti="avs,m5s,azione"]{--n:3}
+.vd-riga{display:contents}
+.vd-riga>*{border-bottom:1px solid var(--linea);display:flex;align-items:center;justify-content:center;min-height:54px}
+.vd-testa>*{flex-direction:column;gap:4px;padding:12px 0 10px;font-size:12px;font-weight:700;font-stretch:118%;letter-spacing:.04em}
+.vd-testa>:first-child{align-items:flex-start;justify-content:flex-end;font-weight:600;color:var(--inchiostro-2);text-transform:uppercase}
+.vd-testa img{width:30px;height:30px;border-radius:50%}
+.vd-q{justify-content:flex-start}
+.vd-q button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;padding:10px 8px 10px 0;font-size:14.5px;line-height:1.3;font-weight:500}
+.vd-q button:focus-visible{outline:2px solid var(--inchiostro);outline-offset:2px}
+.vd-q svg{width:12px;height:12px;flex:none;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.vd-riga.aperta .vd-q svg{transform:rotate(45deg)}
+.vd-riga.aperta .vd-q button{font-weight:700}
+.vd-punto{all:unset;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
+.vd-punto:hover{background:var(--pietra-2)}
+.vd-punto:focus-visible{outline:2px solid var(--inchiostro)}
+.vd-punto svg{width:16px;height:16px}
+.vd-frase,.vd-chi{display:none}
+.vd-riga.aperta>[role=cell]{align-items:flex-start;justify-content:flex-start;padding:4px 10px 18px 0}
+.vd-riga.aperta .vd-punto,.vd-riga.aperta .vd-punto-vuoto{display:none}
+.vd-riga.aperta .vd-frase{display:block}
+.vd-frase blockquote{font-size:14.5px;line-height:1.5}
+.vd-frase .p+blockquote{margin-top:14px}
+.vd-frase .p{font-size:12px;font-stretch:118%;letter-spacing:.04em;text-transform:uppercase;color:var(--inchiostro-2);margin-top:6px}
+.vd-frase .no{font-size:14px;color:var(--inchiostro-2)}
+.vd-aiuto{font-size:13px;color:var(--inchiostro-2);margin-top:8px}
+.vd-riga.aperta .vd-q{align-items:flex-start}
+.vd-niente{color:var(--inchiostro-2)}
+.vd-riga>.terzo{display:none}
+body[data-terzo] .vd-riga>.terzo{display:flex}
+@media (max-width:899px){
+  .vd-riga.aperta>*{grid-column:1/-1}
+  .vd-riga.aperta>[role=cell],body[data-terzo] .vd-riga.aperta>[role=cell].terzo{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:12px 0 14px;border-bottom-style:dashed}
+  .vd-riga.aperta .vd-chi{display:block}
+  .vd-chi img{width:32px;height:32px;border-radius:50%}
+  .vd-chi .sigla{font-size:11.5px;font-weight:700;font-stretch:118%;margin-top:3px;display:block;text-align:center}
+}
+.vd-pop{border:0;padding:0;background:var(--carta);color:var(--inchiostro);width:min(560px,100vw);max-width:100vw;max-height:86vh;margin:auto}
+.vd-pop[open]{animation:vd-entra .34s cubic-bezier(.16,1,.3,1)}
+.vd-pop::backdrop{background:rgba(39,16,2,.42)}
+@keyframes vd-entra{from{transform:translateY(18px);opacity:0}}
+.vd-pop-testa{display:flex;align-items:center;gap:12px;padding:22px var(--gutter) 14px;border-bottom:1px solid var(--linea);position:sticky;top:0;background:var(--carta)}
+.vd-pop-testa img{width:40px;height:40px;border-radius:50%}
+.vd-pop-testa .sigla{font-weight:700;font-stretch:118%;font-size:14px}
+.vd-pop-testa h2{font-family:var(--capitali);font-weight:500;font-size:19px;line-height:1.15;text-transform:uppercase;letter-spacing:.02em}
+.vd-pop-testa .tondo{margin-left:auto;width:44px;height:44px;border:0;cursor:pointer}
+.vd-pop-corpo{padding:6px var(--gutter) 4px}
+.vd-pop-corpo .citazione:first-child{margin-top:16px}
+.vd-pop-corpo .no{margin-top:16px;font-size:16px}
+.vd-pop-piede{padding:18px var(--gutter) 26px}
+@media (max-width:899px){
+  .vd-pop{margin:auto 0 0;width:100vw}
+  .vd-pop[open]{animation-name:vd-sale}
+  @keyframes vd-sale{from{transform:translateY(40%)}}
+}
+
+@media (min-width:900px){
+  :root{--gutter:max(48px,calc((100vw - 1120px)/2))}
+  .vd-mappa{grid-template-columns:minmax(200px,.8fr) repeat(var(--n),minmax(0,1fr))}
+  .vd-riga.aperta>[role=cell]{padding:14px 18px 20px 0}
+  .va-elenco{display:grid;grid-template-columns:repeat(2,1fr);column-gap:56px}
+  .vb-scheda{display:grid;grid-template-columns:1.3fr 1fr;column-gap:48px}
+  .vb-scheda .chi{grid-column:1/-1}
+  .vb-scheda .grande{margin:18px 0 0}
+  .vc-pannello{flex-basis:calc((100% - 28px)/3)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- Mondo 2 · Grottesco (riferimento paragonproductions.co) ----------
+   Stesse strutture, altro mondo: bianco e nero, grottesco pesante in maiuscolo,
+   navigazione a scatole. Gli accenti blu e rosso del riferimento sono esclusi:
+   sono colori di partito. */
+body[data-mondo=g]{--carta:#F8F8F8;--inchiostro:#100F0F;--inchiostro-2:#4D4B4B;--pietra:#E4E4E4;--pietra-2:#EEEEEE;--linea:rgba(16,15,15,.22);--capitali:"Archivo",sans-serif;font-stretch:100%}
+body[data-mondo=g] .testata{border-bottom:0;padding-top:20px}
+body[data-mondo=g] .marchio{font-weight:850;font-stretch:100%;letter-spacing:-.01em;font-size:18px;text-transform:uppercase;border:1px solid var(--inchiostro);padding:9px 12px}
+body[data-mondo=g] .percorso{border:1px solid var(--inchiostro);padding:9px 12px;color:var(--inchiostro);font-weight:600}
+body[data-mondo=g] .capo h1{font-weight:850;font-stretch:88%;font-size:clamp(60px,19vw,200px);line-height:.86;letter-spacing:-.03em;overflow-wrap:anywhere}
+body[data-mondo=g] .capo .def{margin-left:0}
+body[data-mondo=g] .capo .nota{margin-left:0}
+body[data-mondo=g] .titolo{font-weight:800;font-stretch:100%;text-transform:uppercase;letter-spacing:-.01em;font-size:22px;line-height:1.08}
+body[data-mondo=g] .va-cmp .titolo{font-size:18px}
+body[data-mondo=g] .vb-sq h2,body[data-mondo=g] .vc-scheda h3,body[data-mondo=g] .vc-pannello h3{font-weight:800;letter-spacing:-.01em}
+body[data-mondo=g] .vb-sq h2{font-size:30px;line-height:.95}
+body[data-mondo=g] .vb-vuota strong{font-weight:850;font-size:34px;letter-spacing:-.02em}
+body[data-mondo=g] .vb-scheda .grande blockquote::before{font-family:var(--testo);font-weight:850}
+body[data-mondo=g] .link-caps{font-weight:800;font-stretch:100%;letter-spacing:0}
+body[data-mondo=g] .azione span:last-child{border-bottom-width:2px}
+body[data-mondo=g] .tondo{border-radius:0;width:46px;height:46px}
+body[data-mondo=g] .chi img{border-radius:0}
+body[data-mondo=g] .va-scelta{background:var(--inchiostro);color:var(--carta);padding:22px var(--gutter) 26px;margin-top:26px}
+body[data-mondo=g] .va-scelta p{color:#BDBBBB}
+body[data-mondo=g] .va-scelta ul{flex-direction:column;gap:0}
+body[data-mondo=g] .va-scelta li{border:0;border-top:1px solid #3a3838;padding:4px 0;font-size:40px;font-weight:850;font-stretch:100%;letter-spacing:-.03em;line-height:1;color:#7A7777;background:none;text-transform:uppercase}
+body[data-mondo=g] .va-scelta li.on{color:#F8F8F8;background:none}
+body[data-mondo=g] .va-cmp{border-top-width:2px}
+
+/* ---------- Barra del prototipo (non fa parte del design) ---------- */
+.proto{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:10;width:min(420px,calc(100vw - 16px));background:#0b0b0b;color:#fff;border-radius:16px;padding:8px 10px;font:12.5px/1.3 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.proto .riga{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.proto button{font:inherit;color:#fff;background:#262626;border:0;border-radius:9px;padding:6px 9px;cursor:pointer}
+.proto button[aria-pressed=true]{background:#fff;color:#0b0b0b}
+.proto .nome-v{font-weight:700;text-align:center;flex:1}
+.proto .riga+.riga{margin-top:6px}
+.proto .gruppo{display:flex;gap:4px}
+.proto small{display:block;color:#bdbdbd;margin-top:6px;font-size:12px;text-align:center}
+.proto :focus-visible{outline:2px solid #fff}
+</style>
+</head>
+<body data-variant="D" data-vista="tema" data-mondo="l">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-piu" viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+  <symbol id="i-freccia" viewBox="0 0 20 20"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+  <symbol id="i-pieno" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="currentColor"/></symbol>
+  <symbol id="i-vuoto" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
+  <symbol id="i-dubbio" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-chiudi" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.6" fill="none"/></symbol>
+</svg>
+
+<header class="testata">
+  <a class="marchio" href="#">Elezio</a>
+  <nav class="percorso" aria-label="Percorso"><a href="#">Politiche 2022</a> · <span class="vista-nome">Temi</span></nav>
+</header>
+
+<main>
+
+<!-- ================= VARIANTE A · TEMA ================= -->
+<section data-v="A" data-vista="tema" aria-label="Variante A, pagina tema">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">Servizio sanitario nazionale, accesso alle cure e personale sanitario.</p>
+    <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+  </div>
+  <ol class="va-elenco">
+    <li class="va-scheda">
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div><div class="sigla">AVS</div><div class="nome">Alleanza Verdi e Sinistra</div></div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <p class="sintesi">Alleanza Verdi e Sinistra vuole potenziare i servizi sanitari sul territorio e assumere 40 mila operatori in tre anni, riducendo precariato ed esternalizzazioni. Propone psicologi nei servizi pubblici e di togliere i vantaggi fiscali a polizze e fondi sanitari integrativi.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Medicina territoriale</p><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=30">p. 30</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«Un Piano di rafforzamento strutturale del personale dipendente, con l'assunzione di complessivi 40 mila operatori in tre anni, per riportare la dotazione di operatori ai livelli precedenti alla crisi, riducendo contestualmente la spesa per il lavoro precario, le collaborazioni esterne e le esternalizzazioni di servizi.»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=31">p. 31</a></p></div>
+        <div class="citazione"><p class="sq">Salute mentale</p><blockquote>«Prevedere l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali, convenzionati o che garantiscano un costo di prestazione calmierato»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=33">p. 33</a></p></div>
+        <div class="citazione"><p class="sq">Pubblico e privato convenzionato</p><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi, in quanto riducono la contribuzione degli assicurati al Fondo Sanitario Nazionale»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=31">p. 31</a></p></div>
+      </details>
+    </li>
+    <li class="va-scheda">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div><div class="sigla">Azione</div><div class="nome">Lista comune con Italia Viva</div></div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <p class="sintesi">Azione e Italia Viva propongono un piano straordinario per portare entro un anno le attese a 60 giorni per le prestazioni programmate e a 30 per le altre. Vogliono regole nazionali per le Case della Comunità, con lo psicologo di base, e carriere più rapide e stipendi adeguati per chi lavora in sanità.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Lista comune</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Finanziamento del SSN e liste d'attesa</p><blockquote>«è necessario varare un piano straordinario per aumentare la capacità produttiva di prestazioni di specialistica ambulatoriale, visite di controllo e interventi. L'obiettivo deve essere ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=20">p. 20</a></p></div>
+        <div class="citazione"><p class="sq">Medicina territoriale e salute mentale</p><blockquote>«occorre adottare indicazioni nazionali prescrittive sulla funzione delle Case della Comunità, che siano proiettate all'esterno con nuove professionalità come ad es. lo Psicologo di Base e con personale presente con un medesimo sistema di guardia notturna e stesso emolumento dei medici ospedalieri.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=19">p. 19</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«Proponiamo di valutare una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro e soprattutto alle responsabilità così da limitare contestualmente il fenomeno dell'emigrazione di professionisti sanitari verso l'estero.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=20">p. 20</a></p></div>
+        <div class="citazione"><p class="sq">Pubblico e privato convenzionato</p><blockquote>«È necessario istituire modalità più trasparenti nel differenziare servizi pubblici e privati in modo che questi possano collaborare in sinergia e integrarsi tra loro.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=19">p. 19</a></p></div>
+      </details>
+    </li>
+    <li class="va-scheda va-assente">
+      <div class="chi"><span class="segno" aria-hidden="true">ESE</span><div><div class="sigla">Esempio <span class="esempio">fittizio</span></div><div class="nome">Partito inventato per mostrare l'assenza</div></div></div>
+      <h2 class="titolo">Il programma non tratta la sanità</h2>
+      <p class="sintesi">Nelle 24 pagine del programma depositato non c'è nessuna proposta su questo tema. Non è un giudizio: è quello che il documento dice, o non dice.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Controlla tu: apri il programma</span></a>
+    </li>
+    <li class="va-scheda">
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div><div class="sigla">M5S</div><div class="nome">Movimento 5 Stelle</div></div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <p class="sintesi">Il Movimento 5 Stelle propone di cambiare la Costituzione per riportare la sanità sotto la gestione diretta dello Stato, togliendola ai 20 sistemi regionali. Chiede stipendi più alti per il personale sanitario, incentivi ai pronto soccorso e accesso più facile alle terapie innovative.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Governo della sanità (fuori dalle sotto-questioni)</p><blockquote>«RIFORMA TITOLO V DELLA COSTITUZIONE PER RIPORTARE LA SALUTE ALLA GESTIONE DIRETTA DELLO STATO ed evitare le attuali disfunzioni dei 20 sistemi regionali, a maggior ragione emerse con la pandemia»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Finanziamento del SSN e liste d'attesa</p><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Accesso alle terapie (fuori dalle sotto-questioni)</p><blockquote>«POTENZIAMENTO E ACCESSIBILITÀ ALLE TERAPIE INNOVATIVE E AVANZATE»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+      </details>
+    </li>
+  </ol>
+  <div style="padding:8px var(--gutter) 0"><a class="azione" href="?variant=A&amp;vista=confronto"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Confronta due partiti sulla sanità</span></a></div>
+</section>
+
+<!-- ================= VARIANTE A · CONFRONTO ================= -->
+<section data-v="A" data-vista="confronto" aria-label="Variante A, confronto">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">AVS e M5S a confronto<span class="terzo">, con Azione</span>. Prima cosa propongono, poi le parole esatte del programma.</p>
+  </div>
+  <div class="va-scelta">
+    <p>Partiti a confronto, fino a tre</p>
+    <ul>
+      <li class="on">AVS</li><li class="terzo on">Azione</li><li>FdI</li><li>FI</li><li>FN</li><li>IV</li><li>Lega</li><li class="on">M5S</li><li>PD</li><li>+Europa</li>
+    </ul>
+  </div>
+  <div class="va-cmp">
+    <div>
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div class="sigla">AVS</div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <p class="sintesi">Potenziare i servizi sul territorio, assumere 40 mila operatori in tre anni, psicologi nei servizi pubblici, niente vantaggi fiscali a polizze e fondi integrativi.</p>
+      <div class="etichetta"><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=A">4 citazioni · p. 30-33</a>
+    </div>
+    <div>
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div class="sigla">M5S</div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <p class="sintesi">Riforma della Costituzione per togliere la sanità alle Regioni, stipendi più alti per il personale, incentivi ai pronto soccorso, accesso alle terapie innovative.</p>
+      <div class="etichetta"><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=A">4 citazioni · p. 6</a>
+    </div>
+    <div class="terzo">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div class="sigla">Azione</div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <p class="sintesi">Piano straordinario sulle liste d'attesa, Case della Comunità con lo psicologo di base, carriere più rapide e stipendi adeguati.</p>
+      <div class="etichetta"><span>Lista comune</span><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=A">4 citazioni · p. 19-20</a>
+    </div>
+  </div>
+  <div class="senza-terzo" style="padding:0 var(--gutter)"><a class="azione" href="?variant=A&amp;vista=confronto&amp;terzo=azione"><span class="tondo"><svg aria-hidden="true"><use href="#i-piu"/></svg></span><span class="link-caps">Aggiungi un terzo partito</span></a></div>
+</section>
+
+<!-- ================= VARIANTE B · TEMA ================= -->
+<section data-v="B" data-vista="tema" aria-label="Variante B, pagina tema">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">Prima le parole esatte dei programmi, poi cosa vogliono dire. Ogni frase ha la sua pagina.</p>
+    <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+  </div>
+  <ol class="vb-elenco" style="list-style:none">
+    <li class="vb-scheda">
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div><div class="sigla">AVS</div><div class="nome">Alleanza Verdi e Sinistra</div></div></div>
+      <figure class="grande"><blockquote>Un Piano di rafforzamento strutturale del personale dipendente, con l'assunzione di complessivi 40 mila operatori in tre anni, per riportare la dotazione di operatori ai livelli precedenti alla crisi.</blockquote><figcaption class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=31">p. 31</a></figcaption></figure>
+      <div>
+        <h2 class="titolo">Cosa vuol dire: 40 mila assunzioni nella sanità pubblica</h2>
+        <p class="sintesi">Più servizi sul territorio, 40 mila operatori in tre anni, psicologi nei servizi pubblici, niente vantaggi fiscali a polizze e fondi sanitari integrativi.</p>
+        <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+        <details class="poi"><summary class="link-caps"><u>Altre 3 citazioni</u></summary>
+          <div class="citazione"><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 30</span></p></div>
+          <div class="citazione"><blockquote>«Prevedere l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali, convenzionati o che garantiscano un costo di prestazione calmierato»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 33</span></p></div>
+          <div class="citazione"><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi, in quanto riducono la contribuzione degli assicurati al Fondo Sanitario Nazionale»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 31</span></p></div>
+        </details>
+      </div>
+    </li>
+    <li class="vb-scheda">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div><div class="sigla">Azione</div><div class="nome">Lista comune con Italia Viva</div></div></div>
+      <figure class="grande"><blockquote>L'obiettivo deve essere ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.</blockquote><figcaption class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=20">p. 20</a></figcaption></figure>
+      <div>
+        <h2 class="titolo">Cosa vuol dire: attese massime di 60 giorni entro un anno</h2>
+        <p class="sintesi">Un piano straordinario sulle liste d'attesa, Case della Comunità con lo psicologo di base, carriere più rapide e stipendi adeguati per frenare la fuga dei sanitari all'estero.</p>
+        <div class="etichetta"><span>Programma depositato</span><span>Lista comune</span><span class="stato">Verificata</span></div>
+        <details class="poi"><summary class="link-caps"><u>Altre 3 citazioni</u></summary>
+          <div class="citazione"><blockquote>«occorre adottare indicazioni nazionali prescrittive sulla funzione delle Case della Comunità, che siano proiettate all'esterno con nuove professionalità come ad es. lo Psicologo di Base e con personale presente con un medesimo sistema di guardia notturna e stesso emolumento dei medici ospedalieri.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 19</span></p></div>
+          <div class="citazione"><blockquote>«Proponiamo di valutare una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro e soprattutto alle responsabilità così da limitare contestualmente il fenomeno dell'emigrazione di professionisti sanitari verso l'estero.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 20</span></p></div>
+          <div class="citazione"><blockquote>«È necessario istituire modalità più trasparenti nel differenziare servizi pubblici e privati in modo che questi possano collaborare in sinergia e integrarsi tra loro.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 19</span></p></div>
+        </details>
+      </div>
+    </li>
+    <li class="vb-scheda">
+      <div class="chi"><span class="segno" aria-hidden="true">ESE</span><div><div class="sigla">Esempio <span class="esempio">fittizio</span></div><div class="nome">Partito inventato per mostrare l'assenza</div></div></div>
+      <div class="vb-vuota"><strong>Nessuna frase</strong><p>sulla sanità nelle 24 pagine del programma depositato.</p></div>
+      <div>
+        <h2 class="titolo">Il programma non tratta la sanità</h2>
+        <p class="sintesi">Non è un giudizio: è quello che il documento dice, o non dice. Puoi controllarlo tu.</p>
+        <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Apri il programma</span></a>
+      </div>
+    </li>
+    <li class="vb-scheda">
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div><div class="sigla">M5S</div><div class="nome">Movimento 5 Stelle</div></div></div>
+      <figure class="grande"><blockquote>RIFORMA TITOLO V DELLA COSTITUZIONE PER RIPORTARE LA SALUTE ALLA GESTIONE DIRETTA DELLO STATO ed evitare le attuali disfunzioni dei 20 sistemi regionali</blockquote><figcaption class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></figcaption></figure>
+      <div>
+        <h2 class="titolo">Cosa vuol dire: la sanità torni allo Stato</h2>
+        <p class="sintesi">Cambiare la Costituzione per togliere la gestione della sanità alle Regioni, stipendi più alti per il personale, incentivi ai pronto soccorso, accesso più facile alle terapie innovative.</p>
+        <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+        <details class="poi"><summary class="link-caps"><u>Altre 3 citazioni</u></summary>
+          <div class="citazione"><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+          <div class="citazione"><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+          <div class="citazione"><blockquote>«POTENZIAMENTO E ACCESSIBILITÀ ALLE TERAPIE INNOVATIVE E AVANZATE»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+        </details>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ================= VARIANTE B · CONFRONTO ================= -->
+<section data-v="B" data-vista="confronto" aria-label="Variante B, confronto">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">AVS e M5S<span class="terzo"> e Azione</span>, questione per questione, con le loro parole.</p>
+  </div>
+  <div class="vb-sq">
+    <h2>Liste d'attesa e finanziamento</h2>
+    <div class="vb-voce"><img src="contrassegni/avs.png" alt="" width="36" height="36"><div><p class="chi-s">AVS</p><p class="no">Il passaggio sul fondo sanitario a p. 30 non si legge nella scansione: citazione esclusa finché non è verificata a mano.</p></div></div>
+    <div class="vb-voce"><img src="contrassegni/m5s.png" alt="" width="36" height="36"><div><p class="chi-s">M5S</p><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="p">Programma M5S 2022, p. 6</p></div></div>
+    <div class="vb-voce terzo"><img src="contrassegni/azione-iv.png" alt="" width="36" height="36"><div><p class="chi-s">Azione</p><blockquote>«ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.»</blockquote><p class="p">Programma Azione - Italia Viva 2022, p. 20</p></div></div>
+  </div>
+  <div class="vb-sq">
+    <h2>Medicina territoriale</h2>
+    <div class="vb-voce"><img src="contrassegni/avs.png" alt="" width="36" height="36"><div><p class="chi-s">AVS</p><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="p">Programma AVS 2022, p. 30</p></div></div>
+    <div class="vb-voce"><img src="contrassegni/m5s.png" alt="" width="36" height="36"><div><p class="chi-s">M5S</p><p class="no">Non ne parla nel programma depositato.</p></div></div>
+    <div class="vb-voce terzo"><img src="contrassegni/azione-iv.png" alt="" width="36" height="36"><div><p class="chi-s">Azione</p><blockquote>«occorre adottare indicazioni nazionali prescrittive sulla funzione delle Case della Comunità»</blockquote><p class="p">Programma Azione - Italia Viva 2022, p. 19</p></div></div>
+  </div>
+  <div class="vb-sq">
+    <h2>Personale sanitario</h2>
+    <div class="vb-voce"><img src="contrassegni/avs.png" alt="" width="36" height="36"><div><p class="chi-s">AVS</p><blockquote>«l'assunzione di complessivi 40 mila operatori in tre anni»</blockquote><p class="p">Programma AVS 2022, p. 31</p></div></div>
+    <div class="vb-voce"><img src="contrassegni/m5s.png" alt="" width="36" height="36"><div><p class="chi-s">M5S</p><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="p">Programma M5S 2022, p. 6</p></div></div>
+    <div class="vb-voce terzo"><img src="contrassegni/azione-iv.png" alt="" width="36" height="36"><div><p class="chi-s">Azione</p><blockquote>«una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro»</blockquote><p class="p">Programma Azione - Italia Viva 2022, p. 20</p></div></div>
+  </div>
+  <div class="vb-sq">
+    <h2>Salute mentale</h2>
+    <div class="vb-voce"><img src="contrassegni/avs.png" alt="" width="36" height="36"><div><p class="chi-s">AVS</p><blockquote>«l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali»</blockquote><p class="p">Programma AVS 2022, p. 33</p></div></div>
+    <div class="vb-voce"><img src="contrassegni/m5s.png" alt="" width="36" height="36"><div><p class="chi-s">M5S</p><p class="no">Non ne parla nel programma depositato.</p></div></div>
+    <div class="vb-voce terzo"><img src="contrassegni/azione-iv.png" alt="" width="36" height="36"><div><p class="chi-s">Azione</p><blockquote>«nuove professionalità come ad es. lo Psicologo di Base»</blockquote><p class="p">Programma Azione - Italia Viva 2022, p. 19</p></div></div>
+  </div>
+  <div class="vb-sq">
+    <h2>Pubblico e privato</h2>
+    <div class="vb-voce"><img src="contrassegni/avs.png" alt="" width="36" height="36"><div><p class="chi-s">AVS</p><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi»</blockquote><p class="p">Programma AVS 2022, p. 31</p></div></div>
+    <div class="vb-voce"><img src="contrassegni/m5s.png" alt="" width="36" height="36"><div><p class="chi-s">M5S</p><p class="no">Non ne parla nel programma depositato.</p></div></div>
+    <div class="vb-voce terzo"><img src="contrassegni/azione-iv.png" alt="" width="36" height="36"><div><p class="chi-s">Azione</p><blockquote>«modalità più trasparenti nel differenziare servizi pubblici e privati»</blockquote><p class="p">Programma Azione - Italia Viva 2022, p. 19</p></div></div>
+  </div>
+  <div class="senza-terzo" style="padding:0 var(--gutter)"><a class="azione" href="?variant=B&amp;vista=confronto&amp;terzo=azione"><span class="tondo"><svg aria-hidden="true"><use href="#i-piu"/></svg></span><span class="link-caps">Aggiungi un terzo partito</span></a></div>
+</section>
+
+<!-- ================= VARIANTE C · TEMA ================= -->
+<section data-v="C" data-vista="tema" aria-label="Variante C, pagina tema">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">Chi parla di cosa: le cinque questioni fisse del tema e cosa ne dice ogni programma. Tocca un punto per leggere la frase.</p>
+    <p class="nota">Tema 4 di 12 · prototipo con 3 partiti su 10</p>
+  </div>
+  <div class="vc-mappa">
+    <table>
+      <thead><tr><th scope="col">Questione</th>
+        <th scope="col"><img src="contrassegni/avs.png" alt="" width="30" height="30">AVS</th>
+        <th scope="col"><img src="contrassegni/azione-iv.png" alt="" width="30" height="30">Azione</th>
+        <th scope="col"><img src="contrassegni/m5s.png" alt="" width="30" height="30">M5S</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Finanziamento e liste d'attesa</th><td><a href="#c-avs" aria-label="AVS: passaggio illeggibile nella scansione"><svg><use href="#i-dubbio"/></svg></a></td><td><a href="#c-azione" aria-label="Azione: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-m5s" aria-label="M5S: ne parla"><svg><use href="#i-pieno"/></svg></a></td></tr>
+        <tr><th scope="row">Medicina territoriale</th><td><a href="#c-avs" aria-label="AVS: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-azione" aria-label="Azione: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><span aria-label="M5S: non ne parla"><svg><use href="#i-vuoto"/></svg></span></td></tr>
+        <tr><th scope="row">Personale sanitario</th><td><a href="#c-avs" aria-label="AVS: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-azione" aria-label="Azione: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-m5s" aria-label="M5S: ne parla"><svg><use href="#i-pieno"/></svg></a></td></tr>
+        <tr><th scope="row">Salute mentale</th><td><a href="#c-avs" aria-label="AVS: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-azione" aria-label="Azione: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><span aria-label="M5S: non ne parla"><svg><use href="#i-vuoto"/></svg></span></td></tr>
+        <tr><th scope="row">Pubblico e privato</th><td><a href="#c-avs" aria-label="AVS: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><a href="#c-azione" aria-label="Azione: ne parla"><svg><use href="#i-pieno"/></svg></a></td><td><span aria-label="M5S: non ne parla"><svg><use href="#i-vuoto"/></svg></span></td></tr>
+        <tr class="vc-fuori"><th scope="row">Altro nel tema</th><td>·</td><td>·</td><td><a href="#c-m5s">Stato e Regioni, terapie</a></td></tr>
+      </tbody>
+    </table>
+    <div class="vc-leg"><span><svg><use href="#i-pieno"/></svg>ne parla</span><span><svg><use href="#i-vuoto"/></svg>non ne parla</span><span><svg><use href="#i-dubbio"/></svg>da verificare</span></div>
+  </div>
+  <div class="vc-schede">
+    <article class="vc-scheda" id="c-avs">
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div><div class="sigla">AVS</div><div class="nome">Alleanza Verdi e Sinistra</div></div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <h3>Medicina territoriale</h3><div class="citazione"><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 30</span></p></div>
+      <h3>Personale sanitario</h3><div class="citazione"><blockquote>«l'assunzione di complessivi 40 mila operatori in tre anni, per riportare la dotazione di operatori ai livelli precedenti alla crisi»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 31</span></p></div>
+      <h3>Salute mentale</h3><div class="citazione"><blockquote>«Prevedere l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 33</span></p></div>
+      <h3>Pubblico e privato</h3><div class="citazione"><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi»</blockquote><p class="rif"><span>Programma AVS 2022</span><span>p. 31</span></p></div>
+    </article>
+    <article class="vc-scheda" id="c-azione">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div><div class="sigla">Azione</div><div class="nome">Lista comune con Italia Viva</div></div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <div class="etichetta"><span>Programma depositato</span><span>Lista comune</span><span class="stato">Verificata</span></div>
+      <h3>Liste d'attesa</h3><div class="citazione"><blockquote>«ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 20</span></p></div>
+      <h3>Medicina territoriale e salute mentale</h3><div class="citazione"><blockquote>«indicazioni nazionali prescrittive sulla funzione delle Case della Comunità, che siano proiettate all'esterno con nuove professionalità come ad es. lo Psicologo di Base»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 19</span></p></div>
+      <h3>Personale sanitario</h3><div class="citazione"><blockquote>«una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro e soprattutto alle responsabilità»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 20</span></p></div>
+      <h3>Pubblico e privato</h3><div class="citazione"><blockquote>«È necessario istituire modalità più trasparenti nel differenziare servizi pubblici e privati»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><span>p. 19</span></p></div>
+    </article>
+    <article class="vc-scheda" id="c-m5s">
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div><div class="sigla">M5S</div><div class="nome">Movimento 5 Stelle</div></div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <h3>Liste d'attesa</h3><div class="citazione"><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+      <h3>Personale sanitario</h3><div class="citazione"><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+      <h3>Altro nel tema</h3><div class="citazione"><blockquote>«RIFORMA TITOLO V DELLA COSTITUZIONE PER RIPORTARE LA SALUTE ALLA GESTIONE DIRETTA DELLO STATO»</blockquote><p class="rif"><span>Programma M5S 2022</span><span>p. 6</span></p></div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= VARIANTE C · CONFRONTO ================= -->
+<section data-v="C" data-vista="confronto" aria-label="Variante C, confronto">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">Un pannello per partito, le stesse questioni nello stesso ordine. Scorri di lato per passare all'altro.</p>
+  </div>
+  <div class="vc-binari" tabindex="0" aria-label="Pannelli dei partiti, scorrimento orizzontale">
+    <article class="vc-pannello">
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div class="sigla">AVS</div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <h3>Liste d'attesa</h3><p class="no">Passaggio illeggibile nella scansione, da verificare a mano (p. 30).</p>
+      <h3>Medicina territoriale</h3><blockquote>«la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="p">p. 30</p>
+      <h3>Personale sanitario</h3><blockquote>«l'assunzione di complessivi 40 mila operatori in tre anni»</blockquote><p class="p">p. 31</p>
+      <h3>Salute mentale</h3><blockquote>«l'assunzione straordinaria di psicologi e specialisti della salute mentale»</blockquote><p class="p">p. 33</p>
+      <h3>Pubblico e privato</h3><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie»</blockquote><p class="p">p. 31</p>
+    </article>
+    <article class="vc-pannello">
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div class="sigla">M5S</div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <h3>Liste d'attesa</h3><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="p">p. 6</p>
+      <h3>Medicina territoriale</h3><p class="no">Non ne parla.</p>
+      <h3>Personale sanitario</h3><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="p">p. 6</p>
+      <h3>Salute mentale</h3><p class="no">Non ne parla.</p>
+      <h3>Pubblico e privato</h3><p class="no">Non ne parla.</p>
+    </article>
+    <article class="vc-pannello terzo">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div class="sigla">Azione</div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <h3>Liste d'attesa</h3><blockquote>«fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre»</blockquote><p class="p">p. 20</p>
+      <h3>Medicina territoriale</h3><blockquote>«indicazioni nazionali prescrittive sulla funzione delle Case della Comunità»</blockquote><p class="p">p. 19</p>
+      <h3>Personale sanitario</h3><blockquote>«una più rapida ascesa di carriera in campo sanitario»</blockquote><p class="p">p. 20</p>
+      <h3>Salute mentale</h3><blockquote>«nuove professionalità come ad es. lo Psicologo di Base»</blockquote><p class="p">p. 19</p>
+      <h3>Pubblico e privato</h3><blockquote>«modalità più trasparenti nel differenziare servizi pubblici e privati»</blockquote><p class="p">p. 19</p>
+    </article>
+  </div>
+  <p class="vc-suggerimento">Scorri di lato · AVS, M5S<span class="terzo">, Azione</span></p>
+  <div class="senza-terzo" style="padding:0 var(--gutter)"><a class="azione" href="?variant=C&amp;vista=confronto&amp;terzo=azione"><span class="tondo"><svg aria-hidden="true"><use href="#i-piu"/></svg></span><span class="link-caps">Aggiungi un terzo partito</span></a></div>
+</section>
+
+<!-- ================= VARIANTE D · TEMA (scelta: A + mappa di C) ================= -->
+<section data-v="D" data-vista="tema" aria-label="Variante D, pagina tema">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">Servizio sanitario nazionale, accesso alle cure e personale sanitario.</p>
+    <p class="nota">Tema 4 di 12 · partiti in ordine alfabetico · prototipo con 3 partiti su 10</p>
+  </div>
+  <div class="vd-blocco" hidden>
+    <div class="vd-mappa" data-partiti="avs,azione,m5s,esempio" role="table" aria-label="Chi parla di cosa sulla sanità"></div>
+    <div class="vc-leg"><span><svg><use href="#i-pieno"/></svg>ne parla</span><span><svg><use href="#i-vuoto"/></svg>non ne parla</span><span><svg><use href="#i-dubbio"/></svg>da verificare</span></div>
+    <p class="vd-aiuto">Tocca un punto per leggere le parole del partito. Tocca una questione per aprirla.</p>
+  </div>
+  <ol aria-label="Schede dei partiti" class="va-elenco">
+    <li class="va-scheda" id="vd-avs">
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div><div class="sigla">AVS</div><div class="nome">Alleanza Verdi e Sinistra</div></div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <p class="sintesi">Alleanza Verdi e Sinistra vuole potenziare i servizi sanitari sul territorio e assumere 40 mila operatori in tre anni, riducendo precariato ed esternalizzazioni. Propone psicologi nei servizi pubblici e di togliere i vantaggi fiscali a polizze e fondi sanitari integrativi.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Medicina territoriale</p><blockquote>«Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=30">p. 30</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«Un Piano di rafforzamento strutturale del personale dipendente, con l'assunzione di complessivi 40 mila operatori in tre anni, per riportare la dotazione di operatori ai livelli precedenti alla crisi, riducendo contestualmente la spesa per il lavoro precario, le collaborazioni esterne e le esternalizzazioni di servizi.»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=31">p. 31</a></p></div>
+        <div class="citazione"><p class="sq">Salute mentale</p><blockquote>«Prevedere l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali, convenzionati o che garantiscano un costo di prestazione calmierato»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=33">p. 33</a></p></div>
+        <div class="citazione"><p class="sq">Pubblico e privato convenzionato</p><blockquote>«Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi, in quanto riducono la contribuzione degli assicurati al Fondo Sanitario Nazionale»</blockquote><p class="rif"><span>Programma AVS 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf#page=31">p. 31</a></p></div>
+      </details>
+    </li>
+    <li class="va-scheda" id="vd-azione">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div><div class="sigla">Azione</div><div class="nome">Lista comune con Italia Viva</div></div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <p class="sintesi">Azione e Italia Viva propongono un piano straordinario per portare entro un anno le attese a 60 giorni per le prestazioni programmate e a 30 per le altre. Vogliono regole nazionali per le Case della Comunità, con lo psicologo di base, e carriere più rapide e stipendi adeguati per chi lavora in sanità.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Lista comune</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Finanziamento del SSN e liste d'attesa</p><blockquote>«è necessario varare un piano straordinario per aumentare la capacità produttiva di prestazioni di specialistica ambulatoriale, visite di controllo e interventi. L'obiettivo deve essere ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=20">p. 20</a></p></div>
+        <div class="citazione"><p class="sq">Medicina territoriale e salute mentale</p><blockquote>«occorre adottare indicazioni nazionali prescrittive sulla funzione delle Case della Comunità, che siano proiettate all'esterno con nuove professionalità come ad es. lo Psicologo di Base e con personale presente con un medesimo sistema di guardia notturna e stesso emolumento dei medici ospedalieri.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=19">p. 19</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«Proponiamo di valutare una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro e soprattutto alle responsabilità così da limitare contestualmente il fenomeno dell'emigrazione di professionisti sanitari verso l'estero.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=20">p. 20</a></p></div>
+        <div class="citazione"><p class="sq">Pubblico e privato convenzionato</p><blockquote>«È necessario istituire modalità più trasparenti nel differenziare servizi pubblici e privati in modo che questi possano collaborare in sinergia e integrarsi tra loro.»</blockquote><p class="rif"><span>Programma Azione - Italia Viva 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf#page=19">p. 19</a></p></div>
+      </details>
+    </li>
+    <li class="va-scheda va-assente" id="vd-esempio">
+      <div class="chi"><span class="segno" aria-hidden="true">ESE</span><div><div class="sigla">Esempio <span class="esempio">fittizio</span></div><div class="nome">Partito inventato per mostrare l'assenza</div></div></div>
+      <h2 class="titolo">Il programma non tratta la sanità</h2>
+      <p class="sintesi">Nelle 24 pagine del programma depositato non c'è nessuna proposta su questo tema. Non è un giudizio: è quello che il documento dice, o non dice.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <a class="azione" href="#"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Controlla tu: apri il programma</span></a>
+    </li>
+    <li class="va-scheda" id="vd-m5s">
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div><div class="sigla">M5S</div><div class="nome">Movimento 5 Stelle</div></div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <p class="sintesi">Il Movimento 5 Stelle propone di cambiare la Costituzione per riportare la sanità sotto la gestione diretta dello Stato, togliendola ai 20 sistemi regionali. Chiede stipendi più alti per il personale sanitario, incentivi ai pronto soccorso e accesso più facile alle terapie innovative.</p>
+      <div class="etichetta"><span>Programma depositato</span><span>Partito</span><span class="stato">Verificata</span></div>
+      <details>
+        <summary><span class="link-caps">Leggi nel programma · 4 citazioni</span><svg aria-hidden="true"><use href="#i-piu"/></svg></summary>
+        <div class="citazione"><p class="sq">Governo della sanità (fuori dalle sotto-questioni)</p><blockquote>«RIFORMA TITOLO V DELLA COSTITUZIONE PER RIPORTARE LA SALUTE ALLA GESTIONE DIRETTA DELLO STATO ed evitare le attuali disfunzioni dei 20 sistemi regionali, a maggior ragione emerse con la pandemia»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Personale sanitario</p><blockquote>«AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Finanziamento del SSN e liste d'attesa</p><blockquote>«INCENTIVI PER I PRONTO SOCCORSO»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+        <div class="citazione"><p class="sq">Accesso alle terapie (fuori dalle sotto-questioni)</p><blockquote>«POTENZIAMENTO E ACCESSIBILITÀ ALLE TERAPIE INNOVATIVE E AVANZATE»</blockquote><p class="rif"><span>Programma M5S 2022</span><a href="https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf#page=6">p. 6</a></p></div>
+      </details>
+    </li>
+  </ol>
+  <div style="padding:8px var(--gutter) 0"><a class="azione" href="?variant=D&amp;vista=confronto"><span class="tondo"><svg aria-hidden="true"><use href="#i-freccia"/></svg></span><span class="link-caps">Confronta due partiti sulla sanità</span></a></div>
+</section>
+
+<!-- ================= VARIANTE D · CONFRONTO ================= -->
+<section data-v="D" data-vista="confronto" aria-label="Variante D, confronto">
+  <div class="capo">
+    <h1>Sanità</h1>
+    <p class="def">AVS e M5S a confronto<span class="terzo">, con Azione</span>. Prima cosa propongono, poi le parole esatte del programma.</p>
+  </div>
+  <div class="va-scelta">
+    <p>Partiti a confronto, fino a tre</p>
+    <ul>
+      <li class="on">AVS</li><li class="terzo on">Azione</li><li>FdI</li><li>FI</li><li>FN</li><li>IV</li><li>Lega</li><li class="on">M5S</li><li>PD</li><li>+Europa</li>
+    </ul>
+  </div>
+  <div class="vd-blocco" hidden>
+    <div class="vd-mappa" data-partiti="avs,m5s,azione" role="table" aria-label="Chi parla di cosa, partiti a confronto"></div>
+    <div class="vc-leg"><span><svg><use href="#i-pieno"/></svg>ne parla</span><span><svg><use href="#i-vuoto"/></svg>non ne parla</span><span><svg><use href="#i-dubbio"/></svg>da verificare</span></div>
+    <p class="vd-aiuto">Tocca un punto per leggere le parole del partito. Tocca una questione per aprirla.</p>
+  </div>
+  <div class="va-cmp">
+    <div>
+      <div class="chi"><img src="contrassegni/avs.png" alt="Contrassegno di Alleanza Verdi e Sinistra" width="40" height="40"><div class="sigla">AVS</div></div>
+      <h2 class="titolo">40 mila assunzioni nella sanità pubblica in tre anni</h2>
+      <p class="sintesi">Potenziare i servizi sul territorio, assumere 40 mila operatori in tre anni, psicologi nei servizi pubblici, niente vantaggi fiscali a polizze e fondi integrativi.</p>
+      <div class="etichetta"><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=D">4 citazioni · p. 30-33</a>
+    </div>
+    <div>
+      <div class="chi"><img src="contrassegni/m5s.png" alt="Contrassegno del Movimento 5 Stelle" width="40" height="40"><div class="sigla">M5S</div></div>
+      <h2 class="titolo">La sanità torni allo Stato, non alle Regioni</h2>
+      <p class="sintesi">Riforma della Costituzione per togliere la sanità alle Regioni, stipendi più alti per il personale, incentivi ai pronto soccorso, accesso alle terapie innovative.</p>
+      <div class="etichetta"><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=D">4 citazioni · p. 6</a>
+    </div>
+    <div class="terzo">
+      <div class="chi"><img src="contrassegni/azione-iv.png" alt="Contrassegno della lista Azione - Italia Viva - Calenda" width="40" height="40"><div class="sigla">Azione</div></div>
+      <h2 class="titolo">Attese massime di 60 giorni entro un anno</h2>
+      <p class="sintesi">Piano straordinario sulle liste d'attesa, Case della Comunità con lo psicologo di base, carriere più rapide e stipendi adeguati.</p>
+      <div class="etichetta"><span>Lista comune</span><span class="stato">Verificata</span></div>
+      <a class="link-caps" href="?variant=D">4 citazioni · p. 19-20</a>
+    </div>
+  </div>
+  <div class="senza-terzo" style="padding:0 var(--gutter)"><a class="azione" href="?variant=D&amp;vista=confronto&amp;terzo=azione"><span class="tondo"><svg aria-hidden="true"><use href="#i-piu"/></svg></span><span class="link-caps">Aggiungi un terzo partito</span></a></div>
+</section>
+
+</main>
+
+<dialog class="vd-pop" aria-labelledby="vd-pop-titolo">
+  <div class="vd-pop-testa">
+    <span class="vd-pop-marchio"></span>
+    <div><p class="sigla"></p><h2 id="vd-pop-titolo"></h2></div>
+    <button type="button" class="tondo" data-chiudi aria-label="Chiudi"><svg aria-hidden="true"><use href="#i-chiudi"/></svg></button>
+  </div>
+  <div class="vd-pop-corpo"></div>
+  <div class="vd-pop-piede"><a class="link-caps" href="#">Vai alla scheda completa</a></div>
+</dialog>
+
+<!-- Barra del prototipo: fuori dal design, solo per commutare le varianti -->
+<div class="proto" role="region" aria-label="Commutatore del prototipo">
+  <div class="riga">
+    <button type="button" data-azione="prev" aria-label="Variante precedente">‹</button>
+    <span class="nome-v" aria-live="polite">D · Scelta: A + mappa</span>
+    <button type="button" data-azione="next" aria-label="Variante successiva">›</button>
+  </div>
+  <div class="riga">
+    <div class="gruppo"><button type="button" data-vista="tema">Tema</button><button type="button" data-vista="confronto">Confr.</button></div>
+    <button type="button" data-azione="terzo">+3°</button>
+    <div class="gruppo"><button type="button" data-mondo="l" title="Mondo lapidario">Lap.</button><button type="button" data-mondo="g" title="Mondo grottesco">Grot.</button></div>
+  </div>
+  <small>Prototipo #10 · citazioni vere 2022, sintesi e stati simulati</small>
+</div>
+
+<script>
+(() => {
+  const nomi = { D: "Scelta: A + mappa", A: "Sintesi prima", B: "Citazione prima", C: "Mappa delle questioni" };
+  const varianti = Object.keys(nomi);
+  const b = document.body;
+  const p = new URLSearchParams(location.search);
+  const stato = {
+    variant: varianti.includes(p.get("variant")) ? p.get("variant") : "D",
+    vista: p.get("vista") === "confronto" ? "confronto" : "tema",
+    terzo: p.get("terzo") === "azione",
+    mondo: p.get("mondo") === "g" ? "g" : "l",
+  };
+  function applica() {
+    b.dataset.variant = stato.variant;
+    b.dataset.vista = stato.vista;
+    b.dataset.mondo = stato.mondo;
+    if (stato.terzo) b.dataset.terzo = ""; else delete b.dataset.terzo;
+    const q = new URLSearchParams({ variant: stato.variant, vista: stato.vista, mondo: stato.mondo });
+    if (stato.terzo) q.set("terzo", "azione");
+    document.querySelectorAll("button[data-mondo]").forEach(el => el.setAttribute("aria-pressed", el.dataset.mondo === stato.mondo));
+    history.replaceState(null, "", "?" + q);
+    document.querySelector(".nome-v").textContent = stato.variant + " · " + nomi[stato.variant];
+    document.querySelector(".vista-nome").textContent = stato.vista === "tema" ? "Temi" : "Confronto";
+    document.querySelectorAll("[data-vista]").forEach(el => { if (el.tagName === "BUTTON") el.setAttribute("aria-pressed", el.dataset.vista === stato.vista); });
+    document.querySelector('[data-azione="terzo"]').setAttribute("aria-pressed", stato.terzo);
+  }
+  function sposta(d) {
+    const i = varianti.indexOf(stato.variant);
+    stato.variant = varianti[(i + d + varianti.length) % varianti.length];
+    applica();
+  }
+  document.querySelector(".proto").addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.dataset.azione === "prev") sposta(-1);
+    else if (t.dataset.azione === "next") sposta(1);
+    else if (t.dataset.azione === "terzo") { stato.terzo = !stato.terzo; applica(); }
+    else if (t.dataset.vista) { stato.vista = t.dataset.vista; applica(); }
+    else if (t.dataset.mondo) { stato.mondo = t.dataset.mondo; applica(); }
+  });
+  addEventListener("keydown", e => {
+    if (e.target.closest("input,textarea,[contenteditable]") || document.querySelector(".vd-pop[open]")) return;
+    if (e.key === "ArrowLeft") sposta(-1);
+    if (e.key === "ArrowRight") sposta(1);
+  });
+  applica();
+})();
+
+// Mappa della variante D. Nel sito vero è HTML statico generato da Astro dalle schede;
+// qui la disegna JavaScript per non ripetere le citazioni a mano. Senza JS restano le schede.
+(() => {
+  const PDF = {
+    avs: "https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/65/%2865_progr_2_%29-programma_di_alleanza_verdi_e_sinistra_in_pdfa.pdf",
+    azione: "https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/7/%287_progr_2_%29-programma_azione-italia_viva-calenda.pdf",
+    m5s: "https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/74/%2874_progr_2_%29-programma_m5s_2022-cuore_e_coraggio.pdf",
+  };
+  const DOMANDE = ["Finanziamento e liste d'attesa", "Medicina territoriale", "Personale sanitario", "Salute mentale", "Pubblico e privato", "Altro nel tema"];
+  const NO = { stato: "vuoto" };
+  const NIENTE = { stato: "niente" }; // solo per "Altro nel tema": non è una questione, l'assenza non si segna
+  const AVS_PERSONALE = "Un Piano di rafforzamento strutturale del personale dipendente, con l'assunzione di complessivi 40 mila operatori in tre anni, per riportare la dotazione di operatori ai livelli precedenti alla crisi, riducendo contestualmente la spesa per il lavoro precario, le collaborazioni esterne e le esternalizzazioni di servizi.";
+  const AZ_CASE = "occorre adottare indicazioni nazionali prescrittive sulla funzione delle Case della Comunità, che siano proiettate all'esterno con nuove professionalità come ad es. lo Psicologo di Base e con personale presente con un medesimo sistema di guardia notturna e stesso emolumento dei medici ospedalieri.";
+  const PARTITI = {
+    avs: { sigla: "AVS", logo: "contrassegni/avs.png", fonte: "Programma AVS 2022", celle: [
+      { stato: "dubbio", nota: "Il passaggio sul fondo sanitario a p. 30 non si legge nella scansione: la citazione è esclusa finché non è verificata a mano.", pagina: 30 },
+      { stato: "si", cit: [["Questo richiede la radicale riorganizzazione e il potenziamento dei servizi territoriali", 30]] },
+      { stato: "si", cit: [[AVS_PERSONALE, 31]] },
+      { stato: "si", cit: [["Prevedere l'assunzione straordinaria di psicologi e specialisti della salute mentale nei sistemi sanitari pubblici territoriali, convenzionati o che garantiscano un costo di prestazione calmierato", 33]] },
+      { stato: "si", cit: [["Abolizione dei vantaggi fiscali connessi alla sottoscrizione di polizze assicurative sanitarie e alla partecipazione a fondi sanitari integrativi, in quanto riducono la contribuzione degli assicurati al Fondo Sanitario Nazionale", 31]] },
+      NIENTE ] },
+    azione: { sigla: "Azione", logo: "contrassegni/azione-iv.png", fonte: "Programma Azione - Italia Viva 2022", celle: [
+      { stato: "si", cit: [["è necessario varare un piano straordinario per aumentare la capacità produttiva di prestazioni di specialistica ambulatoriale, visite di controllo e interventi. L'obiettivo deve essere ridurre entro un anno il periodo di attesa per tali prestazioni fino ad un massimo di 60 giorni per quelle programmate e di 30 per tutte le altre.", 20]] },
+      { stato: "si", cit: [[AZ_CASE, 19]] },
+      { stato: "si", cit: [["Proponiamo di valutare una più rapida ascesa di carriera in campo sanitario e una remunerazione adeguata al carico di lavoro e soprattutto alle responsabilità così da limitare contestualmente il fenomeno dell'emigrazione di professionisti sanitari verso l'estero.", 20]] },
+      { stato: "si", cit: [[AZ_CASE, 19]] },
+      { stato: "si", cit: [["È necessario istituire modalità più trasparenti nel differenziare servizi pubblici e privati in modo che questi possano collaborare in sinergia e integrarsi tra loro.", 19]] },
+      NIENTE ] },
+    m5s: { sigla: "M5S", logo: "contrassegni/m5s.png", fonte: "Programma M5S 2022", celle: [
+      { stato: "si", cit: [["INCENTIVI PER I PRONTO SOCCORSO", 6]] },
+      NO,
+      { stato: "si", cit: [["AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO", 6]] },
+      NO, NO,
+      { stato: "si", cit: [["RIFORMA TITOLO V DELLA COSTITUZIONE PER RIPORTARE LA SALUTE ALLA GESTIONE DIRETTA DELLO STATO ed evitare le attuali disfunzioni dei 20 sistemi regionali, a maggior ragione emerse con la pandemia", 6], ["POTENZIAMENTO E ACCESSIBILITÀ ALLE TERAPIE INNOVATIVE E AVANZATE", 6]] } ] },
+    esempio: { sigla: "Esempio", logo: null, fonte: "Programma fittizio", celle: [NO, NO, NO, NO, NO, NIENTE] },
+  };
+  const ICONA = { si: "i-pieno", vuoto: "i-vuoto", dubbio: "i-dubbio" };
+  const DESCR = { si: "ne parla", vuoto: "non ne parla", dubbio: "passaggio da verificare" };
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const marchio = (id, px) => PARTITI[id].logo
+    ? `<img src="${PARTITI[id].logo}" alt="" width="${px}" height="${px}">`
+    : `<span class="segno" style="width:${px}px;height:${px}px" aria-hidden="true">ESE</span>`;
+
+  function frase(id, c, pieno) {
+    const P = PARTITI[id];
+    if (c.stato === "vuoto") return `<p class="no">${id === "esempio" ? "Il programma non tratta la sanità." : "Non ne parla nel programma depositato."}</p>`;
+    if (c.stato === "dubbio") return `<p class="no">${esc(c.nota)}</p>`;
+    if (c.stato === "niente") return `<p class="no">Nient'altro su questo tema.</p>`;
+    return c.cit.map(([testo, pag]) => pieno
+      ? `<div class="citazione"><blockquote>«${esc(testo)}»</blockquote><p class="rif"><span>${P.fonte}</span><a href="${PDF[id]}#page=${pag}">p. ${pag}</a></p></div>`
+      : `<blockquote>«${esc(testo)}»</blockquote><p class="p"><a href="${PDF[id]}#page=${pag}">p. ${pag}</a></p>`).join("");
+  }
+
+  document.querySelectorAll(".vd-mappa").forEach(m => {
+    const ids = m.dataset.partiti.split(",");
+    const terzo = id => m.dataset.partiti === "avs,m5s,azione" && id === "azione" ? " terzo" : "";
+    let h = `<div class="vd-riga vd-testa" role="row"><span role="columnheader">Questione</span>` +
+      ids.map(id => `<span role="columnheader" class="${terzo(id)}">${marchio(id, 30)}${PARTITI[id].sigla}</span>`).join("") + `</div>`;
+    DOMANDE.forEach((q, r) => {
+      h += `<div class="vd-riga" role="row" data-r="${r}"><span class="vd-q" role="rowheader"><button type="button" aria-expanded="false"><svg aria-hidden="true"><use href="#i-piu"/></svg>${q}</button></span>` +
+        ids.map(id => {
+          const c = PARTITI[id].celle[r];
+          return `<span role="cell" class="${terzo(id)}">` +
+            `<span class="vd-chi">${marchio(id, 32)}<span class="sigla">${PARTITI[id].sigla}</span></span>` +
+            (c.stato === "niente"
+              ? `<span class="vd-niente vd-punto-vuoto" aria-label="${PARTITI[id].sigla}: nient'altro">–</span>`
+              : `<button type="button" class="vd-punto" data-p="${id}" data-r="${r}" aria-label="${PARTITI[id].sigla}, ${q}: ${DESCR[c.stato]}. Apri"><svg aria-hidden="true"><use href="#${ICONA[c.stato]}"/></svg></button>`) +
+            `<span class="vd-frase">${frase(id, c, false)}</span></span>`;
+        }).join("") + `</div>`;
+    });
+    m.innerHTML = h;
+    m.closest(".vd-blocco").hidden = false;
+  });
+
+  // Tocco sulla questione: la riga si apre e al posto dei punti compaiono le frasi
+  document.addEventListener("click", e => {
+    const q = e.target.closest(".vd-q button");
+    if (!q) return;
+    const riga = q.closest(".vd-riga");
+    const aperta = riga.classList.toggle("aperta");
+    q.setAttribute("aria-expanded", aperta);
+  });
+
+  // Tocco sul punto: pop-up con le parole di quel partito su quella questione
+  const pop = document.querySelector(".vd-pop");
+  document.addEventListener("click", e => {
+    const t = e.target.closest(".vd-punto");
+    if (!t) return;
+    const id = t.dataset.p, r = +t.dataset.r, P = PARTITI[id];
+    pop.querySelector(".vd-pop-marchio").innerHTML = marchio(id, 40);
+    pop.querySelector(".sigla").textContent = P.sigla;
+    pop.querySelector("h2").textContent = DOMANDE[r];
+    pop.querySelector(".vd-pop-corpo").innerHTML = frase(id, P.celle[r], true);
+    pop.querySelector(".vd-pop-piede a").href = `?variant=D&vista=tema&mondo=${document.body.dataset.mondo}#vd-${id}`;
+    pop.showModal();
+  });
+  pop.addEventListener("click", e => {
+    if (e.target === pop || e.target.closest("[data-chiudi]")) pop.close();
+  });
+  pop.querySelector(".vd-pop-piede a").addEventListener("click", e => {
+    if (document.body.dataset.vista !== "tema") return;
+    e.preventDefault();
+    pop.close();
+    document.getElementById(new URL(e.currentTarget.href).hash.slice(1)).scrollIntoView({ behavior: "smooth" });
+  });
+})();
+</script>
+</body>
+</html>

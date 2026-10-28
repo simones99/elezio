@@ -1,0 +1,7 @@
+Fonte dati: https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/POLITICHE_20220925.json (metadata dt_rep 29/08/2022 11:30), letto da https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 via /eligendo/politiche2022/dima-contrassegni.js
+Unica dimensione disponibile: Piccolo, PNG 100x100 RGBA (Grande/Medio/radice -> 404). Scaricati il 2026-10-28.
+m5s.png        n_ord 74   https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Contrassegni/Accettato/Piccolo/074MOVIMENTO5STELLE_SIE.PNG
+avs.png        n_ord 65   https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Contrassegni/Accettato/Piccolo/065AVSNAZIONALE_SIE.PNG
+avs-65A.png    n_ord 65A  https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Contrassegni/Accettato/Piccolo/065AAVS_SIE.PNG   (variante con "Grune Verdi" / "Die Linke")
+avs-65B.png    n_ord 65B  https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Contrassegni/Accettato/Piccolo/65BAVS_SIE.PNG    (variante con "Zeleni" / "Levica")
+azione-iv.png  n_ord 7    https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Contrassegni/Accettato/Piccolo/007AZIONEITALIAVIVACALENDA_SIE.PNG
