@@ -98,7 +98,19 @@ Nessuna data di taglio intermedia: si pubblicano temi fino a T-2. Se le ore non 
 
 ## Lancio
 
-Il lancio pubblico (post, giornalisti, docenti) coincide con l'accensione del quiz 2027, non con una data fissa. Prima si comunica poco: il pubblico arriva per il quiz.
+Il lancio pubblico coincide con l'accensione del quiz 2027, non con una data fissa. Prima si comunica poco: il pubblico arriva per il quiz.
+
+Indirizzo: `elezio.pages.dev`, l'unico indirizzo ufficiale, senza dominio proprio (ticket [Nome e dominio definitivi, handle social](https://github.com/simones99/elezio/issues/19)).
+
+Canali: il maintainer promuove elezio dai propri account personali su **Instagram** e **Reddit**, più il contatto diretto con qualche giornalista o docente. Il progetto non ha canali propri: `@elezio` su Instagram è registrato solo per difesa da imitazioni, vuoto, con bio e link al sito, e non si usa.
+
+Regole per chi promuove:
+
+1. ogni post su elezio dichiara che è un progetto del maintainer, aperto, e porta alla pagina metodologia;
+2. da T-44 al voto, sugli account usati per promuoverlo, niente contenuti di parte;
+3. su Reddit si posta solo dove le regole del subreddit lo permettono (thread dedicati, per esempio in r/italy), un post per subreddit, senza ripetizioni.
+
+Contatto: una casella gratuita a nome del progetto su Proton (server in UE), separata dall'email personale, indicata nelle pagine metodologia e crediti; in più un template di issue "segnalazione" su GitHub. Ogni correzione che ne nasce va nel registro pubblico delle correzioni.
 
 ## Voto anticipato
 
