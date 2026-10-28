@@ -77,7 +77,7 @@ La presentazione affiancata delle schede di due o tre partiti sullo stesso tema.
 _Avoid_: comparazione, versus
 
 **Copertina**:
-La fotografia d'atmosfera della home o di un tema. Non dice nulla su un partito o su una posizione: tolta, la pagina non perde contenuto. Ha sempre una provenienza registrata.
+La fotografia d'atmosfera della home o di un tema; per la home è una breve sequenza di fotogrammi che lo scorrimento fa avanzare. Non dice nulla su un partito o su una posizione: tolta, la pagina non perde contenuto. Ha sempre una provenienza registrata.
 _Avoid_: foto del tema, immagine di copertina, illustrazione
 
 ## Quiz
