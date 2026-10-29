@@ -13,7 +13,7 @@ def _valuta_classificatore(args, cfg):
     temi = classifica.carica_temi()
     soglia = float(cfg["ELEZIO_SOGLIA_CLASSIFICAZIONE"])
     modelli = args.modelli.split(",") if args.modelli else [cfg["ELEZIO_MODELLO_CLASSIFICAZIONE"]]
-    print(f"campione {args.campione.name}: {len(campione)} passaggi, soglia {soglia}")
+    print(f"campione {args.campione.name}: {len(campione)} passaggi, soglia {soglia}, prompt {classifica.PROMPT}")
     for modello in modelli:
         c = classifica.ClassificatoreLLM(cfg, modello, temi)
         previsti = c.classifica(campione)

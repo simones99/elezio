@@ -14,7 +14,7 @@ from openai import OpenAI, RateLimitError
 from .config import PIPELINE, RADICE
 
 PASSAGGI_PER_CHIAMATA = 20
-PROMPT = "classificazione-v1.md"
+PROMPT = "classificazione-v2.md"
 
 
 class TettoSuperato(RuntimeError):
