@@ -61,7 +61,7 @@ Un passaggio è un paragrafo del testo estratto con la sua pagina, spezzato se s
 
 Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
 
-Campione d'oro: circa 60 passaggi del programma AVS 2022 (testo nativo, nessun OCR) etichettati a mano dal maintainer in `pipeline/campione/avs-2022.jsonl` nel repo pubblico (sono citazioni brevi con pagina, entro i limiti decisi nel ticket #4). `pipeline valuta-classificatore` stampa precisione e richiamo per tema per ogni backend. Il backend con il richiamo migliore diventa il default; sotto il 90 percento di richiamo nessun backend è accettato senza revisione umana della classificazione.
+Campione d'oro: 60 passaggi del programma AVS 2022 depositato etichettati a mano dal maintainer in `pipeline/campione/avs-2022.jsonl` nel repo pubblico (sono citazioni brevi con pagina, entro i limiti decisi nel ticket #4). La copia depositata è una scansione: il testo viene da Mistral OCR, segmentato con `segmenta_markdown`. Sono 48 passaggi stratificati per sezione e 12 casi limite, uno per confine di `temi.yaml` (seme 28); ogni riga dice da quale gruppo viene. Comando: `python -m elezio_pipeline valuta-classificatore --modelli <id>,<id>` da `pipeline/`. `pipeline valuta-classificatore` stampa precisione e richiamo per tema per ogni backend. Il backend con il richiamo migliore diventa il default; sotto il 90 percento di richiamo nessun backend è accettato senza revisione umana della classificazione.
 
 ## Bozza
 

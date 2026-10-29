@@ -1,3 +1,5 @@
 ricerca/
 .worktrees/
 .playwright-mcp/
+.env
+__pycache__/
