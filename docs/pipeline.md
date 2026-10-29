@@ -47,7 +47,7 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 | `classificatore` | `ELEZIO_CLASSIFICATORE` | `llm` (alternativa: `jev`) |
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
 | `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30` |
-| `soglia_classificazione` | `ELEZIO_SOGLIA_CLASSIFICAZIONE` | `0.5` |
+| `soglia_classificazione` | `ELEZIO_SOGLIA_CLASSIFICAZIONE` | `0.2` |
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
 
