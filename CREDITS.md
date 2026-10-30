@@ -28,7 +28,7 @@ Regole per aggiungere una voce:
 
 | Foto | Link | Licenza | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
-| Seggio vicino al Colosseo (Roma), video del Parlamento europeo, rif. I257607 | https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607 | © Unione europea, 2024, nota legale del Parlamento europeo | 8 fotogrammi tra 2:47,6 e 2:50,8, in duotono e ritagliati, per la copertina animata della home | prototipo |
+| Seggio vicino al Colosseo (Roma), video del Parlamento europeo, rif. I257607 | https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607 | © Unione europea, 2024, nota legale del Parlamento europeo | 8 fotogrammi tra 2:47,6 e 2:50,8, ritagliati e posterizzati in duotono, per la copertina animata della home | prototipo |
 | Corridoio ambulatori, Ospedale Santa Maria della Misericordia (Rovigo), di Threecharlie | https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg | CC BY-SA 4.0 | Miniatura da 1920 px, in duotono inchiostro-carta e ritagliata, come copertina di prova del tema Sanità | prototipo |
 
 ## Dati e documenti fonte
