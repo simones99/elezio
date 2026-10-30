@@ -77,7 +77,8 @@ Deciso nel ticket [#28](https://github.com/simones99/elezio/issues/28) misurando
 | FI | n.d. | 42,3% | **91,7%** | 91,0% |
 
 - **Mistral OCR è il default.** Via OpenRouter: plugin `file-parser` con `engine: mistral-ocr`, un PDF di una pagina per chiamata, testo letto dalle `annotations` della risposta, provider bloccato su `mistral`. Il guardrail ZDR di OpenRouter non copre i plugin. Costo misurato: circa 0,002 dollari a pagina. Il Markdown dell'uscita si conserva per la segmentazione (`segmenta_markdown`) e si toglie nella normalizzazione.
-- **Tesseract è il ripiego senza chiave.** Tesseract `ita` nell'immagine `pipeline/docker/tesseract`, pagine a 300 dpi in scala di grigi, `--psm 1`. Regge le scansioni pulite, non i timbri e le sigle a margine dell'accordo FI.
+- **Tesseract è il ripiego senza chiave.** Tesseract `ita` nell'immagine `pipeline/docker/tesseract`, pagine a 300 dpi in scala di grigi, `--psm 1`. Regge le scansioni pulite, non i timbri e le sigle a margine dell'accordo FI. L'immagine Docker si costruisce al primo uso e ogni pagina le passa da stdin, senza cartelle montate; la versione (es. `tesseract 5.3.0 ita`) va in `ocr_versione`. Senza chiave, `pipeline acquisisci` registra `ocr: tesseract`.
+- **Il motore lo decide la fonte.** `pipeline estrai` usa il campo `ocr` del YAML, non `ELEZIO_OCR`, e lo scrive in `lavoro/<fonte>/ocr/motore.txt`: una fonte non mescola pagine di due motori, e per cambiarlo si cancella la cartella.
 - **Nessun modello generativo come OCR.** Medium 3.5 legge quasi come Mistral OCR, ma sbaglia riscrivendo parole plausibili, che la verifica delle citazioni non vede (ADR 0005).
 - **Lo strato OCR incorporato non si usa.** Un PDF depositato con strato di testo prodotto da OCR (AVS 2022) si tratta come una scansione: lo strato resta 12 punti sotto Tesseract.
 
@@ -152,7 +153,8 @@ La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel re
 elezio-fonti/
 ├── pdf/<fonte>.pdf
 ├── testo/<fonte>.txt              # testo estratto con marcatori di pagina
-├── lavoro/<fonte>/ocr/p<NNN>.md     # Markdown di Mistral OCR, una pagina per file
+├── lavoro/<fonte>/ocr/p<NNN>.md     # uscita dell'OCR, una pagina per file (Markdown di Mistral OCR o testo di Tesseract)
+├── lavoro/<fonte>/ocr/motore.txt    # motore che ha prodotto le pagine
 ├── lavoro/<fonte>/ocr-log.jsonl     # usage e costo di ogni pagina
 ├── lavoro/<fonte>/passaggi.jsonl    # passaggi segmentati, poi classificati
 ├── lavoro/<fonte>/bozze/<tema>.json

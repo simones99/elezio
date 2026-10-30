@@ -3,21 +3,26 @@
 Vedi docs/pipeline.md, sezione OCR. Default Mistral OCR via OpenRouter: plugin
 `file-parser` con `engine: mistral-ocr`, un PDF di una pagina per chiamata,
 testo letto dalle `annotations` della risposta. Il modello della chiamata non
-genera nulla (`max_tokens` 1): si paga il plugin. Il ripiego Tesseract senza
-chiave non è ancora collegato qui; l'immagine è in pipeline/docker/tesseract.
+genera nulla (`max_tokens` 1): si paga il plugin. Ripiego senza chiave:
+Tesseract `ita` nell'immagine Docker di pipeline/docker/tesseract, pagina a
+300 dpi in scala di grigi, `--psm 1`, come nella misura del ticket #28.
 """
 
 import base64
 import io
+import subprocess
 import time
 
+import pdfplumber
 from openai import OpenAI, RateLimitError
 from pypdf import PdfReader, PdfWriter
 
 from .classifica import TettoSuperato
+from .config import PIPELINE
 
 # il plugin fa l'OCR, il modello serve solo a portare la richiesta
 MODELLO_VEICOLO = "mistralai/ministral-3b-2512"
+IMMAGINE_TESSERACT = "elezio-tesseract"
 
 
 def pdf_di_una_pagina(lettore, n):
@@ -79,12 +84,51 @@ class MistralOCR:
         return "\n\n".join(parti)
 
 
-def ocr_pdf(percorso_pdf, cartella, cfg, ocr=None):
-    """Una pagina alla volta in <cartella>/pNNN.md; le pagine già fatte si saltano."""
-    if cfg["ELEZIO_OCR"] != "mistral-ocr":
-        raise RuntimeError(f"OCR {cfg['ELEZIO_OCR']}: per ora solo mistral-ocr")
-    ocr = ocr or MistralOCR(cfg)
+class Tesseract:
+    """Tesseract in Docker: l'immagine si costruisce al primo uso, la pagina passa da stdin."""
+
+    def __init__(self):
+        self.costo = 0.0
+        self.log = []
+        if subprocess.run(["docker", "image", "inspect", IMMAGINE_TESSERACT], capture_output=True).returncode:
+            subprocess.run(["docker", "build", "-t", IMMAGINE_TESSERACT, str(PIPELINE / "docker" / "tesseract")],
+                           check=True, capture_output=True)
+        uscita = subprocess.run(["docker", "run", "--rm", IMMAGINE_TESSERACT, "--version"],
+                                capture_output=True, text=True, check=True)
+        # es. "tesseract 5.3.0 ita", il valore di ocr_versione nel YAML della fonte
+        self.versione = (uscita.stdout or uscita.stderr).splitlines()[0].strip() + " ita"
+
+    def pagina(self, nome, dati):
+        """Testo di Tesseract per un PDF di una pagina: blocchi separati da una riga vuota."""
+        with pdfplumber.open(io.BytesIO(dati)) as pdf:
+            immagine = pdf.pages[0].to_image(resolution=300).original.convert("L")
+        png = io.BytesIO()
+        immagine.save(png, "PNG")
+        uscita = subprocess.run(
+            ["docker", "run", "--rm", "-i", IMMAGINE_TESSERACT, "stdin", "stdout", "-l", "ita", "--psm", "1"],
+            input=png.getvalue(), capture_output=True, check=True)
+        self.log.append({"file": nome, "motore": self.versione})
+        return uscita.stdout.decode("utf-8")
+
+
+def ocr_pdf(percorso_pdf, cartella, cfg, motore):
+    """Una pagina alla volta in <cartella>/pNNN.md; le pagine già fatte si saltano.
+
+    Il motore è quello del campo `ocr` della fonte e resta scritto in
+    <cartella>/motore.txt: le pagine di una fonte vengono tutte dallo stesso.
+    """
     cartella.mkdir(parents=True, exist_ok=True)
+    segno = cartella / "motore.txt"
+    if segno.exists() and segno.read_text(encoding="utf-8").strip() != motore:
+        raise RuntimeError(f"{cartella}: pagine fatte con {segno.read_text(encoding='utf-8').strip()}, "
+                           f"non con {motore}; cancella la cartella per rifarle")
+    if motore == "mistral-ocr":
+        ocr = MistralOCR(cfg)
+    elif motore == "tesseract":
+        ocr = Tesseract()
+    else:
+        raise RuntimeError(f"motore OCR sconosciuto: {motore}")
+    segno.write_text(motore + "\n", encoding="utf-8")
     lettore = PdfReader(percorso_pdf)
     for n in range(1, len(lettore.pages) + 1):
         uscita = cartella / f"p{n:03d}.md"
