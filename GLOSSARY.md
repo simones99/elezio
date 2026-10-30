@@ -81,7 +81,7 @@ Per una elezione di riferimento, quali temi sono pubblicati e, dentro ogni tema,
 _Avoid_: avanzamento, completezza, posizione assente (per un documento che manca)
 
 **Copertina**:
-La fotografia d'atmosfera della home o di un tema. Non dice nulla su un partito o su una posizione: tolta, la pagina non perde contenuto. Ha sempre una provenienza registrata.
+La fotografia d'atmosfera della home o di un tema; per la home è una breve sequenza di fotogrammi che lo scorrimento fa avanzare. Non dice nulla su un partito o su una posizione: tolta, la pagina non perde contenuto. Ha sempre una provenienza registrata.
 _Avoid_: foto del tema, immagine di copertina, illustrazione
 
 ## Quiz
