@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 30 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -8,7 +8,7 @@ Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005
 | --- | --- | --- | --- | --- |
 | 1 | Acquisizione | URL ufficiale | PDF nel repo privato, SHA-256, copia Wayback, YAML fonte in bozza | no |
 | 2 | Estrazione testo | PDF | testo estratto con marcatori di pagina (`pdfplumber` o `pypdf`) | no |
-| 3 | OCR | PDF scansionato | testo estratto (Tesseract `ita`; ripiego: modello con visione, pagina per pagina come PNG) | solo il ripiego |
+| 3 | OCR | PDF scansionato, anche con strato OCR incorporato | testo estratto (Mistral OCR, una pagina per chiamata; ripiego senza chiave: Tesseract `ita` in Docker) | no (Mistral OCR vuole la chiave, Tesseract no) |
 | 4 | Segmentazione | testo estratto | passaggi (paragrafo, pagina, massimo circa 200 parole) | no |
 | 5 | Classificazione | passaggi, `temi.yaml` | per ogni passaggio 0..n temi con punteggio | sì (backend `llm` o `jev`) |
 | 6 | Bozza | passaggi di un tema, sotto-questioni, dentro/altrove | JSON: posizione, titolo, sintesi, citazioni con pagina | sì |
@@ -42,7 +42,7 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 | chiave | `ELEZIO_LLM_API_KEY` | nessuna (passi 5 e 6 disattivati) |
 | `modello_sintesi` | `ELEZIO_MODELLO_SINTESI` | `mistralai/mistral-large-4-0` |
 | `modello_classificazione` | `ELEZIO_MODELLO_CLASSIFICAZIONE` | `mistralai/ministral-14b-2512` |
-| `modello_ocr` | `ELEZIO_MODELLO_OCR` | `mistralai/mistral-medium-3-5` (multimodale) |
+| `ocr` | `ELEZIO_OCR` | `mistral-ocr` (alternativa senza chiave: `tesseract`) |
 | `provider` | `ELEZIO_LLM_PROVIDER` | `mistral` (su OpenRouter: `provider.order=["mistral"]`, `allow_fallbacks=false`) |
 | `classificatore` | `ELEZIO_CLASSIFICATORE` | `llm` (alternativa: `jev`) |
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
@@ -51,9 +51,26 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
 
-Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Medium 3.5 (multimodale) per l'OCR di ripiego. Gli id sono quelli esposti da OpenRouter il 27 ottobre 2026; si fissano definitivamente alla prima run, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
+Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono quelli esposti da OpenRouter il 27 ottobre 2026; si fissano definitivamente alla prima run, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
 
-Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral, da verificare alla prima run; la stessa API offre OCR 4.1, che può sostituire il ripiego con modello multimodale.
+Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral, da verificare alla prima run; la stessa API offre anche Mistral OCR in modo nativo.
+
+## OCR
+
+Deciso nel ticket [#28](https://github.com/simones99/elezio/issues/28) misurando su 70 pagine di scansioni 2022: AVS, Lega e FI (accordo di centrodestra). Per ogni documento, 300 citazioni da 15 parole prese da un riferimento pulito con lo stesso contenuto (PDF nativo dell'accordo su ANSA, pagina web del programma AVS), cercate nel testo OCR con la normalizzazione della verifica. I valori sono limiti inferiori, perché il riferimento può differire un po' dal depositato.
+
+| Documento | Strato incorporato | Tesseract | Mistral OCR | Medium 3.5 |
+| --- | --- | --- | --- | --- |
+| AVS | 60,3% | 72,3% | **86,0%** | 84,3% |
+| Lega | n.d. | 74,3% | 91,0% | **94,0%** |
+| FI | n.d. | 42,3% | **91,7%** | 91,0% |
+
+- **Mistral OCR è il default.** Via OpenRouter: plugin `file-parser` con `engine: mistral-ocr`, un PDF di una pagina per chiamata, testo letto dalle `annotations` della risposta, provider bloccato su `mistral`. Il guardrail ZDR di OpenRouter non copre i plugin. Costo misurato: circa 0,002 dollari a pagina. Il Markdown dell'uscita si conserva per la segmentazione (`segmenta_markdown`) e si toglie nella normalizzazione.
+- **Tesseract è il ripiego senza chiave.** Tesseract `ita` nell'immagine `pipeline/docker/tesseract`, pagine a 300 dpi in scala di grigi, `--psm 1`. Regge le scansioni pulite, non i timbri e le sigle a margine dell'accordo FI.
+- **Nessun modello generativo come OCR.** Medium 3.5 legge quasi come Mistral OCR, ma sbaglia riscrivendo parole plausibili, che la verifica delle citazioni non vede (ADR 0005).
+- **Lo strato OCR incorporato non si usa.** Un PDF depositato con strato di testo prodotto da OCR (AVS 2022) si tratta come una scansione: lo strato resta 12 punti sotto Tesseract.
+
+Il YAML della fonte registra il motore in `ocr` e, se nota, la versione in `ocr_versione` ([schema-scheda.md](schema-scheda.md)).
 
 ## Passaggi e classificazione
 
@@ -103,7 +120,7 @@ Le 20 ore di revisione non stanno in 4 settimane a 5 ore: la pubblicazione è in
 
 ## Costi
 
-Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR di ripiego, circa 90 pagine, sotto i 3 dollari; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
+Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
 
 La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run. La pagina metodologia pubblica il costo reale di generazione per elezione.
 

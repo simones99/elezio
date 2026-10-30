@@ -82,7 +82,8 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 | `testo_estratto` | sì | Percorso del testo estratto (OCR se la copia depositata è una scansione), usato dalla pipeline per verificare le citazioni. Non pubblicato. |
 | `data_documento` | no | Data riportata sul documento, se presente. |
 | `copie_equivalenti` | no | Lista di `{url, hash, partito}` per le altre copie depositate dello stesso documento (es. le copie Lega e FI dell'accordo di centrodestra 2022). Prova di deposito; la numerazione di pagina valida è solo quella della copia canonica in `url`. |
-| `ocr` | se scansione | `tesseract` \| `llm`. Come è stato prodotto il testo estratto quando la copia canonica non ha livello di testo. Con `llm` si registra anche il modello in `ocr_modello`. |
+| `ocr` | se scansione | `mistral-ocr` \| `tesseract`. Come è stato prodotto il testo estratto quando la copia canonica è una scansione. Conta come scansione anche un PDF con uno strato OCR incorporato: lo strato non si usa come testo estratto. Nessun OCR con modello generativo (ADR 0005). |
+| `ocr_versione` | no | Versione del motore OCR, quando è nota: per Tesseract versione e lingua (es. `tesseract 5.3.0 ita`), per Mistral OCR l'id del modello se l'API lo restituisce. |
 
 ## Tema (`temi.yaml`)
 

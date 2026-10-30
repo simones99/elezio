@@ -13,7 +13,7 @@ DEFAULT = {
     "ELEZIO_LLM_PROVIDER": "mistral",
     "ELEZIO_MODELLO_SINTESI": "mistralai/mistral-large-4-0",
     "ELEZIO_MODELLO_CLASSIFICAZIONE": "mistralai/ministral-14b-2512",
-    "ELEZIO_MODELLO_OCR": "mistralai/mistral-medium-3-5",
+    "ELEZIO_OCR": "mistral-ocr",
     "ELEZIO_CLASSIFICATORE": "llm",
     "ELEZIO_JEV_API_KEY": "",
     "ELEZIO_TETTO_DOLLARI": "30",
