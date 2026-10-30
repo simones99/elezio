@@ -22,11 +22,11 @@ Senza endpoint LLM configurato i passi 5 e 6 non partono e le schede si scrivono
 
 ```
 pipeline acquisisci --elezione 2027          # legge il JSON di Elezioni trasparenti, scarica i programmi dei partiti in perimetro
-pipeline acquisisci --url <url> --fonte <id>
-pipeline estrai --fonte <id>                 # passi 2-4
+pipeline acquisisci --url <url> --fonte <id> --partiti <slug,...> --elezione <anno> [--tipo <tipo>] [--copia-di <fonte>]
+pipeline estrai --fonte <id>                 # passi 2-4: testo nativo oppure OCR, poi passaggi
 pipeline classifica --fonte <id>             # passo 5
 pipeline bozze --fonte <id> [--tema <slug>]  # passi 6-7
-pipeline verifica                            # passo 9, usato anche in CI
+pipeline verifica                            # passo 9, usato anche in CI; per ora solo i YAML delle fonti
 pipeline valuta-classificatore               # precisione e richiamo sul campione d'oro
 ```
 
@@ -47,6 +47,7 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 | `classificatore` | `ELEZIO_CLASSIFICATORE` | `llm` (alternativa: `jev`) |
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
 | `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30` |
+| `fonti` | `ELEZIO_FONTI` | `../elezio-fonti`, il clone locale del repo privato accanto al repo pubblico |
 | `soglia_classificazione` | `ELEZIO_SOGLIA_CLASSIFICAZIONE` | `0.2` |
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
@@ -151,9 +152,13 @@ La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel re
 elezio-fonti/
 ├── pdf/<fonte>.pdf
 ├── testo/<fonte>.txt              # testo estratto con marcatori di pagina
-├── lavoro/<fonte>/passaggi.jsonl
+├── lavoro/<fonte>/ocr/p<NNN>.md     # Markdown di Mistral OCR, una pagina per file
+├── lavoro/<fonte>/ocr-log.jsonl     # usage e costo di ogni pagina
+├── lavoro/<fonte>/passaggi.jsonl    # passaggi segmentati, poi classificati
 ├── lavoro/<fonte>/bozze/<tema>.json
 └── lavoro/log/<run>.jsonl
 ```
 
 Il repo pubblico tiene solo `contenuti/fonti/<fonte>.yaml` con URL, hash e percorso relativo (`testo_estratto`, `copie_equivalenti`, `ocr`). La CI pubblica clona `elezio-fonti` con un token di sola lettura per `pipeline verifica`.
+
+`pipeline acquisisci` registra in `archivio` la prima copia su Wayback identica al byte al PDF scaricato (confronto del digest SHA-1 dell'API CDX), così l'archivio prova anche che il documento non è cambiato. Una fonte riceve `ocr` quando il PDF non ha testo nativo: più di un quarto delle pagine coperte da un'immagine, oppure meno di 50 parole a pagina. Le pagine OCR già salvate non si rifanno, quindi `pipeline estrai` si può rilanciare senza ripagarle. Per il 2022 le fonti sono 7, di cui 4 da OCR (accordo di centrodestra, PD, AVS, +Europa); la scelta della copia canonica dell'accordo è motivata in testa al suo YAML.

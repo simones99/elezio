@@ -18,6 +18,8 @@ DEFAULT = {
     "ELEZIO_JEV_API_KEY": "",
     "ELEZIO_TETTO_DOLLARI": "30",
     "ELEZIO_SOGLIA_CLASSIFICAZIONE": "0.2",
+    # clone locale del repo privato con PDF, testi estratti e lavoro
+    "ELEZIO_FONTI": str(RADICE.parent / "elezio-fonti"),
 }
 
 

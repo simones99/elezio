@@ -1,0 +1,33 @@
+# Copia canonica: quella depositata da Fratelli d'Italia (lista n. 68).
+# Le tre copie depositate (FdI 19 pagine, Lega 14, FI 18) sono lo stesso
+# accordo con impaginazioni diverse. Passate da Mistral OCR e confrontate con
+# il PDF nativo dell'accordo pubblicato da ANSA (300 citazioni da 15 parole,
+# seme 28, come nel ticket #28), passano la verifica: FdI 98,3%, FI 94,3%,
+# Lega 80,0%. Il contenuto è completo in tutte e tre: tolta l'intestazione
+# ripetuta, coprono il testo di riferimento al 99,9% (FdI), 99,6% (FI) e
+# 99,4% (Lega). La copia Lega perde punti perché ha un'altra intestazione
+# ("PER L'ITALIA LEGA SALVINI", titolo "Programma per un Governo di
+# centrodestra") e qualche parola incollata dall'OCR ("crisieconomica").
+# FdI è la copia con meno errori. Misura del 30 ottobre 2026, ticket #27.
+id: 2022-cdx-accordo
+titolo: Per l'Italia. Accordo quadro di programma per un Governo di centrodestra
+tipo: accordo_coalizione
+elezione: 2022
+partiti:
+- fdi
+- lega
+- fi
+url: https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/68/%2868_progr_2_%29-programma.pdf
+hash: 389803a0bb2aca3dafffa7f232af103860dfe7c216f913452590abc8fe0222fc
+acquisito_il: 2026-10-30
+pagine: 19
+testo_estratto: testo/2022-cdx-accordo.txt
+archivio: https://web.archive.org/web/20220830132503/https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/68/%2868_progr_2_%29-programma.pdf
+copie_equivalenti:
+- url: https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/9/%289_progr_2_%29-lega_per_salvini_premier.programma.pdf
+  hash: 6ef250d932e43f45ee5254415fe4eec40a11fc2c0e7fa1c77f60fc816e4597d8
+  partito: lega
+- url: https://dait.interno.gov.it/documenti/trasparenza/POLITICHE_20220925/Documenti/43/%2843_progr_2_%29-pdfa_-_programma_forza_italia_politiche_2022.pdf
+  hash: 3e92373e382abe516216715844010450fef3543864df529d141c86586d0c3d85
+  partito: fi
+ocr: mistral-ocr
