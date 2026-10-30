@@ -11,6 +11,8 @@ se supera circa 200 parole. Due ingressi:
 
 import html
 import re
+import statistics
+from collections import Counter
 from dataclasses import dataclass, field
 
 import pdfplumber
@@ -19,6 +21,16 @@ MAX_PAROLE = 200
 # Una riga che finisce prima di questo margine dal bordo destro del testo è
 # corta: se chiude anche una frase, chiude il paragrafo.
 MARGINE_RIGA_CORTA = 40
+# Una riga più grande del corpo del testo di questo fattore è un titolo, se il
+# documento marca così i titoli: almeno RIGHE_TITOLO_A_CORPO_MAGGIORE righe
+# fuori dalla copertina. Altrimenti i titoli sono le righe in maiuscolo a corpo
+# testo.
+FATTORE_CORPO_TITOLO = 1.15
+RIGHE_TITOLO_A_CORPO_MAGGIORE = 3
+# Nei documenti con i titoli a corpo maggiore, uno spazio verticale oltre questo
+# multiplo dell'interlinea tipica chiude il paragrafo. Negli altri lo spazio
+# separa anche i sottotitoli dal loro paragrafo, e lì non si usa.
+FATTORE_STACCO = 1.6
 
 PUNTO_ELENCO = re.compile(r"^(?:o|-|–|—)\s+")
 TITOLETTO = "•"  # nei programmi depositati il pallino apre un titoletto
@@ -32,6 +44,8 @@ class Riga:
     pagina: int
     testo: str
     x1: float
+    top: float
+    corpo: float  # dimensione mediana dei caratteri
 
 
 @dataclass
@@ -53,7 +67,8 @@ def leggi_righe(percorso_pdf):
                 testo = r["text"].strip()
                 if not testo or NUMERO_PAGINA.match(testo) or SOLO_SIMBOLI.match(testo):
                     continue
-                righe.append(Riga(n, testo, r["x1"]))
+                corpi = [c["size"] for c in r["chars"] if c["text"].strip()]
+                righe.append(Riga(n, testo, r["x1"], r["top"], statistics.median(corpi)))
     return righe
 
 
@@ -103,8 +118,44 @@ def _e_titolo_maiuscolo(testo):
     return testo.isupper() and len(parole) >= 2 and len(testo.split()) <= 12
 
 
+def _corpo_testo(righe):
+    """Il corpo più usato, pesato sui caratteri."""
+    pesi = Counter()
+    for r in righe:
+        pesi[r.corpo] += len(r.testo)
+    return pesi.most_common(1)[0][0]
+
+
+def _interlinea(righe, corpo):
+    """Distanza tipica tra due righe consecutive di testo nella stessa pagina."""
+    salti = [b.top - a.top for a, b in zip(righe, righe[1:])
+             if a.pagina == b.pagina and a.corpo == b.corpo == corpo and b.top > a.top]
+    return statistics.median(salti) if salti else None
+
+
+def _senza_intestazioni(righe):
+    """Toglie intestazioni e piè di pagina: righe identiche su almeno metà delle pagine."""
+    pagine_per_testo = {}
+    for r in righe:
+        pagine_per_testo.setdefault(r.testo, set()).add(r.pagina)
+    soglia = max(2, len({r.pagina for r in righe}) / 2)
+    return [r for r in righe if len(pagine_per_testo[r.testo]) < soglia]
+
+
 def segmenta(righe, fonte):
+    righe = _senza_intestazioni(righe)
     bordo = _bordo_destro(righe)
+    corpo = _corpo_testo(righe)
+    soglia_titolo = corpo * FATTORE_CORPO_TITOLO
+    titoli_a_corpo_maggiore = (sum(1 for r in righe if r.pagina > 1 and r.corpo > soglia_titolo)
+                               >= RIGHE_TITOLO_A_CORPO_MAGGIORE)
+    interlinea = _interlinea(righe, corpo) if titoli_a_corpo_maggiore else None
+
+    def e_titolo(r):
+        if titoli_a_corpo_maggiore:
+            return r.corpo > soglia_titolo
+        return _e_titolo_maiuscolo(r.testo)
+
     paragrafi = []  # (pagina, pagina_fine, sezione, testo)
     sezione, corrente = "", None
 
@@ -114,16 +165,27 @@ def segmenta(righe, fonte):
             paragrafi.append(corrente)
         corrente = None
 
-    titolo_aperto = False  # un titolo maiuscolo può andare su più righe
+    titolo_aperto = False  # un titolo può andare su più righe
+    precedente = None
     for r in righe:
         testo = r.testo
         corta = r.x1 < bordo[r.pagina] - MARGINE_RIGA_CORTA
-        if _e_titolo_maiuscolo(testo) or (titolo_aperto and testo.isupper()):
+        # nei documenti con i titoli a corpo maggiore un blocco non attraversa
+        # la pagina: il cambio pagina vale come stacco
+        cambio_pagina = interlinea and precedente and precedente.pagina != r.pagina
+        stacco = cambio_pagina or (interlinea and precedente
+                                   and r.top - precedente.top > interlinea * FATTORE_STACCO)
+        precedente = r
+        if cambio_pagina:
+            titolo_aperto = False
+        if e_titolo(r) or (titolo_aperto and not titoli_a_corpo_maggiore and testo.isupper()):
             chiudi()
             sezione = f"{sezione} {testo}" if titolo_aperto else testo
             titolo_aperto = True
             continue
         titolo_aperto = False
+        if stacco:
+            chiudi()
         if testo.startswith(TITOLETTO):
             chiudi()
             testo = testo.lstrip(TITOLETTO).strip()
