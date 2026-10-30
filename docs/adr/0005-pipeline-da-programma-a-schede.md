@@ -27,6 +27,8 @@ La pipeline trasforma un documento fonte in schede in stato bozza e ha un solo s
 - SDK e modello di un singolo fornitore fissati nel codice: scartati perché chi lancia la pipeline deve poter scegliere endpoint e modello e perché la pipeline deve funzionare anche senza chiave.
 - PDF nativo del partito come testo di riferimento per le scansioni: scartato perché l'impaginazione differisce da quella della copia depositata e la pagina citata non sarebbe verificabile sull'originale.
 - Testi estratti nel repository pubblico: scartati perché decidono da soli una questione legale ancora aperta.
+- Modello generativo con visione come OCR (Mistral Medium 3.5, pagina per pagina): scartato dopo la misura del ticket #28. Passa quasi tante citazioni quanto Mistral OCR, ma i suoi errori sono riscritture plausibili ("prevedono" diventa "prevedano", "slegata" diventa "sganciata"): la citazione esiste nel testo estratto e non nella pagina, e la verifica deterministica non può accorgersene. Si usa solo un OCR dedicato.
+- Strato OCR incorporato nel PDF depositato come testo estratto: scartato, sulle citazioni di AVS 2022 resta 12 punti sotto Tesseract.
 - Batch API per dimezzare i costi: scartato perché aggiunge attese fino a 24 ore e in Fase 2 la velocità vale più dei pochi dollari risparmiati.
 
 ## Consequences
