@@ -38,7 +38,7 @@ Nessuna posizione senza citazione: ogni frase attribuita a un partito è sostenu
 
 ## Brand Commitments
 
-- Nome: elezio (dominio da confermare, ticket #11).
+- Nome: elezio, all'indirizzo `elezio.pages.dev`, senza dominio proprio (ticket #19).
 - Neutralità visibile: nessun colore di partito nell'interfaccia. I partiti si riconoscono per sigla e contrassegno ufficiale, piccolo, nella forma depositata, mai alterato, sempre con alternativa testuale; i contrassegni non entrano mai nel brand di elezio (icone, anteprime social, materiale promozionale).
 - Il quiz è "orientamento sui programmi", mai "per chi votare".
 - Il risultato non deve sembrare schierato (gerarchie, ordine o colori che suggeriscono una preferenza), né un sito della pubblica amministrazione, né un paper accademico illeggibile da telefono.

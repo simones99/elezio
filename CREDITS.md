@@ -36,6 +36,16 @@ Regole per aggiungere una voce:
 | --- | --- | --- | --- | --- |
 | Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi | prototipo |
 
+## Servizi
+
+Servizi esterni su cui il sito gira, gratuiti. Non sono componenti copiati: si elencano perché il lettore sappia chi tratta le sue richieste.
+
+| Servizio | Link | Condizioni | Uso | Stato |
+| --- | --- | --- | --- | --- |
+| Cloudflare Pages | https://pages.cloudflare.com | Piano gratuito | Hosting del sito statico e indirizzo ufficiale `elezio.pages.dev`, anteprime delle PR (ADR 0006) | previsto |
+| GoatCounter | https://www.goatcounter.com | Piano hosted gratuito; codice EUPL-1.2 | Analytics senza cookie, server in UE (ticket #4) | previsto |
+| Proton Mail | https://proton.me | Piano gratuito | Casella di contatto del progetto per segnalazioni e stampa | previsto |
+
 ## Ispirazione
 
 Progetti letti e studiati, da cui non è stato copiato codice né dati.
