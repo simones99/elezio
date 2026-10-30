@@ -117,7 +117,8 @@ def acquisisci(cfg, url, fonte, partiti, elezione, tipo, copia_di=None):
         "testo_estratto": f"testo/{fonte}.txt",
     }
     if not ha_testo_nativo(percorso):
-        y["ocr"] = cfg["ELEZIO_OCR"]
+        # senza chiave Mistral OCR non parte: la fonte nasce con il ripiego
+        y["ocr"] = cfg["ELEZIO_OCR"] if cfg["ELEZIO_LLM_API_KEY"] else "tesseract"
     scrivi({k: v for k, v in y.items() if v is not None})
     return percorso
 

@@ -58,7 +58,9 @@ def _estrai(args, cfg):
     lavoro = base / "lavoro" / args.fonte
     if y.get("ocr"):
         cartella = lavoro / "ocr"
-        o = ocr.ocr_pdf(pdf, cartella, cfg)
+        o = ocr.ocr_pdf(pdf, cartella, cfg, y["ocr"])
+        if getattr(o, "versione", None) and y.get("ocr_versione") != o.versione:
+            print(f"versione dell'OCR: {o.versione}; registrala in ocr_versione del YAML")
         pagine = ocr.leggi_pagine(cartella)
         testo = estrai.testo_con_pagine_md(pagine)
         passaggi = estrai.segmenta_markdown(pagine, args.fonte)
