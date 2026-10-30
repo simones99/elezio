@@ -143,7 +143,7 @@ components:
 
 **Creative North Star: "L'etichetta civica"**
 
-La pagina di un'etichetta italiana di pregio applicata al dovere civico: capitali romane da iscrizione per i titoli, grottesco largo per il testo e l'interfaccia, inchiostro bruno su carta calda, tantissima aria. Il sistema è costruito per un elettore che legge da telefono in momenti brevi: una riga dice cosa propone un partito, un tocco mostra le parole esatte del programma e la pagina da cui vengono. Le immagini sono due e non si mescolano: il contrassegno ufficiale del partito, piccolo e inalterato, che identifica; e la copertina della home e di ogni tema, una fotografia in duotono inchiostro su carta che dà atmosfera e non dice nulla sui partiti. Tutto il resto è tipografia, filetti e due toni di carta.
+La pagina di un'etichetta italiana di pregio applicata al dovere civico: capitali romane da iscrizione per i titoli, grottesco largo per il testo e l'interfaccia, inchiostro bruno su carta calda, tantissima aria. Il sistema è costruito per un elettore che legge da telefono in momenti brevi: una riga dice cosa propone un partito, un tocco mostra le parole esatte del programma e la pagina da cui vengono. Le immagini sono due e non si mescolano: il contrassegno ufficiale del partito, piccolo e inalterato, che identifica; e la copertina della home e di ogni tema, una fotografia posterizzata in quattro toni di inchiostro su carta che dà atmosfera e non dice nulla sui partiti. Tutto il resto è tipografia, filetti e due toni di carta.
 
 La gerarchia è piatta per principio: ogni partito riceve la stessa sequenza di elementi, lo stesso spazio e lo stesso peso, in ordine alfabetico. Un'assenza ("il programma non tratta il tema") occupa lo stesso posto e la stessa gerarchia di una posizione dichiarata. Lo stato di una posizione si legge da segni grafici (punto pieno, cerchio vuoto, cerchio tratteggiato, trattino), mai da un colore.
 
@@ -184,7 +184,7 @@ Una monocromia bruna su carta calda: un inchiostro, la sua versione attenuata, d
 **Character:** Capitali romane da iscrizione contro un grottesco allargato: la lapide dà il nome alle cose, il grottesco le spiega. Archivo non si usa mai alla larghezza normale: il testo corrente sta a 108%, titoli di scheda a 112%, etichette, sigle e metadati a 118%.
 
 ### Hierarchy
-- **Display** (Cinzel 500, clamp(50px, 13vw, 104px), interlinea 0.95, maiuscolo): solo il nome del tema in testa alla pagina, allineato a sinistra.
+- **Display** (Cinzel 500, clamp(50px, 13vw, 104px), interlinea 0.95, maiuscolo): solo il nome del tema in testa alla pagina, allineato a sinistra, e il marchio "Elezio" dentro la copertina della home (vedi Copertine).
 - **Headline** (Cinzel 500, 19px, interlinea 1.15, maiuscolo, spaziatura 0.02em): titolo della sotto-questione nel pop-up.
 - **Marchio** (Cinzel 600, 19px, spaziatura 0.14em): il nome "Elezio" nella testata.
 - **Title** (Archivo 700, 21px, interlinea 1.22, larghezza 112%, `text-wrap: balance`): titolo della scheda, la riga che dice cosa propone il partito. Nel confronto a due colonne scende a 17.5px. Per una posizione assente il peso scende a 500, stessa dimensione e stesso posto.
@@ -215,10 +215,10 @@ Ritmo: le schede sono separate da un filetto e da 32-34px di aria sopra e sotto;
 
 ## Copertine
 
-La copertina è una fotografia d'atmosfera (vedi `GLOSSARY.md`): non dice nulla su un partito o su una posizione e, tolta, la pagina non perde contenuto. Il titolo del tema sta dentro la foto, ma resta testo HTML. Criterio deciso nel ticket #15; prototipo in `prototipi/15-copertina-sanita/` sul branch `prototipo/10-scheda-confronto`.
+La copertina è una fotografia d'atmosfera (vedi `GLOSSARY.md`): non dice nulla su un partito o su una posizione e, tolta, la pagina non perde contenuto. Il titolo del tema sta dentro la foto, ma resta testo HTML. Criterio deciso nel ticket #15; prototipo in `prototipi/15-copertina-sanita/` sul branch `prototipo/10-scheda-confronto`. La home ha regole sue, decise nel ticket #20 (sezione Home).
 
 ### Dove
-- **Sì:** home (un seggio elettorale: cabina, urna o tabella della sezione) e le 12 pagine tema, una copertina per tema.
+- **Sì:** home (una scheda che entra nell'urna, in fotogrammi: vedi Home) e le 12 pagine tema, una copertina per tema.
 - **No:** pagina partito (un'immagine accanto a un partito diventa un'associazione), confronto, quiz, pop-up.
 - **Tutte o nessuna:** le copertine dei 12 temi si pubblicano insieme; un tema con la foto e uno senza sembrerebbero di importanza diversa. La home può arrivare prima. Le copertine non bloccano la beta.
 - **Stabile tra le elezioni:** la copertina appartiene al tema, non alla scheda né all'elezione.
@@ -228,26 +228,44 @@ La copertina è una fotografia d'atmosfera (vedi `GLOSSARY.md`): non dice nulla 
 - **Da 900px:** pagina divisa. La foto occupa la colonna sinistra (5 parti su 12), alta quanto lo schermo e ferma (`position: sticky`) mentre si scorre; il titolo è dentro la foto in basso a sinistra, `clamp(50px, 7vw, 96px)`. Nella colonna destra (7 parti) scorre tutto il contenuto: definizione, nota, credito, mappa, schede in una colonna sola, azione verso il confronto; il margine laterale scende a 48px.
 - Funziona senza JavaScript: solo CSS.
 
+### Home
+La copertina della home è una sequenza: lo scorrimento infila la scheda nell'urna. Deciso nel ticket #20; prototipo in `prototipi/20-home/` (variante E) sul branch `prototipo/10-scheda-confronto`.
+- **Materiale:** 8 fotogrammi da un video vero, oggi il video del Parlamento europeo I257607 (seggio vicino al Colosseo, 2024) tra 2:47,6 e 2:50,8: la scheda piegata entra nella fessura, la mano si apre e si ritira, resta l'urna vuota. Duotono posterizzato come ogni copertina (vedi Cosa: soggetto e trattamento), ritaglio che esclude il manifesto delle liste con i simboli dei partiti. Mai livelli ritagliati e ritoccati da una foto ferma.
+- **Scorrimento:** la copertina sta in una sezione alta `230svh` con un palco `position: sticky` alto uno schermo. Lo scorrimento sceglie il fotogramma con le animazioni legate allo scorrimento (`animation-timeline: view()`, un intervallo per fotogramma sull'88% della sezione): prima dell'inizio si vede il primo, alla fine resta l'ultimo, poi la pagina riprende a scorrere. Niente video, niente JavaScript.
+- **Senza animazione:** senza supporto (Firefox) o con `prefers-reduced-motion: reduce` la sezione è alta `min(64svh, 620px)` su telefono e `min(72svh, 760px)` da 900px, con fermo il terzo fotogramma (la scheda a metà nella fessura).
+- **Titolo:** il marchio "Elezio" in display (Cinzel 500, `clamp(56px, 17vw, 120px)` su telefono, `clamp(96px, 11vw, 176px)` da 900px), **in inchiostro**, in alto a sinistra dentro la foto con il margine laterale della pagina. Regola inversa rispetto ai temi: la scena è chiara, quindi il titolo deve avere almeno 3:1 di contrasto sul 10% più **scuro** dei pixel della fascia alta, in ogni fotogramma e in entrambi i ritagli (4:5 per il telefono, 16:9 da 900px). Il ritaglio largo sposta la scena perché la scheda non passi sotto il titolo.
+- **Vai ai temi:** sempre visibile durante l'animazione, in basso a sinistra sulla foto: riquadro carta ad angoli vivi, link in maiuscoletto con la freccia in giù, che porta all'indice dei temi.
+- **Peso:** tutti gli 8 fotogrammi insieme stanno negli 80 KB della copertina su telefono (prototipo posterizzato: 32 KB in AVIF, 80 KB in WebP; 40 KB in AVIF il ritaglio largo a 1200 px). Titolo in inchiostro sui fotogrammi posterizzati: 8,0:1.
+- **Dopo la copertina:** riga di credito; promessa in Archivo 700 grande ("I programmi elettorali per tema, con le parole esatte dei partiti."); una riga che spiega; elezione e stato in meta ("Politiche 2022 · beta"); striscia di copertura della Fase 2 (vedi `docs/playbook-fase-2.md`); due azioni tonde, "Leggi per tema" e "Fai il quiz"; l'indice dei 12 temi, righe numerate con nome in Cinzel e definizione, due colonne da 900px; la banda del quiz tra due filetti inchiostro; "Come lavora elezio" in tre regole; il piede con Metodologia, Registro delle correzioni, Segnala un errore, Crediti, Privacy, Codice sorgente e la riga "Sito indipendente, nessun partito lo finanzia".
+- **Scartate:** il quiz come blocco principale, la griglia a scatole, la pagina divisa come i temi, la foto ferma del seggio con cabine (nel duotono non arriva a 3:1).
+
 ### Cosa: soggetto e trattamento
 - **Soggetto:** "lo strumento, non il conflitto". Un luogo o un oggetto ordinario dove il tema accade (una corsia d'ospedale, un'aula, uno sportello, una banchina, un'aula di tribunale vuota, un traliccio).
 - **Esclusi:** volti riconoscibili (solo persone di spalle o lontane); leader e politici; eventi di cronaca (proteste, sbarchi, arresti, disastri, emergenze); simboli, bandiere, manifesti e sedi di partito.
 - **Test dell'opuscolo:** la foto potrebbe stare sull'opuscolo di uno qualunque dei partiti in perimetro senza che nessuno protesti. Se no, si cambia foto.
-- **Duotono:** scala di grigi mappata in modo lineare da inchiostro (`#271002`, le ombre) a carta (`#FAF8F1`, le luci), applicata in build. Nessun'altra tinta, nessun velo, nessuna sfumatura sopra la foto, nessuno schiarimento oltre il duotono.
+- **Duotono posterizzato:** ogni copertina, ferma o in fotogrammi, è ridotta a quattro toni piatti tra inchiostro e carta, come una serigrafia. Deciso nel ticket #25 perché i fotogrammi del video, morbidi e compressi, sembravano di bassa qualità; vale anche per le foto ferme dei temi, così home e temi restano un solo mondo visivo. Procedimento, in build e dentro il file (nessun filtro CSS o SVG):
+  1. scala di grigi, ritaglio e riduzione alla larghezza finale;
+  2. curva: il 6% più scuro diventa nero pieno, il 6% più chiaro bianco pieno;
+  3. levigatura: sfocatura gaussiana di 1,5 px e poi mediana di 9 px, perché i bordi dei toni siano netti e non sfrangiati;
+  4. quattro livelli, mappati in modo lineare da inchiostro (`#271002`, le ombre) a carta (`#FAF8F1`, le luci): `#271002`, `#6D5D52`, `#B4ABA1`, `#FAF8F1`.
+- **Regolazione per immagine:** curva e levigatura si possono regolare foto per foto (o video per video) quando una zona diventa una macchia o un dettaglio importante sparisce; i quattro livelli e i loro toni no. I valori usati vanno nelle modifiche del registro.
+- Nessun'altra tinta, nessun velo, nessuna sfumatura sopra la foto, nessuno schiarimento oltre il trattamento. Le regole di contrasto del titolo si misurano sull'immagine già posterizzata.
+- **Trattamenti scartati (ticket #25):** grana di pellicola (63 KB per gli 8 fotogrammi, quasi invisibile su telefono), contrasto alto con grana (resta una foto morbida), dithering ordinato a pixel grossi (12 KB, ma ha un tono da computer d'epoca), retino a punti (2 MB nel file; nel browser con un filtro SVG non ha peso, ma dipende dal supporto di Safari e ridisegna a ogni fotogramma), grana generata da un filtro SVG. Prototipo: `prototipi/20-home/?variant=E&tratt=…` e `foto/trattamenti.py` sul branch `prototipo/10-scheda-confronto`.
 - **Zona scura per il titolo:** il titolo in carta deve avere almeno 3:1 di contrasto sul 10% più chiaro dei pixel della zona del titolo (terzo inferiore sinistro della foto) in entrambi i ritagli, 4:5 per il telefono e colonna sinistra per lo schermo largo. Se la foto non ha una zona abbastanza scura, si cambia foto: non si scurisce. La definizione e ogni altro testo non vanno mai sopra la foto.
 - **Alt:** descrive la scena in modo neutro, senza aggettivi di giudizio ("Il corridoio degli ambulatori di un ospedale pubblico…").
 
 ### Fonti e provenienza
-- **Ammesse:** Wikimedia Commons con pubblico dominio, CC0, CC BY o CC BY-SA; foto del maintainer, rilasciate CC BY-SA 4.0 come i dati.
-- **Escluse:** licenze NC e ND (il duotono è una modifica), Unsplash e Pexels (licenza propria, provenienza fragile), archivi con condizioni proprie, immagini generate da AI.
-- **Registro:** ogni copertina è registrata in un file di contenuto in `contenuti/` con tema, file, autore, titolo, URL della fonte, licenza, data di presa, modifiche ("duotono, ritaglio"), alt. Senza registrazione completa la build la rifiuta; la pagina `/crediti` si genera dal registro.
-- **Credito visibile:** sotto ogni copertina una riga in stile meta (12px, larghezza 118%, maiuscolo, inchiostro attenuato): "Foto Autore · CC BY-SA 4.0 · Wikimedia Commons · duotono", con link alla pagina del file e alla licenza.
+- **Ammesse:** Wikimedia Commons con pubblico dominio, CC0, CC BY o CC BY-SA; foto del maintainer, rilasciate CC BY-SA 4.0 come i dati; foto e video del Parlamento europeo sotto la sua [nota legale](https://www.europarl.europa.eu/legal-notice/), che ammette riuso e opere derivate citando la fonte ("© Unione europea, anno"), presi dal Multimedia Centre o da Commons.
+- **Escluse:** licenze NC e ND (la posterizzazione è una modifica), Unsplash e Pexels (licenza propria, provenienza fragile), archivi con condizioni proprie (tranne il Parlamento europeo, ammesso sopra), immagini generate da AI.
+- **Registro:** ogni copertina è registrata in un file di contenuto in `contenuti/` con tema, file, autore, titolo, URL della fonte, licenza, data di presa, modifiche ("duotono posterizzato, ritaglio", con curva e levigatura se diverse da quelle standard), alt. Senza registrazione completa la build la rifiuta; la pagina `/crediti` si genera dal registro.
+- **Credito visibile:** sotto ogni copertina una riga in stile meta (12px, larghezza 118%, maiuscolo, inchiostro attenuato): "Foto Autore · CC BY-SA 4.0 · Wikimedia Commons · posterizzata", con link alla pagina del file e alla licenza. Per il Parlamento europeo: "Video Parlamento europeo · © Unione europea, 2024 · fotogrammi posterizzati", con link alla pagina dell'elemento.
 - **Scelta e correzioni:** sceglie il maintainer applicando il test dell'opuscolo; una copertina contestata segue il registro delle correzioni come una scheda: si sostituisce e si annota.
 
 ### Peso e caricamento
 - AVIF con fallback WebP tramite `<picture>`, `srcset` a 390, 780 e 1200 px quando l'originale lo consente; `width` e `height` sempre dichiarati.
 - Al massimo 80 KB per la copertina servita a un telefono; al massimo 250 KB per l'intera pagina tema su telefono, PDF linkati esclusi (i due font pesano circa 115 KB).
 - Nessuna priorità alta né preload sulla copertina: testo e font arrivano prima. `decoding="async"`.
-- Riferimento misurato sul prototipo: ritaglio 4:5 a 780 px, 16 KB in AVIF e 29 KB in WebP.
+- Riferimento misurato sul prototipo: ritaglio 4:5 a 780 px, 16 KB in AVIF e 29 KB in WebP, prima della posterizzazione (che sui fotogrammi della home aggiunge circa il 20% in AVIF).
 
 ### Anteprime social
 Copertine tipografiche generate in build, senza foto e senza contrassegni: il nome del tema in Cinzel su carta crema con il marchio elezio. Una per tema e una per la home; il confronto usa quella del suo tema, la pagina partito quella generica.

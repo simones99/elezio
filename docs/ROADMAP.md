@@ -1,6 +1,6 @@
 # elezio: roadmap fino alle politiche 2027
 
-Ultimo aggiornamento: 27 ottobre 2026. Le decisioni aperte vivono come ticket figli della [Mappa: elezio v1](https://github.com/simones99/elezio/issues/1); questo file è la vista temporale, non l'elenco delle decisioni.
+Ultimo aggiornamento: 28 ottobre 2026. Le decisioni aperte vivono come ticket figli della [Mappa: elezio v1](https://github.com/simones99/elezio/issues/1); questo file è la vista temporale, non l'elenco delle decisioni.
 
 ## Vincoli
 
@@ -18,7 +18,7 @@ Risultato: tutte le decisioni della mappa chiuse, dati 2022 strutturati, repo pu
 - Ricerche già chiuse il 27 ottobre 2026 (findings sui branch `research/*`): Open Election Compass riusabile come bundle statico; fonti 2022 sulle copie depositate al Ministero, 5 su 8 da OCR; regole su loghi, PDF, citazioni e analytics (GoatCounter).
 - Decidere i 12 temi, lo schema dati della scheda, lo stack, il modello del quiz, la pipeline da programma a schede.
 - Prototipo usa e getta di scheda e confronto su mobile.
-- Nome, dominio, licenze, `CREDITS.md`, repo pubblico.
+- Nome, dominio, licenze, `CREDITS.md`, repo pubblico: nome elezio su `elezio.pages.dev`, senza dominio; il repo si apre appena è spuntata la checklist del ticket [Quando e come rendere pubblico il repository](https://github.com/simones99/elezio/issues/21) (README, CONTRIBUTING, codice di condotta, template di segnalazione, gitleaks, impostazioni).
 - Preparare i 10 documenti fonte 2022 (PDF, hash, testo estratto) nella struttura decisa.
 
 Uscita della fase: ADR scritti, glossario aggiornato, mappa senza ticket aperti sul nucleo v1.
@@ -36,17 +36,27 @@ Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
 
 Niente feature oltre il nucleo. Ogni idea nuova finisce nella mappa come fog.
 
-## Fase 2: rilasciare sui programmi 2027 (marzo e aprile 2027, circa 50 ore)
+## Fase 2: rilasciare sui programmi 2027
 
-Risultato: sito aggiornato sui programmi 2027 entro pochi giorni dalla loro pubblicazione, poi lancio pubblico.
+Risultato: sito aggiornato sui programmi 2027 entro pochi giorni dalla loro pubblicazione, poi lancio pubblico. Il playbook completo, con date contate dal giorno del voto (T), è in `docs/playbook-fase-2.md` (deciso in [Playbook Fase 2](https://github.com/simones99/elezio/issues/12)). La legislatura scade nell'autunno 2027: senza voto anticipato i programmi escono intorno ad agosto, quindi la Fase 2 si divide in due.
 
-- Playbook pronto prima (ticket dedicato nella mappa): per ogni partito, dove uscirà il programma, se usare la copia depositata o quella nativa del sito di partito, come gira la pipeline, quanto tempo serve per 120 schede. Finestra utile: dai 44 ai 32 giorni prima del voto.
-- Le schede 2022 restano visibili come storia, marcate chiaramente con l'elezione di riferimento; le schede 2027 le affiancano o le sostituiscono secondo lo schema deciso.
-- Revisione incrementale per tema nell'ordine di `contenuti/temi.yaml`, tutti i partiti insieme per ogni tema, con 10 ore a settimana nelle 2 settimane dopo la pubblicazione; il quiz 2027 sostituisce il 2022 quando ha almeno 20 affermazioni verificate (deciso in [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9), dettagli in `docs/pipeline.md`).
-- Quiz 2027: riusare o riscrivere le affermazioni 2022 e ricompilare ogni risposta del partito dalle schede 2027 (ADR 0007).
-- Lancio: post pubblici, contatto con qualche giornalista o docente, misurazione dei quiz completati.
+### Preparazione (marzo e aprile 2027, circa 50 ore)
 
-Se le elezioni vengono anticipate rispetto alla primavera 2027, la Fase 2 parte appena i programmi escono, con quello che c'è.
+Risultato: checklist di prontezza del playbook tutta spuntata.
+
+- Action di monitoraggio di Elezioni trasparenti, `pipeline acquisisci` end-to-end sul JSON 2022, alias dei partiti, credito API.
+- Striscia di copertura in home, avviso "programmi 2027 in revisione" sui temi, avviso sul quiz 2022: pronti e spenti.
+- Prova generale cronometrata sui dati 2022 (2 temi completi): i tempi misurati sostituiscono le stime del playbook.
+
+### Esecuzione (da T-44 al voto, circa 36 ore fuori dalle 130)
+
+- Pubblicazione solo dalle copie depositate al Ministero; la pipeline gira su ogni programma appena compare.
+- Revisione per tema nell'ordine di `contenuti/temi.yaml`, una PR per tema con schede e 2 affermazioni del quiz, 15 ore a settimana da T-32 a T-15.
+- Le schede 2022 restano visibili come storia; un tema non ancora aggiornato mostra le 2022 con l'avviso.
+- Lancio pubblico all'accensione del quiz 2027 (20 affermazioni, circa T-20): post, contatto con qualche giornalista o docente, misurazione dei quiz completati.
+- Temi pubblicati fino a T-2, congelamento da T-1.
+
+Se il voto viene anticipato, l'esecuzione parte al decreto di scioglimento dal punto della checklist in cui si è.
 
 ## Dopo v1 (non pianificato)
 

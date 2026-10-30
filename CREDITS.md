@@ -28,6 +28,7 @@ Regole per aggiungere una voce:
 
 | Foto | Link | Licenza | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
+| Seggio vicino al Colosseo (Roma), video del Parlamento europeo, rif. I257607 | https://multimedia.europarl.europa.eu/en/video/european-elections-2024-ambiance-shots-of-polling-station-near-the-colosseum-in-the-historical-city-center-of-rome-italy_I257607 | © Unione europea, 2024, nota legale del Parlamento europeo | 8 fotogrammi tra 2:47,6 e 2:50,8, ritagliati e posterizzati in duotono, per la copertina animata della home | prototipo |
 | Corridoio ambulatori, Ospedale Santa Maria della Misericordia (Rovigo), di Threecharlie | https://commons.wikimedia.org/wiki/File:Ospedale_Santa_Maria_della_Misericordia,_interno,_corridoio_ambulatori_quinto_piano_(Rovigo)_01.jpg | CC BY-SA 4.0 | Miniatura da 1920 px, in duotono inchiostro-carta e ritagliata, come copertina di prova del tema Sanità | prototipo |
 
 ## Dati e documenti fonte
@@ -35,6 +36,16 @@ Regole per aggiungere una voce:
 | Fonte | Link | Condizioni | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
 | Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi | prototipo |
+
+## Servizi
+
+Servizi esterni su cui il sito gira, gratuiti. Non sono componenti copiati: si elencano perché il lettore sappia chi tratta le sue richieste.
+
+| Servizio | Link | Condizioni | Uso | Stato |
+| --- | --- | --- | --- | --- |
+| Cloudflare Pages | https://pages.cloudflare.com | Piano gratuito | Hosting del sito statico e indirizzo ufficiale `elezio.pages.dev`, anteprime delle PR (ADR 0006) | previsto |
+| GoatCounter | https://www.goatcounter.com | Piano hosted gratuito; codice EUPL-1.2 | Analytics senza cookie, server in UE (ticket #4) | previsto |
+| Proton Mail | https://proton.me | Piano gratuito | Casella di contatto del progetto per segnalazioni e stampa | previsto |
 
 ## Ispirazione
 
