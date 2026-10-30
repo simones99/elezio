@@ -15,11 +15,11 @@ Conseguenza: ogni fase ha un budget in ore e un solo risultato. Quando una fase 
 
 Risultato: tutte le decisioni della mappa chiuse, dati 2022 strutturati, repo pubblico.
 
-- Ricerche già chiuse il 27 ottobre 2026 (findings sui branch `research/*`): Open Election Compass riusabile come bundle statico; fonti 2022 sulle copie depositate al Ministero, 5 su 8 da OCR; regole su loghi, PDF, citazioni e analytics (GoatCounter).
+- Ricerche già chiuse il 27 ottobre 2026 (findings sui branch `research/*`): Open Election Compass riusabile come bundle statico; fonti 2022 sulle copie depositate al Ministero (7 documenti fonte, 4 da OCR, verificato nel ticket #27); regole su loghi, PDF, citazioni e analytics (GoatCounter).
 - Decidere i 12 temi, lo schema dati della scheda, lo stack, il modello del quiz, la pipeline da programma a schede.
 - Prototipo usa e getta di scheda e confronto su mobile.
 - Nome, dominio, licenze, `CREDITS.md`, repo pubblico: nome elezio su `elezio.pages.dev`, senza dominio; il repo si apre appena è spuntata la checklist del ticket [Quando e come rendere pubblico il repository](https://github.com/simones99/elezio/issues/21) (README, CONTRIBUTING, codice di condotta, template di segnalazione, gitleaks, impostazioni).
-- Preparare i 10 documenti fonte 2022 (PDF, hash, testo estratto) nella struttura decisa.
+- Preparare i 7 documenti fonte 2022 (PDF, hash, testo estratto) nella struttura decisa: sono 7 e non 10 perché FdI, Lega e FI hanno depositato lo stesso accordo e Azione e Italia Viva un programma comune.
 
 Uscita della fase: ADR scritti, glossario aggiornato, mappa senza ticket aperti sul nucleo v1.
 
