@@ -146,11 +146,11 @@ def segmenta(righe, fonte):
     bordo = _bordo_destro(righe)
     corpo = _corpo_testo(righe)
     soglia_titolo = corpo * FATTORE_CORPO_TITOLO
-    titoli_a_corpo = sum(1 for r in righe if r.pagina > 1 and r.corpo > soglia_titolo) >= RIGHE_TITOLO_A_CORPO
-    interlinea = _interlinea(righe, corpo) if titoli_a_corpo else None
+    titoli_a_corpo_maggiore = sum(1 for r in righe if r.pagina > 1 and r.corpo > soglia_titolo) >= RIGHE_TITOLO_A_CORPO
+    interlinea = _interlinea(righe, corpo) if titoli_a_corpo_maggiore else None
 
     def e_titolo(r):
-        if titoli_a_corpo:
+        if titoli_a_corpo_maggiore:
             return r.corpo > soglia_titolo
         return _e_titolo_maiuscolo(r.testo)
 
@@ -168,15 +168,15 @@ def segmenta(righe, fonte):
     for r in righe:
         testo = r.testo
         corta = r.x1 < bordo[r.pagina] - MARGINE_RIGA_CORTA
-        # nei documenti a schede (titoli a corpo maggiore) un blocco non
-        # attraversa la pagina: il cambio pagina vale come stacco
+        # nei documenti con i titoli a corpo maggiore un blocco non attraversa
+        # la pagina: il cambio pagina vale come stacco
         cambio_pagina = interlinea and precedente and precedente.pagina != r.pagina
         stacco = cambio_pagina or (interlinea and precedente
                                    and r.top - precedente.top > interlinea * FATTORE_STACCO)
         precedente = r
         if cambio_pagina:
             titolo_aperto = False
-        if e_titolo(r) or (titolo_aperto and not titoli_a_corpo and testo.isupper()):
+        if e_titolo(r) or (titolo_aperto and not titoli_a_corpo_maggiore and testo.isupper()):
             chiudi()
             sezione = f"{sezione} {testo}" if titolo_aperto else testo
             titolo_aperto = True
