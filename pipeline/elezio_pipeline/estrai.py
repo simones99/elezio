@@ -22,10 +22,11 @@ MAX_PAROLE = 200
 # corta: se chiude anche una frase, chiude il paragrafo.
 MARGINE_RIGA_CORTA = 40
 # Una riga più grande del corpo del testo di questo fattore è un titolo, se il
-# documento marca così i titoli: almeno RIGHE_TITOLO_A_CORPO righe fuori dalla
-# copertina. Altrimenti i titoli sono le righe in maiuscolo a corpo testo.
+# documento marca così i titoli: almeno RIGHE_TITOLO_A_CORPO_MAGGIORE righe
+# fuori dalla copertina. Altrimenti i titoli sono le righe in maiuscolo a corpo
+# testo.
 FATTORE_CORPO_TITOLO = 1.15
-RIGHE_TITOLO_A_CORPO = 3
+RIGHE_TITOLO_A_CORPO_MAGGIORE = 3
 # Nei documenti con i titoli a corpo maggiore, uno spazio verticale oltre questo
 # multiplo dell'interlinea tipica chiude il paragrafo. Negli altri lo spazio
 # separa anche i sottotitoli dal loro paragrafo, e lì non si usa.
@@ -146,7 +147,8 @@ def segmenta(righe, fonte):
     bordo = _bordo_destro(righe)
     corpo = _corpo_testo(righe)
     soglia_titolo = corpo * FATTORE_CORPO_TITOLO
-    titoli_a_corpo_maggiore = sum(1 for r in righe if r.pagina > 1 and r.corpo > soglia_titolo) >= RIGHE_TITOLO_A_CORPO
+    titoli_a_corpo_maggiore = (sum(1 for r in righe if r.pagina > 1 and r.corpo > soglia_titolo)
+                               >= RIGHE_TITOLO_A_CORPO_MAGGIORE)
     interlinea = _interlinea(righe, corpo) if titoli_a_corpo_maggiore else None
 
     def e_titolo(r):
