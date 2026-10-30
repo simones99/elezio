@@ -51,9 +51,19 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
 
-Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono quelli esposti da OpenRouter il 27 ottobre 2026; si fissano definitivamente alla prima run, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
+Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono verificati il 30 ottobre 2026 su OpenRouter e su `api.mistral.ai` (tabella sotto); il modello di sintesi si fissa alla prima run delle bozze, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
 
-Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral, da verificare alla prima run; la stessa API offre anche Mistral OCR in modo nativo.
+Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral; la stessa API offre anche Mistral OCR in modo nativo.
+
+| Uso | Id su OpenRouter | Id nativo su `api.mistral.ai` |
+| --- | --- | --- |
+| Sintesi (default) | `mistralai/mistral-large-4-0` | `mistral-large-4-0` |
+| Classificazione (default) | `mistralai/ministral-14b-2512` | `ministral-14b-2512` |
+| Classificazione, provato | `mistralai/ministral-8b-2512` | `ministral-8b-2512` |
+| Classificazione, provato | `mistralai/mistral-small-2603` | `mistral-small-2603` |
+| OCR (default) | plugin `file-parser`, `engine: mistral-ocr` | `mistral-ocr-4-1` (Mistral OCR 4.1) |
+
+`mistralai/mistral-large-2512` esiste solo su OpenRouter, senza un id nativo corrispondente: non si usa. Sull'API nativa `mistral-ocr-2512` è Mistral OCR 3.0, non la 4.1, e `mistral-ocr-latest` è un alias da non registrare. Il plugin di OpenRouter non dice quale versione di Mistral OCR applica, per questo `ocr_versione` resta facoltativo. Elenco nativo letto da `GET /v1/models`, che non consuma token; le chiamate della pipeline passano da OpenRouter senza una chiave Mistral collegata, quindi si paga solo OpenRouter.
 
 ## OCR
 
@@ -79,6 +89,17 @@ Un passaggio è un paragrafo del testo estratto con la sua pagina, spezzato se s
 Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
 
 Campione d'oro: 120 passaggi del programma AVS 2022 depositato etichettati a mano dal maintainer in `pipeline/campione/avs-2022.jsonl` nel repo pubblico (sono citazioni brevi con pagina, entro i limiti decisi nel ticket #4). La copia depositata è una scansione: il testo viene da Mistral OCR, segmentato con `segmenta_markdown`. Due lotti da 60, scelti da `pipeline/campione/seleziona.py`: il primo ha 48 passaggi stratificati per sezione e 12 casi limite, uno per confine di `temi.yaml` (seme 28); il secondo aggiunge un secondo caso limite per i confini che ne hanno un altro (9) e stratificati fino a 120 (seme 29). Ogni riga dice lotto e origine. Le etichette seguono la regola "ogni proposta un solo tema" degli esempi dentro/altrove. Comando: `python -m elezio_pipeline valuta-classificatore --modelli <id>,<id>` da `pipeline/`. `pipeline valuta-classificatore` stampa precisione e richiamo per tema per ogni backend. Il backend con il richiamo migliore diventa il default; sotto il 90 percento di richiamo nessun backend è accettato senza revisione umana della classificazione.
+
+Misura del ticket [#28](https://github.com/simones99/elezio/issues/28) (29-30 ottobre 2026), backend `llm`, 120 passaggi, 121 temi veri, prompt v2, soglia 0,2:
+
+| Modello | Precisione | Richiamo | Costo |
+| --- | --- | --- | --- |
+| `mistralai/ministral-14b-2512` | 61,9% | **86,0%** | 0,004 $ |
+| `mistralai/ministral-8b-2512` | 67,4% | 80,2% | 0,003 $ |
+| `mistralai/mistral-small-2603` | 73,7% | 71,9% | 0,005 $ |
+| `mistralai/mistral-large-4-0` | 78,2% | 80,2% | 0,110 $ |
+
+Default `ministral-14b-2512`, sotto il 90 percento: la classificazione passa dalla revisione umana. Large non fa meglio del 14B sul richiamo, quindi il limite non è la fascia Ministral: sono i confini tra temi (giustizia e ambiente sui reati ambientali, ambiente sul benessere animale) e la soggettività del campione. Con 120 passaggi l'incertezza sul richiamo è di circa ±6 punti. Il backend `jev` non è misurato: manca la chiave.
 
 ## Bozza
 
