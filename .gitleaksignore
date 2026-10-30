@@ -1,0 +1,4 @@
+# Falsi positivi di gitleaks, uno per riga come impronta commit:file:regola:riga.
+# pipeline/.env.example: ELEZIO_JEV_API_KEY è vuota, la regola generic-api-key
+# prende come valore la riga dopo (ELEZIO_TETTO_DOLLARI=30).
+8e11f29514989b69cfafc23035d7009330bf8254:pipeline/.env.example:generic-api-key:17
