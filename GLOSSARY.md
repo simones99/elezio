@@ -76,6 +76,10 @@ _Avoid_: status, flag, superata (non è uno stato)
 La presentazione affiancata delle schede di due o tre partiti sullo stesso tema.
 _Avoid_: comparazione, versus
 
+**Copertura**:
+Per una elezione di riferimento, quali temi sono pubblicati e, dentro ogni tema, quali partiti hanno un documento fonte disponibile. Un partito senza documento fonte disponibile per quella elezione è "non disponibile": non ha una posizione assente, perché manca il documento, non la proposta. Un tema si pubblica con i partiti disponibili, senza aspettare gli altri.
+_Avoid_: avanzamento, completezza, posizione assente (per un documento che manca)
+
 **Copertina**:
 La fotografia d'atmosfera della home o di un tema. Non dice nulla su un partito o su una posizione: tolta, la pagina non perde contenuto. Ha sempre una provenienza registrata.
 _Avoid_: foto del tema, immagine di copertina, illustrazione

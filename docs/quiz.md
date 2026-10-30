@@ -1,6 +1,6 @@
 # Quiz: affermazioni, risposte dei partiti, configurazione di Open Election Compass
 
-Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0007](adr/0007-modello-del-quiz.md); termini in [GLOSSARY.md](../GLOSSARY.md); deciso nel ticket [Modello del quiz di orientamento](https://github.com/simones99/elezio/issues/8). Questo file è la vista operativa e cambia più spesso dell'ADR.
+Ultimo aggiornamento: 28 ottobre 2026. Decisioni di fondo in [ADR 0007](adr/0007-modello-del-quiz.md); termini in [GLOSSARY.md](../GLOSSARY.md); deciso nel ticket [Modello del quiz di orientamento](https://github.com/simones99/elezio/issues/8), con il passaggio al quiz 2027 deciso nel ticket [Playbook Fase 2](https://github.com/simones99/elezio/issues/12). Questo file è la vista operativa e cambia più spesso dell'ADR.
 
 ## Layout dei file
 
@@ -72,6 +72,12 @@ Un'affermazione entra nel JSON del quiz solo se:
 
 Un'affermazione `contestata`, o che cita una scheda `contestata`, resta fuori finché la segnalazione non si chiude. Se le affermazioni pubblicabili sono meno di 20, `/quiz/` non carica Open Election Compass e mostra un avviso di sospensione. Sul sito c'è solo il quiz dell'elezione più recente che ha almeno 20 affermazioni pubblicabili.
 
+### Passaggio al quiz 2027
+
+Il quiz 2027 si costruisce tema per tema: le 2 affermazioni di un tema, con le risposte dei partiti, stanno nella stessa PR delle schede 2027 di quel tema e si pubblicano con il suo merge. `ordine` si riassegna a ogni PR, così resta senza buchi e senza due temi uguali di seguito. Il quiz 2027 si accende alla ventesima affermazione pubblicabile, cioè dopo circa 10 temi, e la sua accensione è il lancio pubblico ([playbook-fase-2.md](playbook-fase-2.md)).
+
+Fino ad allora resta il quiz 2022, con l'avviso "basato sui programmi 2022, non su quelli di questa elezione", e sparisce dalla home appena esiste un documento fonte 2027. Un partito il cui programma 2027 arriva tardi diventa partito del quiz appena ha la fonte: le affermazioni a cui non risponde ancora escono dal quiz per la regola 2 finché la sua PR non le completa.
+
 ## Criteri di formulazione
 
 Pubblicati nella pagina metodologia.
@@ -82,7 +88,7 @@ Pubblicati nella pagina metodologia.
 4. Discriminazione: nessuna affermazione su cui tutti rispondono uguale; ogni riga del quiz (partito o raggruppamento) ha almeno 6 accordi e 6 disaccordi.
 5. Linguaggio da terza media, al massimo 20 parole.
 
-Copertura: 24 affermazioni, 2 per tema, mai due sulla stessa sotto-questione. Ordine fisso con i temi alternati, mai due affermazioni dello stesso tema di seguito. Affermazioni e risposte si scrivono a mano, senza LLM, dopo che le schede del tema sono verificate.
+Copertura: 24 affermazioni, 2 per tema, mai due sulla stessa sotto-questione. Ordine fisso con i temi alternati, mai due affermazioni dello stesso tema di seguito. Affermazioni e risposte si scrivono a mano, senza LLM, dopo che le schede del tema sono verificate (dal 2027 nella stessa PR del tema).
 
 ## Controlli
 
