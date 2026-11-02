@@ -19,7 +19,7 @@ Chi partecipa a elezio (issue, PR, commenti, segnalazioni) si impegna a rendere 
 
 ## Applicazione
 
-Il maintainer può modificare o rimuovere commenti, issue e PR che violano questo codice, bloccare temporaneamente o in modo permanente chi lo viola, e limitare le interazioni sul repository nei periodi di campagna elettorale. Le segnalazioni di comportamenti scorretti vanno alla casella di contatto del progetto, indicata nelle pagine metodologia e crediti del sito; il maintainer le tratta in modo riservato.
+Il maintainer può modificare o rimuovere commenti, issue e PR che violano questo codice, bloccare temporaneamente o in modo permanente chi lo viola, e limitare le interazioni sul repository nei periodi di campagna elettorale. Le segnalazioni di comportamenti scorretti vanno alla casella di contatto del progetto, elezio.contatti@proton.me; il maintainer le tratta in modo riservato.
 
 ## Attribuzione
 
