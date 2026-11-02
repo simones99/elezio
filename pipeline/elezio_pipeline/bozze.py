@@ -156,7 +156,9 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     """Scrive le schede del tema per i partiti della fonte e restituisce il costo in dollari.
 
     Le chiamate finiscono in `log`, anche se il passo si ferma a metà. Senza passaggi
-    del tema la posizione è assente e il modello non viene chiamato.
+    del tema la posizione è assente e il modello non viene chiamato, a meno che qualche
+    passaggio non abbia il punteggio del tema: allora l'assenza non è dimostrata e il
+    passo si ferma con BozzaImpossibile.
     """
     tema = next((t for t in classifica.carica_temi() if t["id"] == tema_id), None)
     if tema is None:
@@ -171,11 +173,11 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     if not partiti:
         return 0.0
     del_tema = [p for p in passaggi if tema_id in p["temi"]]
-    senza_punteggio = [p["id"] for p in passaggi if classifica.temi_mancanti(p["punteggi"], [tema])]
+    id_senza_punteggio = [p["id"] for p in passaggi if classifica.temi_mancanti(p.get("punteggi", {}), [tema])]
     if not del_tema:
-        if senza_punteggio:  # l'assenza non è dimostrata: la scheda direbbe più di quello che si sa
+        if id_senza_punteggio:  # l'assenza non è dimostrata: la scheda direbbe più di quello che si sa
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
-                                   + ", ".join(senza_punteggio)
+                                   + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
         for partito in partiti:
             schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
@@ -188,8 +190,8 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     llm = ClienteLLM(cfg, cfg["ELEZIO_MODELLO_SINTESI"])
     llm.log = log
     risposta, valide, note = _genera(llm, tema, del_tema, pagine)
-    if senza_punteggio:
-        note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(senza_punteggio))
+    if id_senza_punteggio:
+        note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
     salvata.parent.mkdir(parents=True, exist_ok=True)
     salvata.write_text(json.dumps(risposta, ensure_ascii=False, indent=2), encoding="utf-8")

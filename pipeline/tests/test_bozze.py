@@ -178,6 +178,29 @@ def test_nessun_passaggio_del_tema_e_uno_senza_punteggio_lascia_intatta_la_sched
     assert progetto.leggi_scheda()[0]["titolo"] == "Vecchia"
 
 
+def test_passaggio_senza_il_campo_punteggi_vale_come_senza_punteggio(progetto, modello, capsys):
+    _senza_temi(progetto)
+    passaggi = progetto.passaggi()
+    del passaggi[3]["punteggi"]
+    progetto.scrivi_passaggi(passaggi)
+    assert _bozze() == 1
+    assert not progetto.scheda().exists()
+    assert f"{FONTE}-0004" in capsys.readouterr().out
+
+
+def test_con_tutte_le_schede_gia_verificate_il_punteggio_mancante_non_ferma(progetto, modello, capsys):
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    progetto.scrivi_scheda({
+        "partito": "prova", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata", "titolo": "A mano",
+        "citazioni": [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}], "stato": "verificata",
+        "verificata_il": datetime.date(2026, 11, 2), "revisore": "revisore", "aggiornata_il": datetime.date(2026, 11, 2),
+    })
+    assert not _bozze()
+    assert modello.richieste == []
+    assert progetto.leggi_scheda()[0]["titolo"] == "A mano"
+
+
 def test_passaggio_senza_il_punteggio_di_un_altro_tema_non_blocca_assente(progetto, modello):
     _senza_temi(progetto)
     _togli_punteggio(progetto, 4, "fisco")
