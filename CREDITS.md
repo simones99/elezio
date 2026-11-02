@@ -45,7 +45,7 @@ Servizi esterni su cui il sito gira, gratuiti. Non sono componenti copiati: si e
 | --- | --- | --- | --- | --- |
 | Cloudflare Pages | https://pages.cloudflare.com | Piano gratuito | Hosting del sito statico e indirizzo ufficiale `elezio.pages.dev`, anteprime delle PR (ADR 0006) | previsto |
 | GoatCounter | https://www.goatcounter.com | Piano hosted gratuito; codice EUPL-1.2 | Analytics senza cookie, server in UE (ticket #4) | previsto |
-| Proton Mail | https://proton.me | Piano gratuito | Casella di contatto del progetto per segnalazioni e stampa | previsto |
+| Proton Mail | https://proton.me | Piano gratuito | Casella di contatto del progetto per segnalazioni e stampa, `elezio.contatti@proton.me` | incluso |
 
 ## Ispirazione
 
