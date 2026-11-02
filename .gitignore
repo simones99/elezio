@@ -3,3 +3,5 @@ ricerca/
 .playwright-mcp/
 .env
 __pycache__/
+*.egg-info/
+build/

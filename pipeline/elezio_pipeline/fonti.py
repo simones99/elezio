@@ -19,15 +19,18 @@ from pathlib import Path
 import pdfplumber
 import yaml
 
-from .config import RADICE
+from . import config
 
-CONTENUTI_FONTI = RADICE / "contenuti" / "fonti"
 TIPI = {"programma", "programma_esteso", "accordo_coalizione", "documento_programmatico"}
 OCR = {"mistral-ocr", "tesseract"}
 OBBLIGATORI = ["id", "titolo", "tipo", "elezione", "partiti", "url", "hash", "acquisito_il", "pagine", "testo_estratto"]
 FACOLTATIVI = ["archivio", "data_documento", "copie_equivalenti", "ocr", "ocr_versione"]
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 AGENTE = "elezio-pipeline/0.1 (+https://github.com/simones99/elezio)"
+
+
+def contenuti_fonti():
+    return config.contenuti() / "fonti"
 
 
 def cartella_fonti(cfg):
@@ -124,15 +127,15 @@ def acquisisci(cfg, url, fonte, partiti, elezione, tipo, copia_di=None):
 
 
 def leggi(fonte):
-    return yaml.safe_load((CONTENUTI_FONTI / f"{fonte}.yaml").read_text(encoding="utf-8"))
+    return yaml.safe_load((contenuti_fonti() / f"{fonte}.yaml").read_text(encoding="utf-8"))
 
 
 def scrivi(y):
-    CONTENUTI_FONTI.mkdir(parents=True, exist_ok=True)
+    contenuti_fonti().mkdir(parents=True, exist_ok=True)
     ordine = OBBLIGATORI + FACOLTATIVI
     y = {k: y[k] for k in sorted(y, key=lambda k: ordine.index(k) if k in ordine else len(ordine))}
     testo = yaml.safe_dump(y, sort_keys=False, allow_unicode=True, width=1000)
-    (CONTENUTI_FONTI / f"{y['id']}.yaml").write_text(testo, encoding="utf-8")
+    (contenuti_fonti() / f"{y['id']}.yaml").write_text(testo, encoding="utf-8")
 
 
 def _errori(percorso, y, fonti_dir):
@@ -193,7 +196,7 @@ def verifica(cfg):
     fonti_dir = cartella_fonti(cfg)
     fonti_dir = fonti_dir if fonti_dir.exists() else None
     esito = {}
-    for p in sorted(CONTENUTI_FONTI.glob("*.yaml")):
+    for p in sorted(contenuti_fonti().glob("*.yaml")):
         e = _errori(p, yaml.safe_load(p.read_text(encoding="utf-8")), fonti_dir)
         if e:
             esito[p.name] = e

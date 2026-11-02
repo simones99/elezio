@@ -5,24 +5,18 @@ definizione, sotto-questioni ed esempi dentro/altrove di ogni tema, uscita
 JSON strutturata con un punteggio per tema. Il backend `jev` non c'è ancora.
 """
 
-import json
-import time
-
 import yaml
-from openai import OpenAI, RateLimitError
 
-from .config import PIPELINE, RADICE
+from . import config
+from .config import PIPELINE
+from .llm import ClienteLLM, TettoSuperato  # noqa: F401  (TettoSuperato lo usa anche ocr)
 
 PASSAGGI_PER_CHIAMATA = 20
 PROMPT = "classificazione-v2.md"
 
 
-class TettoSuperato(RuntimeError):
-    pass
-
-
-def carica_temi(percorso=RADICE / "contenuti" / "temi.yaml"):
-    return yaml.safe_load(percorso.read_text(encoding="utf-8"))
+def carica_temi():
+    return yaml.safe_load((config.contenuti() / "temi.yaml").read_text(encoding="utf-8"))
 
 
 def _descrivi_temi(temi):
@@ -70,57 +64,31 @@ class ClassificatoreLLM:
     """Classificatore su un endpoint compatibile OpenAI (OpenRouter, Ollama, ...)."""
 
     def __init__(self, cfg, modello=None, temi=None):
-        if not cfg["ELEZIO_LLM_API_KEY"]:
-            raise RuntimeError("ELEZIO_LLM_API_KEY vuota: la classificazione non parte")
-        self.cfg = cfg
-        self.modello = modello or cfg["ELEZIO_MODELLO_CLASSIFICAZIONE"]
+        self.llm = ClienteLLM(cfg, modello or cfg["ELEZIO_MODELLO_CLASSIFICAZIONE"])
         self.temi = temi or carica_temi()
         self.sistema = prompt_di_sistema(self.temi)
-        self.client = OpenAI(base_url=cfg["ELEZIO_LLM_BASE_URL"], api_key=cfg["ELEZIO_LLM_API_KEY"])
-        self.tetto = float(cfg["ELEZIO_TETTO_DOLLARI"])
-        self.costo = 0.0
-        self.log = []
 
-    def _extra(self):
-        extra = {"usage": {"include": True}}
-        if "openrouter.ai" in self.cfg["ELEZIO_LLM_BASE_URL"] and self.cfg["ELEZIO_LLM_PROVIDER"]:
-            # residenza dell'inferenza: niente instradamento su altri host
-            extra["provider"] = {"order": [self.cfg["ELEZIO_LLM_PROVIDER"]],
-                                 "allow_fallbacks": False, "zdr": True}
-        return extra
+    @property
+    def modello(self):
+        return self.llm.modello
+
+    @property
+    def costo(self):
+        return self.llm.costo
+
+    @property
+    def log(self):
+        return self.llm.log
 
     def _chiama(self, gruppo):
         utente = "\n\n".join(f"[{p['id']}] {p['testo']}" for p in gruppo)
-        for attesa in (15, None):
-            try:
-                risposta = self._completa(utente)
-                break
-            except RateLimitError:
-                if attesa is None:
-                    raise
-                time.sleep(attesa)
-        uso = risposta.usage.model_dump() if risposta.usage else {}
-        self.costo += uso.get("cost") or 0.0
-        self.log.append({"modello": self.modello, "passaggi": len(gruppo), "usage": uso})
-        return json.loads(risposta.choices[0].message.content)["passaggi"]
-
-    def _completa(self, utente):
-        return self.client.chat.completions.create(
-            model=self.modello,
-            temperature=0,
-            messages=[{"role": "system", "content": self.sistema},
-                      {"role": "user", "content": utente}],
-            response_format={"type": "json_schema", "json_schema": {
-                "name": "classificazione", "strict": True, "schema": _schema(self.temi)}},
-            extra_body=self._extra(),
-        )
+        messaggi = [{"role": "system", "content": self.sistema}, {"role": "user", "content": utente}]
+        return self.llm.completa(messaggi, "classificazione", _schema(self.temi), passaggi=len(gruppo))["passaggi"]
 
     def classifica(self, passaggi):
         """{id passaggio: {tema: punteggio}} per tutti i passaggi."""
         esito = {}
         for i in range(0, len(passaggi), PASSAGGI_PER_CHIAMATA):
-            if self.costo >= self.tetto:
-                raise TettoSuperato(f"tetto di {self.tetto} dollari raggiunto")
             gruppo = passaggi[i:i + PASSAGGI_PER_CHIAMATA]
             attesi = {p["id"] for p in gruppo}
             for voce in self._chiama(gruppo):
