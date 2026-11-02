@@ -12,7 +12,7 @@ from .config import PIPELINE
 from .llm import ClienteLLM, TettoSuperato  # noqa: F401  (TettoSuperato lo usa anche ocr)
 
 PASSAGGI_PER_CHIAMATA = 20
-PROMPT = "classificazione-v2.md"
+PROMPT = "classificazione-v3.md"
 
 
 def carica_temi():

@@ -61,6 +61,18 @@ def test_vista_del_revisore_divide_assegnati_scartati_e_senza_temi(progetto, mod
     assert "-0004" not in uscita
 
 
+def test_vista_del_revisore_toglie_gli_zeri_e_ordina_gli_scartati_dal_piu_alto(progetto, modello, capsys):
+    modello.risposte.append(_risposta(
+        (1, [("sanita", 0)]), (2, [("sanita", 0.05)]), (3, [("sanita", 0.15)]), (4, [("sanita", 0.1)])))
+    assert not main(["classifica", "--fonte", FONTE])
+    capsys.readouterr()
+    assert not main(["passaggi", "--fonte", FONTE, "--tema", "sanita"])
+    uscita = capsys.readouterr().out
+    scartati = uscita.split("Scartati con punteggio basso", 1)[1].split("Senza temi", 1)[0]
+    assert "(3)" in scartati and "-0001" not in scartati
+    assert scartati.index("-0003") < scartati.index("-0004") < scartati.index("-0002")
+
+
 def test_vista_del_revisore_senza_classificazione_lo_dice(progetto, capsys):
     assert main(["passaggi", "--fonte", FONTE, "--tema", "sanita"]) == 1
     assert "classifica" in capsys.readouterr().out

@@ -96,7 +96,8 @@ def _passaggi(args, cfg):
         return 1
     t = args.tema
     assegnati = [p for p in passaggi if t in p["temi"]]
-    scartati = [p for p in passaggi if t not in p["temi"] and t in p["punteggi"]]
+    scartati = sorted((p for p in passaggi if t not in p["temi"] and p["punteggi"].get(t)),
+                      key=lambda p: -p["punteggi"][t])  # 0 vuol dire che il passaggio non c'entra
     senza = [p for p in passaggi if not p["temi"]]
     print(f"Assegnati a {t} ({len(assegnati)})")
     for p in assegnati:

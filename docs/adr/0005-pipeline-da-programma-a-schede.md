@@ -11,7 +11,7 @@ La pipeline trasforma un documento fonte in schede in stato bozza e ha un solo s
 
 **Il documento si spezza in passaggi classificati per tema, poi si sintetizza per tema.** Ogni paragrafo del testo estratto diventa un passaggio con numero di pagina; un classificatore assegna a ogni passaggio zero o più temi; una chiamata generativa per coppia fonte-tema produce la bozza sui soli passaggi del tema. Le chiamate restano piccole, il lavoro gira anche su un modello locale, e l'insieme dei passaggi classificati è un dato riusabile (quiz, controllo di copertura).
 
-**Il modello restituisce JSON, la pipeline scrive i file.** Il modello non scrive mai Markdown. Uno script valida il JSON contro lo schema della scheda, esegue la verifica delle citazioni e solo se passa scrive il file con `stato: bozza` e `bozza_da` compilato.
+**Il modello restituisce JSON, la pipeline scrive i file.** Il modello non scrive mai Markdown. Uno script valida il JSON contro lo schema della scheda, esegue la verifica delle citazioni e scrive il file con `stato: bozza` e `bozza_da` compilato. Una citazione che non passa non entra mai nel file: si scarta, il modello riprova una volta e se fallisce ancora la scheda resta bozza con il problema in `note`. Se non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce, quindi la scheda non può arrivare al sito (ADR 0003). Solo una risposta inservibile anche al secondo tentativo non scrive nessun file.
 
 **La verifica delle citazioni è deterministica e indipendente dal modello.** Ogni citazione deve esistere come sottostringa contigua del testo estratto della fonte, dopo una normalizzazione fissa, nella pagina indicata o in quella adiacente. Gira in CI come passo separato prima della build del sito. È questo controllo, non la qualità del modello, che rende accettabile usare modelli piccoli, locali o sconosciuti.
 
@@ -23,6 +23,7 @@ La pipeline trasforma un documento fonte in schede in stato bozza e ha un solo s
 
 - Un prompt per coppia fonte-tema con il documento intero in contesto, senza classificazione: scartato perché richiede contesti da 10k a 140k token per chiamata, impossibili su hardware locale senza GPU, e rilegge ogni documento dodici volte.
 - Recupero semantico (RAG, Elysia su Weaviate) per abbassare i costi: scartato perché il recupero top-k perde passaggi e produce posizioni assenti false, aggiunge un vector store da mantenere e il costo da abbattere è già sotto i 10 dollari per elezione.
+- Nessun file se la verifica delle citazioni fallisce: scartato perché il revisore non vedrebbe né la bozza né il problema, mentre la bozza con la nota li mostra entrambi e il blocco resta affidato a `pipeline verifica`.
 - Citazioni restituite dall'API del provider al posto del verificatore proprio: scartate perché dipendono dal provider, non funzionano sulle scansioni e non sostituiscono comunque il controllo in CI sui file committati.
 - SDK e modello di un singolo fornitore fissati nel codice: scartati perché chi lancia la pipeline deve poter scegliere endpoint e modello e perché la pipeline deve funzionare anche senza chiave.
 - PDF nativo del partito come testo di riferimento per le scansioni: scartato perché l'impaginazione differisce da quella della copia depositata e la pagina citata non sarebbe verificabile sull'originale.
