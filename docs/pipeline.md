@@ -122,7 +122,7 @@ La v3 chiede tutti i 12 temi per ogni passaggio perché un invito a elencare in 
 
 Per la revisione della classificazione `pipeline passaggi` mostra i passaggi assegnati al tema, quelli scartati con punteggio sopra 0 e sotto la soglia, dal più alto, e quelli senza temi. Sul campione gli scartati sono in media 59 per tema, perché il modello dà spesso 0,05. Da 0,1 in su sono in media 6, ma contengono solo 2 dei 5 temi persi: i primi della lista sono i più probabili, non gli unici da controllare. Un passaggio con soli punteggi bassi compare sia tra gli scartati sia tra quelli senza temi.
 
-Limite noto: lo schema JSON non può obbligare il modello a elencare tutti i 12 temi. Sul campione d'oro ha risposto per tutti i passaggi; su M5S 2022 una chiamata su 7 (passaggi 0101-0120) ha ignorato la regola e si comporta come la v2, quindi quei passaggi non mostrano perdite. La pipeline per ora non lo rileva.
+Limite noto: lo schema JSON attuale è una lista di lunghezza libera e non obbliga il modello a elencare tutti i 12 temi. Sul campione d'oro ha risposto per tutti i passaggi; su M5S 2022 una chiamata su 7 (passaggi 0101-0120) ha ignorato la regola e si comporta come la v2, quindi quei passaggi non mostrano perdite. La pipeline per ora non lo rileva: se ne occupa [#58](https://github.com/simones99/elezio/issues/58).
 
 ## Bozza
 
