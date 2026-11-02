@@ -2,6 +2,7 @@
 
 import json
 
+import pytest
 from conftest import FONTE
 
 from elezio_pipeline.__main__ import main
@@ -56,6 +57,63 @@ def test_ripete_una_volta_solo_i_passaggi_incompleti_e_tiene_la_risposta_complet
     assert passaggi["0004"]["punteggi"] == {"sanita": 0, "fisco": 0.9}
     log = next((progetto.fonti_dir / "lavoro" / "log").glob("*.jsonl"))
     assert len(log.read_text(encoding="utf-8").splitlines()) == 2
+
+
+RISPOSTE_INSERVIBILI = {
+    "non json": "{tronca",
+    "chiave assente": {"altro": 1},
+    "non un oggetto": [],
+    "forma vecchia": {"passaggi": [{"id": f"{FONTE}-0001", "temi": [{"tema": "sanita", "punteggio": 0.9}]}]},
+    "voce senza id": {"passaggi": [{"punteggi": {"sanita": 0, "fisco": 0}}]},
+    "id non testo": {"passaggi": [{"id": ["x"], "punteggi": {"sanita": 0, "fisco": 0}}]},
+    "punteggi nulli": {"passaggi": [{"id": f"{FONTE}-0001", "punteggi": None}]},
+    "voce non oggetto": {"passaggi": ["x"]},
+}
+
+
+@pytest.mark.parametrize("inservibile", RISPOSTE_INSERVIBILI.values(), ids=RISPOSTE_INSERVIBILI.keys())
+def test_risposta_inservibile_si_ripete_e_la_seconda_vale(progetto, modello, inservibile):
+    modello.risposte += [inservibile, _risposta((1, []), (2, [("sanita", 0.9)]), (3, []), (4, []))]
+    assert not main(["classifica", "--fonte", FONTE])
+    assert len(modello.richieste) == 2
+    assert progetto.passaggi()[1]["temi"] == ["sanita"]
+
+
+@pytest.mark.parametrize("inservibile", RISPOSTE_INSERVIBILI.values(), ids=RISPOSTE_INSERVIBILI.keys())
+def test_risposta_inservibile_due_volte_non_ferma_e_non_perde_i_passaggi(progetto, modello, capsys, inservibile):
+    modello.risposte += [inservibile, inservibile]
+    assert not main(["classifica", "--fonte", FONTE])
+    passaggi = progetto.passaggi()
+    assert len(passaggi) == 4
+    assert passaggi[3]["testo"] == "Riforma dell'Irpef con tre aliquote."
+    assert passaggi[3]["punteggi"] == {} and passaggi[3]["temi"] == []
+    assert "passaggi incompleti: 4" in capsys.readouterr().out
+
+
+def test_ripetizione_inservibile_tiene_le_risposte_valide_gia_pagate(progetto, modello):
+    modello.risposte += [{"passaggi": _risposta((1, []), (2, [("sanita", 0.9)]), (3, []))["passaggi"]}, "{tronca"]
+    assert not main(["classifica", "--fonte", FONTE])
+    assert progetto.passaggi()[1]["temi"] == ["sanita"]
+
+
+@pytest.mark.parametrize("valore", ["0.9", None, 85, -0.1, True], ids=["testo", "nullo", "sopra 1", "sotto 0", "booleano"])
+def test_punteggio_non_valido_vale_come_mancante(progetto, modello, capsys, valore):
+    risposta = _risposta((1, []), (2, []), (3, []), (4, []))
+    risposta["passaggi"][3]["punteggi"]["sanita"] = valore
+    modello.risposte += [risposta, _incompleti((4, [("sanita", valore), ("fisco", 0.95)]))]
+    assert not main(["classifica", "--fonte", FONTE])
+    assert len(modello.richieste) == 2
+    passaggi = progetto.passaggi()
+    assert len(passaggi) == 4
+    assert passaggi[3]["punteggi"] == {"fisco": 0.95} and passaggi[3]["temi"] == ["fisco"]
+    assert "passaggi incompleti: 1" in capsys.readouterr().out
+
+
+def test_punteggi_agli_estremi_sono_validi(progetto, modello):
+    modello.risposte.append(_risposta((1, [("sanita", 0), ("fisco", 1)]), (2, []), (3, []), (4, [])))
+    assert not main(["classifica", "--fonte", FONTE])
+    assert len(modello.richieste) == 1
+    assert progetto.passaggi()[0]["temi"] == ["fisco"]
 
 
 def test_tema_inventato_non_finisce_nei_passaggi(progetto, modello):

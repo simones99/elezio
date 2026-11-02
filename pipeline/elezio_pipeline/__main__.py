@@ -75,12 +75,14 @@ def _classifica(args, cfg):
     finally:
         _registra(cfg, f"classifica-{args.fonte}", c.log)
     soglia = float(cfg["ELEZIO_SOGLIA_CLASSIFICAZIONE"])
+    righe = []  # preparate prima di aprire il file: un errore qui non tronca i passaggi
+    for p in passaggi:
+        punteggi = previsti.get(p["id"], {})
+        righe.append(json.dumps(dict(p, punteggi=punteggi,
+                                     temi=[t for t, s in punteggi.items() if s >= soglia]),
+                                ensure_ascii=False) + "\n")
     with open(percorso, "w", encoding="utf-8") as f:
-        for p in passaggi:
-            punteggi = previsti.get(p["id"], {})
-            f.write(json.dumps(dict(p, punteggi=punteggi,
-                                    temi=[t for t, s in punteggi.items() if s >= soglia]),
-                               ensure_ascii=False) + "\n")
+        f.writelines(righe)
     print(f"{len(passaggi)} passaggi classificati con {c.modello}, costo {c.costo:.4f} dollari")
     _avvisa_incompleti(c)
     return 0
@@ -116,8 +118,8 @@ def _passaggi(args, cfg):
     print(f"\nSenza temi ({len(senza)})")
     for p in senza:
         print(_riga_passaggio(p))
-    temi = {tema["id"] for tema in classifica.carica_temi()}
-    incompleti = [p for p in passaggi if temi - p["punteggi"].keys()]
+    temi = classifica.carica_temi()
+    incompleti = [p for p in passaggi if classifica.temi_mancanti(p["punteggi"], temi)]
     if incompleti:
         print(f"\nPunteggi incompleti ({len(incompleti)}): per questi passaggi gli scartati non sono affidabili")
         for p in incompleti:

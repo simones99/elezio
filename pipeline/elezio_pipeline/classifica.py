@@ -5,6 +5,8 @@ definizione, sotto-questioni ed esempi dentro/altrove di ogni tema, uscita
 JSON strutturata con un punteggio per tema. Il backend `jev` non c'è ancora.
 """
 
+import json
+
 import yaml
 
 from . import config
@@ -58,6 +60,15 @@ def _schema(temi):
     }
 
 
+def _punteggio_valido(s):
+    return isinstance(s, (int, float)) and not isinstance(s, bool) and 0 <= s <= 1
+
+
+def temi_mancanti(punteggi, temi):
+    """I temi senza punteggio: se ce ne sono, il passaggio è incompleto."""
+    return {t["id"] for t in temi} - punteggi.keys()
+
+
 class ClassificatoreLLM:
     """Classificatore su un endpoint compatibile OpenAI (OpenRouter, Ollama, ...)."""
 
@@ -80,22 +91,32 @@ class ClassificatoreLLM:
         return self.llm.log
 
     def _chiama(self, gruppo):
+        """Le voci della risposta; una risposta rotta vale come nessuna voce."""
         utente = "\n\n".join(f"[{p['id']}] {p['testo']}" for p in gruppo)
         messaggi = [{"role": "system", "content": self.sistema}, {"role": "user", "content": utente}]
-        return self.llm.completa(messaggi, "classificazione", _schema(self.temi), passaggi=len(gruppo))["passaggi"]
+        try:
+            risposta = self.llm.completa(messaggi, "classificazione", _schema(self.temi), passaggi=len(gruppo))
+        except json.JSONDecodeError:
+            return []
+        voci = risposta.get("passaggi") if isinstance(risposta, dict) else None
+        return [v for v in voci if isinstance(v, dict)] if isinstance(voci, list) else []
 
-    def _completo(self, punteggi):
-        return len(punteggi) == len(self.temi)
-
-    def _raccogli(self, gruppo, esito):
-        """Chiama il modello sul gruppo; per ogni passaggio tiene la risposta con più temi."""
-        attesi = {p["id"] for p in gruppo}
+    def _punteggi_validi(self, punteggi):
         validi = {t["id"] for t in self.temi}
+        return {t: s for t, s in punteggi.items() if t in validi and _punteggio_valido(s)}
+
+    def _aggiungi_risposte(self, gruppo, esito):
+        """Per ogni passaggio del gruppo tiene la risposta con più punteggi validi."""
+        attesi = {p["id"] for p in gruppo}
         for voce in self._chiama(gruppo):
-            if voce["id"] in attesi:
-                punteggi = {t: s for t, s in voce["punteggi"].items() if t in validi}
-                if len(punteggi) >= len(esito.get(voce["id"], {})):
-                    esito[voce["id"]] = punteggi
+            id_passaggio, punteggi = voce.get("id"), voce.get("punteggi")
+            if isinstance(id_passaggio, str) and id_passaggio in attesi and isinstance(punteggi, dict):
+                validi = self._punteggi_validi(punteggi)
+                if len(validi) >= len(esito.get(id_passaggio, {})):
+                    esito[id_passaggio] = validi
+
+    def _incompleti_in(self, passaggi, esito):
+        return [p for p in passaggi if temi_mancanti(esito.get(p["id"], {}), self.temi)]
 
     def classifica(self, passaggi):
         """{id passaggio: {tema: punteggio}}. Lo schema chiede tutti i temi, ma non tutti gli
@@ -103,9 +124,9 @@ class ClassificatoreLLM:
         esito = {}
         for i in range(0, len(passaggi), PASSAGGI_PER_CHIAMATA):
             gruppo = passaggi[i:i + PASSAGGI_PER_CHIAMATA]
-            self._raccogli(gruppo, esito)
-            da_ripetere = [p for p in gruppo if not self._completo(esito.get(p["id"], {}))]
+            self._aggiungi_risposte(gruppo, esito)
+            da_ripetere = self._incompleti_in(gruppo, esito)
             if da_ripetere:
-                self._raccogli(da_ripetere, esito)
-        self.incompleti = [p["id"] for p in passaggi if not self._completo(esito.get(p["id"], {}))]
+                self._aggiungi_risposte(da_ripetere, esito)
+        self.incompleti = [p["id"] for p in self._incompleti_in(passaggi, esito)]
         return esito
