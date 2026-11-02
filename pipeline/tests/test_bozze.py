@@ -154,6 +154,29 @@ def test_assente_dopo_una_citazione_falsa_lo_segnala_al_revisore(progetto, model
     assert "dichiarata" in fronte["note"]
 
 
+def test_assente_dopo_una_risposta_non_json_lo_segnala_al_revisore(progetto, modello):
+    _classificati(progetto)
+    modello.risposte += ["non è json", ASSENTE]
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["posizione"] == "assente"
+    assert "secondo tentativo" in fronte["note"]
+
+
+def test_una_scheda_contestata_non_si_sovrascrive_e_non_si_chiama_verificata(progetto, modello, capsys):
+    _classificati(progetto)
+    progetto.scrivi_scheda({
+        "partito": "prova", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata", "titolo": "A mano",
+        "citazioni": [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}], "stato": "contestata",
+        "verificata_il": datetime.date(2026, 11, 2), "revisore": "revisore", "aggiornata_il": datetime.date(2026, 11, 2),
+    })
+    assert not _bozze()
+    assert modello.richieste == []
+    assert progetto.leggi_scheda()[0]["titolo"] == "A mano"
+    uscita = capsys.readouterr().out
+    assert "contestata" in uscita and "verificata" not in uscita
+
+
 def test_dichiarata_senza_titolo_o_sintesi_si_ritenta(progetto, modello):
     _classificati(progetto)
     modello.risposte += [dict(_dichiarata((2, CITAZIONE_VERA)), titolo=""), _dichiarata((2, CITAZIONE_VERA))]

@@ -115,15 +115,14 @@ def _genera(llm, tema, passaggi, pagine):
     difetti, valide = _esamina(risposta, pagine)
     if not difetti:
         return risposta, valide, []
-    prima = risposta
-    risposta = _chiedi(llm, messaggi + _correzione(prima, difetti))
+    risposta = _chiedi(llm, messaggi + _correzione(risposta, difetti))
     difetti, valide = _esamina(risposta, pagine)
     if risposta is None or _difetto_struttura(risposta):
         raise BozzaImpossibile(f"risposta del modello non valida anche al secondo tentativo: {difetti[0]}")
     note = list(difetti)
-    if risposta["posizione"] == "assente" and prima and prima.get("posizione") == "dichiarata":
-        note.append("il primo tentativo del modello era dichiarata, con citazioni che non hanno passato "
-                    "la verifica: controllare che il tema non sia trattato")
+    if risposta["posizione"] == "assente":
+        note.append("assente solo al secondo tentativo, dopo una risposta scartata: "
+                    "controllare che la posizione non sia in realtà dichiarata")
     return risposta, valide, note
 
 
@@ -141,14 +140,16 @@ def _fronte(partito, tema, y, posizione, titolo, citazioni, note, bozza_da):
     return f
 
 
-def _gia_verificate(y, tema_id):
-    """Partiti della fonte con una scheda già revisionata: la pipeline non la tocca."""
-    verificate = []
+def _gia_revisionate(y, tema_id):
+    """{partito: stato} per le schede già passate dal revisore: la pipeline non le tocca."""
+    revisionate = {}
     for partito in y["partiti"]:
         p = schede.percorso(y["elezione"], partito, tema_id)
-        if p.exists() and schede.leggi(p)[0].get("stato") != "bozza":
-            verificate.append(partito)
-    return verificate
+        if p.exists():
+            stato = schede.leggi(p)[0].get("stato")
+            if stato != "bozza":
+                revisionate[partito] = stato
+    return revisionate
 
 
 def genera(cfg, fonte, tema_id, passaggi, log):
@@ -163,10 +164,10 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     if any("temi" not in p for p in passaggi):
         raise BozzaImpossibile(f"{fonte}: passaggi non classificati, lancia prima pipeline classifica")
     y = fonti.leggi(fonte)
-    verificate = _gia_verificate(y, tema_id)
-    partiti = [p for p in y["partiti"] if p not in verificate]
-    for p in verificate:
-        print(f"{p}/{tema_id}: scheda già verificata, non la tocco")
+    revisionate = _gia_revisionate(y, tema_id)
+    partiti = [p for p in y["partiti"] if p not in revisionate]
+    for p, stato in revisionate.items():
+        print(f"{p}/{tema_id}: scheda in stato {stato}, non la tocco")
     if not partiti:
         return 0.0
     del_tema = [p for p in passaggi if tema_id in p["temi"]]

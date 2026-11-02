@@ -27,7 +27,7 @@ pipeline estrai --fonte <id>                 # passi 2-4: testo nativo oppure OC
 pipeline classifica --fonte <id>             # passo 5
 pipeline passaggi --fonte <id> --tema <slug> # per il revisore: passaggi assegnati al tema e possibili perdite
 pipeline bozze --fonte <id> --tema <slug>    # passi 6-7
-pipeline verifica                            # passo 9, usato anche in CI: YAML delle fonti, schede e citazioni
+pipeline verifica                            # passo 9: YAML delle fonti, schede e citazioni; in CI con #41
 pipeline valuta-classificatore               # precisione e richiamo sul campione d'oro
 ```
 
@@ -126,7 +126,7 @@ Una chiamata per coppia fonte-tema. Input: i passaggi del tema con pagina, defin
 
 oppure `{"posizione": "assente"}` se nessun passaggio tratta il tema. Lo script valida contro lo schema, esegue la verifica delle citazioni e scrive `contenuti/schede/<elezione>/<partito>/<tema>.md` con `stato: bozza` e `bozza_da: {modello, prompt}`. Per una fonte condivisa (accordo di coalizione) la stessa bozza viene scritta per ogni partito che la condivide. Se una citazione non passa, lo script la scarta e ritenta una volta chiedendo la correzione; se fallisce ancora, la scheda resta bozza con il problema in `note`.
 
-Tre casi limite. Se il classificatore non assegna al tema nessun passaggio, la scheda è assente senza chiamare il modello, senza `bozza_da` e con una nota per il revisore. Se dopo il nuovo tentativo non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce: la scheda non diventa mai assente per un errore del modello, e un `assente` arrivato al secondo tentativo porta una nota. Una scheda già `verificata` o `contestata` non si sovrascrive; una risposta inservibile anche al secondo tentativo non scrive nessun file.
+Tre casi limite. Se il classificatore non assegna al tema nessun passaggio, la scheda è assente senza chiamare il modello, senza `bozza_da` e con una nota per il revisore. Se dopo il nuovo tentativo non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce: la scheda non diventa mai assente per un errore del modello, e un `assente` arrivato al secondo tentativo, dopo una risposta scartata di qualunque tipo, porta una nota. Una scheda già `verificata` o `contestata` non si sovrascrive; una risposta inservibile anche al secondo tentativo non scrive nessun file.
 
 Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modifica è un nuovo file. `bozza_da.modello` è l'id completo del modello, `bozza_da.prompt` il nome del file. La pagina metodologia pubblica i prompt.
 
