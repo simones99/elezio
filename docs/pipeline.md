@@ -126,7 +126,48 @@ La v3 chiede tutti i 12 temi per ogni passaggio perché un invito a elencare in 
 
 Per la revisione della classificazione `pipeline passaggi` mostra i passaggi assegnati al tema, quelli scartati con punteggio sopra 0 e sotto la soglia, dal più alto, quelli senza temi e, se ce ne sono, quelli con punteggi incompleti, per cui gli scartati non sono affidabili. Sul campione gli scartati sono in media 10 per tema. I temi persi con punteggio 0 non compaiono tra gli scartati: sul campione sono 3 su 6, e nessuna vista li mostra. Un passaggio con soli punteggi sotto la soglia compare sia tra gli scartati sia tra quelli senza temi.
 
-Limite noto: avere tutti i 12 punteggi non vuol dire che il tema giusto abbia un punteggio sopra 0, quindi le perdite con punteggio 0 restano invisibili, e una posizione può risultare assente anche per questo. Per i passaggi senza il punteggio del tema `pipeline bozze` invece si ferma o mette una nota (sezione [Bozza](#bozza)).
+Limite noto: avere tutti i 12 punteggi non vuol dire che il tema giusto abbia un punteggio sopra 0, quindi le perdite con punteggio 0 restano invisibili, e una posizione può risultare assente anche per questo. Per i passaggi senza il punteggio del tema `pipeline bozze` invece si ferma o mette una nota (sezione [Bozza](#bozza)). Il peso di queste perdite è misurato qui sotto.
+
+### Perdite con punteggio 0
+
+Misura del ticket [#61](https://github.com/simones99/elezio/issues/61) (2 novembre 2026), configurazione di default, soglia 0,1. Sono le etichette del campione d'oro misurate in due modi: classificando il campione da solo, con i passaggi mescolati, e classificando AVS intero, con ogni passaggio tra i suoi vicini come in `pipeline classifica`.
+
+| Classificazione | Temi assegnati sui 120 passaggi | Precisione | Richiamo | Temi persi su 121 | Di cui a 0 |
+| --- | --- | --- | --- | --- | --- |
+| Campione da solo, run 1 | 345 | 33,9% | 96,7% | 4 | 3 |
+| Campione da solo, run 2 | 312 | 37,5% | 96,7% | 4 | 4 |
+| Campione da solo, run 3 | 367 | 31,9% | 96,7% | 4 | 4 |
+| AVS intero, run 1 | 343 | 33,5% | 95,0% | 6 | 2 |
+| AVS intero, run 2 | 402 | 28,6% | 95,0% | 6 | 3 |
+
+- **Il risultato cambia da una run all'altra anche a temperatura 0.** Su AVS intero le due run assegnano 1357 e 1557 temi, e 370 decisioni su 5928 sono diverse. Il richiamo è stabile, la precisione no: va letta come un intervallo.
+- **Quante perdite è stabile, quali no: dipende dai passaggi vicini.** Il passaggio 0285 sulla spesa militare prende 0 in tutte e tre le run del campione e 0,8 in tutte e due su AVS intero; il passaggio 0097 fa il contrario, da 0,3-0,8 a 0.
+- **Le perdite sono soprattutto casi di confine.** In queste 5 run si perdono 10 coppie passaggio-tema. Tranne 0285 sul campione da solo, ogni passaggio perso ha comunque un altro tema da 0,5 in su, quindi manca da un tema ma non sparisce dal documento.
+- **Nessuna posizione assente da controllare.** Su 24 coppie fonte-tema (AVS e M5S per 12 temi) nessuna resta senza passaggi: il minimo per tema è 39 su AVS, in entrambe le run, e 4 su M5S. La ricerca a mano delle assenze non aveva casi, quindi il suo costo in tempo non è misurato.
+
+I 10 casi, con un giudizio proposto che il maintainer deve confermare. Il campione resta com'è finché non lo fa:
+
+| Passaggio | Tema etichettato | Run in cui si perde, su 5 | Temi dati dal modello | Giudizio proposto |
+| --- | --- | --- | --- | --- |
+| 0393, consultori familiari | `giustizia` | 5 | `sanita`, `famiglia` | etichetta dubbia |
+| 0285, moratoria delle spese della Difesa | `europa` | 3, solo sul campione | nessuno da 0,5 in su | errore vero, solo sul campione da solo |
+| 0292, comunicazione nonviolenta a scuola | `europa` | 3, solo sul campione | `scuola` | confine |
+| 0390, valori del SSN e dignità della persona | `giustizia` | 3 | `sanita` | etichetta dubbia |
+| 0097, professioni di frontiera delle donne | `giustizia` | 2, solo su AVS intero | `lavoro` | confine |
+| 0341, edilizia scolastica | `scuola` | 2, solo su AVS intero | `casa`, `ambiente` | errore vero, con punteggio 0,05 |
+| 0413, case popolari | `famiglia` | 2, solo su AVS intero | `casa`, `ambiente` | etichetta dubbia |
+| 0472, anagrafe dei rifiuti | `giustizia` | 2, solo su AVS intero | `ambiente` | confine |
+| 0476, banche dati ambientali | `giustizia` | 1 | `ambiente`, `istituzioni` | confine |
+| 0222, privatizzazione dei beni comuni | `ambiente` | 1, solo sul campione | `casa`, `imprese` | confine |
+
+Limiti della misura: due fonti su sette, entrambe con tutti i temi trattati, e nessuna prova su un documento breve. Una posizione assente falsa richiede di perdere tutti i passaggi di un tema in una fonte, quindi il rischio sta nei temi toccati una sola volta. Con circa il 5 percento di temi persi, è un ordine di grandezza per quel caso, non una stima misurata. La soglia 0,1 sposta anche il rischio: il classificatore quasi non lascia temi vuoti, quindi è il modello di sintesi a dire `assente` leggendo passaggi in gran parte fuori tema, e questo non è misurato. Su AVS intero gli assegnati sono 2,75 per passaggio contro 1,61 a soglia 0,2, e `istituzioni` ne riceve 223 su 494, di cui 34 da 0,5 in su: il peso sulle bozze non è ancora noto.
+
+Raccomandazioni:
+
+1. **Nessun intervento nella pipeline per ora.** Una seconda chiamata mirata sui temi rimasti vuoti, su queste due fonti, non partirebbe mai.
+2. **Controllo a mano di ogni posizione assente in revisione:** passaggi assegnati, scartati e ricerca nel testo estratto, cronometrando il tempo, perché qui non è stato misurato.
+3. **Guardare per prime le assenze dei documenti brevi quando #44 li classifica,** a partire dall'accordo di centrodestra. Una sola posizione assente falsa riapre la decisione.
+4. **Misurare la bozza sui temi rumorosi in #44:** se i passaggi fuori tema portano a sintesi sbagliate o a un `assente` falso, la soglia 0,1 va rivista. Su AVS intero la soglia 0,2 dà richiamo 90,1% e 88,4%, precisione 50,9% e 50,2%.
 
 ## Bozza
 
@@ -170,7 +211,7 @@ La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i p
 
 ## Costi
 
-Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-14b-2512`, prompt v3 e schema a 12 chiavi 0,006 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata.
+Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-14b-2512`, prompt v3 e schema a 12 chiavi 0,006 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata. AVS 2022 (#61): classificazione di 494 passaggi 0,025 dollari, con 4 o 5 ripetizioni per i passaggi saltati dal modello.
 
 Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
 
