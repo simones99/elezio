@@ -171,7 +171,12 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     if not partiti:
         return 0.0
     del_tema = [p for p in passaggi if tema_id in p["temi"]]
+    senza_punteggio = [p["id"] for p in passaggi if classifica.temi_mancanti(p["punteggi"], [tema])]
     if not del_tema:
+        if senza_punteggio:  # l'assenza non è dimostrata: la scheda direbbe più di quello che si sa
+            raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
+                                   + ", ".join(senza_punteggio)
+                                   + "; scheda non scritta, rilancia pipeline classifica")
         for partito in partiti:
             schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
                           _fronte(partito, tema, y, "assente", "", [],
@@ -183,6 +188,8 @@ def genera(cfg, fonte, tema_id, passaggi, log):
     llm = ClienteLLM(cfg, cfg["ELEZIO_MODELLO_SINTESI"])
     llm.log = log
     risposta, valide, note = _genera(llm, tema, del_tema, pagine)
+    if senza_punteggio:
+        note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(senza_punteggio))
     salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
     salvata.parent.mkdir(parents=True, exist_ok=True)
     salvata.write_text(json.dumps(risposta, ensure_ascii=False, indent=2), encoding="utf-8")
