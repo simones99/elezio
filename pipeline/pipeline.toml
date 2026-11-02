@@ -1,0 +1,15 @@
+# Configurazione versionata della pipeline: valori e motivi in docs/pipeline.md.
+# Ogni valore si sovrascrive con pipeline/.env o con la variabile d'ambiente.
+# Le chiavi API stanno solo lì, mai qui.
+
+base_url = "https://openrouter.ai/api/v1"
+provider = "mistral"
+modello_sintesi = "mistralai/mistral-large-4-0"
+modello_classificazione = "mistralai/ministral-14b-2512"
+ocr = "mistral-ocr"
+classificatore = "llm"
+tetto_dollari_per_run = 30
+soglia_classificazione = 0.2
+# Percorsi relativi alla radice del repo.
+fonti = "../elezio-fonti"
+contenuti = "contenuti"

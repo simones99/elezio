@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 30 ottobre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 2 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -25,12 +25,15 @@ pipeline acquisisci --elezione 2027          # legge il JSON di Elezioni traspar
 pipeline acquisisci --url <url> --fonte <id> --partiti <slug,...> --elezione <anno> [--tipo <tipo>] [--copia-di <fonte>]
 pipeline estrai --fonte <id>                 # passi 2-4: testo nativo oppure OCR, poi passaggi
 pipeline classifica --fonte <id>             # passo 5
-pipeline bozze --fonte <id> [--tema <slug>]  # passi 6-7
-pipeline verifica                            # passo 9, usato anche in CI; per ora solo i YAML delle fonti
+pipeline passaggi --fonte <id> --tema <slug> # per il revisore: passaggi assegnati al tema e possibili perdite
+pipeline bozze --fonte <id> --tema <slug>    # passi 6-7
+pipeline verifica                            # passo 9: YAML delle fonti, schede e citazioni; in CI con #41
 pipeline valuta-classificatore               # precisione e richiamo sul campione d'oro
 ```
 
-Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano interviene due volte: conferma il YAML della fonte dopo l'acquisizione (titolo, tipo, partiti condivisi, copia canonica) e revisiona le schede.
+`pipeline acquisisci --elezione 2027` non c'è ancora: arriva con la preparazione della Fase 2. `pipeline bozze` lavora per ora su una coppia fonte-tema alla volta.
+
+Python standalone in `pipeline/`, indipendente dallo stack del sito. Si installa con `pip install -e "./pipeline[test]"`, in modalità modificabile perché prompt e `pipeline.toml` si leggono dalla cartella; i test si lanciano con `python -m pytest` da `pipeline/`. L'umano interviene due volte: conferma il YAML della fonte dopo l'acquisizione (titolo, tipo, partiti condivisi, copia canonica) e revisiona le schede.
 
 ## Configurazione
 
@@ -48,6 +51,7 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. L'umano int
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
 | `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30` |
 | `fonti` | `ELEZIO_FONTI` | `../elezio-fonti`, il clone locale del repo privato accanto al repo pubblico |
+| `contenuti` | `ELEZIO_CONTENUTI` | `contenuti`, relativo alla radice del repo |
 | `soglia_classificazione` | `ELEZIO_SOGLIA_CLASSIFICAZIONE` | `0.2` |
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
@@ -90,7 +94,7 @@ Un passaggio è un paragrafo del testo estratto con la sua pagina, spezzato se s
 
 Nei PDF con testo nativo `segmenta` toglie prima intestazioni e piè di pagina (righe identiche su almeno metà delle pagine). Se il documento ha titoli in un corpo maggiore del testo, come il programma M5S 2022, il titolo è la riga più grande: il maiuscolo a corpo testo è il nome di una proposta. In questo caso chiudono il paragrafo anche uno spazio verticale oltre 1,6 volte l'interlinea e il cambio pagina. Negli altri documenti (Azione-IV, Futuro Nazionale) il titolo è la riga in maiuscolo. I test sono in `pipeline/tests/`: `python -m pytest tests` da `pipeline/` (#33).
 
-Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
+Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato con il punteggio di tutti i 12 temi per ogni passaggio. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
 
 Campione d'oro: 120 passaggi del programma AVS 2022 depositato etichettati a mano dal maintainer in `pipeline/campione/avs-2022.jsonl` nel repo pubblico (sono citazioni brevi con pagina, entro i limiti decisi nel ticket #4). La copia depositata è una scansione: il testo viene da Mistral OCR, segmentato con `segmenta_markdown`. Due lotti da 60, scelti da `pipeline/campione/seleziona.py`: il primo ha 48 passaggi stratificati per sezione e 12 casi limite, uno per confine di `temi.yaml` (seme 28); il secondo aggiunge un secondo caso limite per i confini che ne hanno un altro (9) e stratificati fino a 120 (seme 29). Ogni riga dice lotto e origine. Le etichette seguono la regola "ogni proposta un solo tema" degli esempi dentro/altrove. Comando: `python -m elezio_pipeline valuta-classificatore --modelli <id>,<id>` da `pipeline/`. `pipeline valuta-classificatore` stampa precisione e richiamo per tema per ogni backend. Il backend con il richiamo migliore diventa il default; sotto il 90 percento di richiamo nessun backend è accettato senza revisione umana della classificazione.
 
@@ -103,7 +107,22 @@ Misura del ticket [#28](https://github.com/simones99/elezio/issues/28) (29-30 ot
 | `mistralai/mistral-small-2603` | 73,7% | 71,9% | 0,005 $ |
 | `mistralai/mistral-large-4-0` | 78,2% | 80,2% | 0,110 $ |
 
-Default `ministral-14b-2512`, sotto il 90 percento: la classificazione passa dalla revisione umana. Large non fa meglio del 14B sul richiamo, quindi il limite non è la fascia Ministral: sono i confini tra temi (giustizia e ambiente sui reati ambientali, ambiente sul benessere animale) e la soggettività del campione. Con 120 passaggi l'incertezza sul richiamo è di circa ±6 punti. Il backend `jev` non è misurato: manca la chiave.
+Large non fa meglio del 14B sul richiamo, quindi il limite non è la fascia Ministral: sono i confini tra temi (giustizia e ambiente sui reati ambientali, ambiente sul benessere animale) e la soggettività del campione. Con 120 passaggi l'incertezza sul richiamo è di circa ±6 punti. Il backend `jev` non è misurato: manca la chiave.
+
+Misura del ticket [#37](https://github.com/simones99/elezio/issues/37) (2 novembre 2026), stesso campione e stessa soglia, solo sul modello di default:
+
+| Prompt | Punteggi sotto 0,2 | Temi assegnati | Precisione | Richiamo | Temi persi visibili tra gli scartati | Costo |
+| --- | --- | --- | --- | --- | --- | --- |
+| `classificazione-v2.md` | non richiesti | 168 | 61,9% | 86,0% | n.d. | 0,004 $ |
+| `classificazione-v3.md` | 1126 su 1440 | 314 | 36,9% | **95,9%** | 5 su 5 | 0,009 $ |
+
+Default `ministral-14b-2512` con `classificazione-v3.md`. Il richiamo passa il 90 percento, ma con l'incertezza del campione il margine è minimo, e gli altri modelli non sono rimisurati con questo prompt. Il prezzo è la precisione: il tema riceve circa il doppio dei passaggi, quindi la bozza può contenere più materiale fuori tema, da fermare in revisione.
+
+La v3 chiede tutti i 12 temi per ogni passaggio perché un invito a elencare in più i temi improbabili non basta: due formulazioni di questo tipo, scartate prima dell'uso, hanno dato 1 e 8 voci sotto 0,2 e nessun tema perso visibile, con richiamo 86,8% e 85,1%.
+
+Per la revisione della classificazione `pipeline passaggi` mostra i passaggi assegnati al tema, quelli scartati con punteggio sopra 0 e sotto la soglia, dal più alto, e quelli senza temi. Sul campione gli scartati sono in media 59 per tema, perché il modello dà spesso 0,05. Da 0,1 in su sono in media 6, ma contengono solo 2 dei 5 temi persi: i primi della lista sono i più probabili, non gli unici da controllare. Un passaggio con soli punteggi bassi compare sia tra gli scartati sia tra quelli senza temi.
+
+Limite noto: lo schema JSON attuale è una lista di lunghezza libera e non obbliga il modello a elencare tutti i 12 temi. Sul campione d'oro ha risposto per tutti i passaggi; su M5S 2022 una chiamata su 7 (passaggi 0101-0120) ha ignorato la regola e si comporta come la v2, quindi quei passaggi non mostrano perdite. La pipeline per ora non lo rileva: se ne occupa [#58](https://github.com/simones99/elezio/issues/58).
 
 ## Bozza
 
@@ -119,6 +138,8 @@ Una chiamata per coppia fonte-tema. Input: i passaggi del tema con pagina, defin
 ```
 
 oppure `{"posizione": "assente"}` se nessun passaggio tratta il tema. Lo script valida contro lo schema, esegue la verifica delle citazioni e scrive `contenuti/schede/<elezione>/<partito>/<tema>.md` con `stato: bozza` e `bozza_da: {modello, prompt}`. Per una fonte condivisa (accordo di coalizione) la stessa bozza viene scritta per ogni partito che la condivide. Se una citazione non passa, lo script la scarta e ritenta una volta chiedendo la correzione; se fallisce ancora, la scheda resta bozza con il problema in `note`.
+
+Tre casi limite. Se il classificatore non assegna al tema nessun passaggio, la scheda è assente senza chiamare il modello, senza `bozza_da` e con una nota per il revisore. Se dopo il nuovo tentativo non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce: la scheda non diventa mai assente per un errore del modello, e un `assente` arrivato al secondo tentativo, dopo una risposta scartata di qualunque tipo, porta una nota. Una scheda già `verificata` o `contestata` non si sovrascrive; una risposta inservibile anche al secondo tentativo non scrive nessun file.
 
 Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modifica è un nuovo file. `bozza_da.modello` è l'id completo del modello, `bozza_da.prompt` il nome del file. La pagina metodologia pubblica i prompt.
 
@@ -144,6 +165,8 @@ Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 m
 La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i partiti disponibili insieme per ogni tema: una PR per tema con schede e affermazioni del quiz, il merge pubblica il tema. La pipeline gira su ogni programma appena il Ministero lo pubblica; la revisione parte quando sono pubblicati tutti i partiti in perimetro, o a T-32 se prima. Ore: circa 36 tra revisione, affermazioni, acquisizione e lancio, con 15 ore a settimana dichiarate da T-32 a T-15. Calendario, checklist di prontezza, ritardatari e taglio in [playbook-fase-2.md](playbook-fase-2.md).
 
 ## Costi
+
+Misurato su M5S 2022 (#37): classificazione di 124 passaggi con `ministral-14b-2512` e prompt v3 0,008 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata.
 
 Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
 

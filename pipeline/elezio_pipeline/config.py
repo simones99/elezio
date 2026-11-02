@@ -1,26 +1,35 @@
-"""Configurazione della pipeline: default di docs/pipeline.md, sovrascritti da
-pipeline/.env e dalle variabili d'ambiente (in quest'ordine di precedenza)."""
+"""Configurazione della pipeline: pipeline.toml, sovrascritto da pipeline/.env e
+dalle variabili d'ambiente (in quest'ordine di precedenza). Vedi docs/pipeline.md."""
 
 import os
+import tomllib
 from pathlib import Path
 
 PIPELINE = Path(__file__).resolve().parent.parent
 RADICE = PIPELINE.parent
 
-DEFAULT = {
-    "ELEZIO_LLM_BASE_URL": "https://openrouter.ai/api/v1",
-    "ELEZIO_LLM_API_KEY": "",
-    "ELEZIO_LLM_PROVIDER": "mistral",
-    "ELEZIO_MODELLO_SINTESI": "mistralai/mistral-large-4-0",
-    "ELEZIO_MODELLO_CLASSIFICAZIONE": "mistralai/ministral-14b-2512",
-    "ELEZIO_OCR": "mistral-ocr",
-    "ELEZIO_CLASSIFICATORE": "llm",
-    "ELEZIO_JEV_API_KEY": "",
-    "ELEZIO_TETTO_DOLLARI": "30",
-    "ELEZIO_SOGLIA_CLASSIFICAZIONE": "0.2",
-    # clone locale del repo privato con PDF, testi estratti e lavoro
-    "ELEZIO_FONTI": str(RADICE.parent / "elezio-fonti"),
+# chiave di pipeline.toml -> variabile
+CHIAVI_TOML = {
+    "base_url": "ELEZIO_LLM_BASE_URL",
+    "provider": "ELEZIO_LLM_PROVIDER",
+    "modello_sintesi": "ELEZIO_MODELLO_SINTESI",
+    "modello_classificazione": "ELEZIO_MODELLO_CLASSIFICAZIONE",
+    "ocr": "ELEZIO_OCR",
+    "classificatore": "ELEZIO_CLASSIFICATORE",
+    "tetto_dollari_per_run": "ELEZIO_TETTO_DOLLARI",
+    "soglia_classificazione": "ELEZIO_SOGLIA_CLASSIFICAZIONE",
+    "fonti": "ELEZIO_FONTI",
+    "contenuti": "ELEZIO_CONTENUTI",
 }
+# solo da .env o dall'ambiente, mai nel file versionato
+SEGRETI = ("ELEZIO_LLM_API_KEY", "ELEZIO_JEV_API_KEY")
+PERCORSI = ("ELEZIO_FONTI", "ELEZIO_CONTENUTI")
+
+
+def _leggi_toml(percorso):
+    with open(percorso, "rb") as f:
+        valori = tomllib.load(f)
+    return {CHIAVI_TOML[k]: str(v) for k, v in valori.items()}
 
 
 def _leggi_env(percorso):
@@ -37,7 +46,14 @@ def _leggi_env(percorso):
 
 def carica():
     """Valori di configurazione; una variabile vuota vale come assente."""
-    cfg = dict(DEFAULT)
+    cfg = dict.fromkeys(SEGRETI, "") | _leggi_toml(PIPELINE / "pipeline.toml")
     for sorgente in (_leggi_env(PIPELINE / ".env"), os.environ):
-        cfg.update({k: v for k, v in sorgente.items() if k in DEFAULT and v})
+        cfg.update({k: v for k, v in sorgente.items() if k in cfg and v})
+    for k in PERCORSI:
+        cfg[k] = str((RADICE / cfg[k]).resolve())  # un percorso assoluto resta com'è
     return cfg
+
+
+def contenuti():
+    """Cartella dei contenuti pubblici: temi, fonti, schede."""
+    return Path(carica()["ELEZIO_CONTENUTI"])

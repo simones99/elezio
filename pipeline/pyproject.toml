@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elezio-pipeline"
+version = "0.1.0"
+description = "Dal documento fonte alle schede in bozza di elezio"
+requires-python = ">=3.12"
+license = "AGPL-3.0-only"
+dependencies = [
+    "openai>=3.41,<4",
+    "pdfplumber>=0.11,<0.12",
+    "pypdf>=6,<7",
+    "pyyaml>=6,<7",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=9,<10"]
+
+[project.scripts]
+pipeline = "elezio_pipeline.__main__:main"
+
+[tool.setuptools]
+packages = ["elezio_pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
