@@ -16,8 +16,23 @@ def _classificati(progetto):
     passaggi = progetto.passaggi()
     for p in passaggi:
         tema = "sanita" if p["sezione"] == "SALUTE" else "fisco" if p["sezione"] else None
-        p["punteggi"] = {tema: 0.9} if tema else {}
+        p["punteggi"] = {"sanita": 0, "fisco": 0} | ({tema: 0.9} if tema else {})
         p["temi"] = [tema] if tema else []
+    progetto.scrivi_passaggi(passaggi)
+
+
+def _senza_temi(progetto):
+    """Tutti i passaggi completi, nessuno assegnato."""
+    passaggi = progetto.passaggi()
+    for p in passaggi:
+        p["punteggi"], p["temi"] = {"sanita": 0, "fisco": 0}, []
+    progetto.scrivi_passaggi(passaggi)
+
+
+def _togli_punteggio(progetto, numero, tema):
+    """Il passaggio resta senza il punteggio del tema, come dopo un nuovo tentativo fallito."""
+    passaggi = progetto.passaggi()
+    del passaggi[numero - 1]["punteggi"][tema]
     progetto.scrivi_passaggi(passaggi)
 
 
@@ -133,16 +148,104 @@ def test_il_modello_dice_assente(progetto, modello):
 
 
 def test_nessun_passaggio_del_tema_assente_senza_chiamare_il_modello(progetto, modello):
-    passaggi = progetto.passaggi()
-    for p in passaggi:
-        p["punteggi"], p["temi"] = {}, []
-    progetto.scrivi_passaggi(passaggi)
+    _senza_temi(progetto)
     assert not _bozze()
     assert modello.richieste == []
     fronte, _ = progetto.leggi_scheda()
     assert fronte["posizione"] == "assente"
     assert "classificatore" in fronte["note"]
     assert "bozza_da" not in fronte
+
+
+def test_nessun_passaggio_del_tema_e_uno_senza_punteggio_non_scrive_assente(progetto, modello, capsys):
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    assert _bozze() == 1
+    assert modello.richieste == []
+    assert not progetto.scheda().exists()
+    uscita = capsys.readouterr().out
+    assert f"{FONTE}-0004" in uscita and f"{FONTE}-0003" not in uscita
+
+
+def test_nessun_passaggio_del_tema_e_uno_senza_punteggio_lascia_intatta_la_scheda(progetto, modello):
+    fronte = {"partito": "prova", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata", "titolo": "Vecchia",
+              "citazioni": [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}], "stato": "bozza",
+              "aggiornata_il": datetime.date(2026, 11, 2)}
+    progetto.scrivi_scheda(fronte)
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    assert _bozze() == 1
+    assert progetto.leggi_scheda()[0]["titolo"] == "Vecchia"
+
+
+def test_passaggio_senza_il_campo_punteggi_vale_come_senza_punteggio(progetto, modello, capsys):
+    _senza_temi(progetto)
+    passaggi = progetto.passaggi()
+    del passaggi[3]["punteggi"]
+    progetto.scrivi_passaggi(passaggi)
+    assert _bozze() == 1
+    assert not progetto.scheda().exists()
+    assert f"{FONTE}-0004" in capsys.readouterr().out
+
+
+def test_con_tutte_le_schede_gia_verificate_il_punteggio_mancante_non_ferma(progetto, modello, capsys):
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    progetto.scrivi_scheda({
+        "partito": "prova", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata", "titolo": "A mano",
+        "citazioni": [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}], "stato": "verificata",
+        "verificata_il": datetime.date(2026, 11, 2), "revisore": "revisore", "aggiornata_il": datetime.date(2026, 11, 2),
+    })
+    assert not _bozze()
+    assert modello.richieste == []
+    assert progetto.leggi_scheda()[0]["titolo"] == "A mano"
+
+
+def test_passaggio_senza_il_punteggio_di_un_altro_tema_non_blocca_assente(progetto, modello):
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 4, "fisco")
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["posizione"] == "assente"
+    assert "0004" not in fronte["note"]
+
+
+def test_dichiarata_con_un_passaggio_senza_punteggio_ha_la_nota(progetto, modello):
+    _classificati(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["posizione"] == "dichiarata"
+    assert f"{FONTE}-0004" in fronte["note"]
+    assert f"{FONTE}-0003" not in fronte["note"]
+
+
+def test_assente_del_modello_con_un_passaggio_senza_punteggio_ha_la_nota(progetto, modello):
+    _classificati(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    modello.risposte.append(ASSENTE)
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["posizione"] == "assente"
+    assert f"{FONTE}-0004" in fronte["note"]
+
+
+def test_nota_sul_punteggio_si_aggiunge_a_quella_delle_citazioni(progetto, modello):
+    _classificati(progetto)
+    _togli_punteggio(progetto, 4, "sanita")
+    modello.risposte += [_dichiarata((2, CITAZIONE_VERA), (2, INVENTATA))] * 2
+    assert not _bozze()
+    note = progetto.leggi_scheda()[0]["note"]
+    assert INVENTATA in note and f"{FONTE}-0004" in note
+
+
+def test_passaggio_senza_il_punteggio_di_un_altro_tema_non_mette_la_nota(progetto, modello):
+    _classificati(progetto)
+    _togli_punteggio(progetto, 4, "fisco")
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    assert "note" not in progetto.leggi_scheda()[0]
 
 
 def test_assente_dopo_una_citazione_falsa_lo_segnala_al_revisore(progetto, modello):
