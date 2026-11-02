@@ -9,7 +9,7 @@ modello_classificazione = "mistralai/ministral-14b-2512"
 ocr = "mistral-ocr"
 classificatore = "llm"
 tetto_dollari_per_run = 30
-soglia_classificazione = 0.2
+soglia_classificazione = 0.1
 # Percorsi relativi alla radice del repo.
 fonti = "../elezio-fonti"
 contenuti = "contenuti"
