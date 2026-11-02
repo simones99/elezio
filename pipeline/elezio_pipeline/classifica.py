@@ -36,23 +36,21 @@ def prompt_di_sistema(temi, nome=PROMPT):
 
 
 def _schema(temi):
+    ids = [t["id"] for t in temi]
     return {
         "type": "object",
         "properties": {"passaggi": {"type": "array", "items": {
             "type": "object",
             "properties": {
                 "id": {"type": "string"},
-                "temi": {"type": "array", "items": {
+                "punteggi": {
                     "type": "object",
-                    "properties": {
-                        "tema": {"type": "string", "enum": [t["id"] for t in temi]},
-                        "punteggio": {"type": "number"},
-                    },
-                    "required": ["tema", "punteggio"],
+                    "properties": {i: {"type": "number"} for i in ids},
+                    "required": ids,
                     "additionalProperties": False,
-                }},
+                },
             },
-            "required": ["id", "temi"],
+            "required": ["id", "punteggi"],
             "additionalProperties": False,
         }}},
         "required": ["passaggi"],
@@ -67,6 +65,7 @@ class ClassificatoreLLM:
         self.llm = ClienteLLM(cfg, modello or cfg["ELEZIO_MODELLO_CLASSIFICAZIONE"])
         self.temi = temi or carica_temi()
         self.sistema = prompt_di_sistema(self.temi)
+        self.incompleti = []
 
     @property
     def modello(self):
@@ -85,18 +84,28 @@ class ClassificatoreLLM:
         messaggi = [{"role": "system", "content": self.sistema}, {"role": "user", "content": utente}]
         return self.llm.completa(messaggi, "classificazione", _schema(self.temi), passaggi=len(gruppo))["passaggi"]
 
+    def _completo(self, punteggi):
+        return len(punteggi) == len(self.temi)
+
+    def _raccogli(self, gruppo, esito):
+        """Chiama il modello sul gruppo; per ogni passaggio tiene la risposta con più temi."""
+        attesi = {p["id"] for p in gruppo}
+        validi = {t["id"] for t in self.temi}
+        for voce in self._chiama(gruppo):
+            if voce["id"] in attesi:
+                punteggi = {t: s for t, s in voce["punteggi"].items() if t in validi}
+                if len(punteggi) >= len(esito.get(voce["id"], {})):
+                    esito[voce["id"]] = punteggi
+
     def classifica(self, passaggi):
-        """{id passaggio: {tema: punteggio}} per tutti i passaggi."""
+        """{id passaggio: {tema: punteggio}}. Lo schema chiede tutti i temi, ma non tutti gli
+        endpoint lo rispettano: chi resta senza dopo un nuovo tentativo finisce in `incompleti`."""
         esito = {}
         for i in range(0, len(passaggi), PASSAGGI_PER_CHIAMATA):
             gruppo = passaggi[i:i + PASSAGGI_PER_CHIAMATA]
-            attesi = {p["id"] for p in gruppo}
-            for voce in self._chiama(gruppo):
-                if voce["id"] in attesi:
-                    esito[voce["id"]] = {t["tema"]: t["punteggio"] for t in voce["temi"]}
-            mancanti = attesi - esito.keys()
-            if mancanti:  # un secondo giro solo per i passaggi saltati
-                for voce in self._chiama([p for p in gruppo if p["id"] in mancanti]):
-                    if voce["id"] in mancanti:
-                        esito[voce["id"]] = {t["tema"]: t["punteggio"] for t in voce["temi"]}
+            self._raccogli(gruppo, esito)
+            da_ripetere = [p for p in gruppo if not self._completo(esito.get(p["id"], {}))]
+            if da_ripetere:
+                self._raccogli(da_ripetere, esito)
+        self.incompleti = [p["id"] for p in passaggi if not self._completo(esito.get(p["id"], {}))]
         return esito

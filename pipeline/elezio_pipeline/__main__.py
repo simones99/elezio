@@ -12,6 +12,12 @@ from . import bozze, classifica, config, estrai, fonti, ocr, schede, valuta
 from .llm import TettoSuperato
 
 
+def _avvisa_incompleti(c):
+    if c.incompleti:
+        print(f"passaggi incompleti: {len(c.incompleti)}, per questi gli scartati non sono affidabili: "
+              + ", ".join(c.incompleti))
+
+
 def _valuta_classificatore(args, cfg):
     campione = valuta.carica_campione(args.campione)
     temi = classifica.carica_temi()
@@ -23,6 +29,7 @@ def _valuta_classificatore(args, cfg):
         previsti = c.classifica(campione)
         per_tema, tot = valuta.misura(campione, previsti, [t["id"] for t in temi], soglia)
         valuta.stampa(f"llm {modello} (costo {c.costo:.4f} dollari)", per_tema, tot)
+        _avvisa_incompleti(c)
         if args.uscita:
             args.uscita.mkdir(parents=True, exist_ok=True)
             nome = modello.replace("/", "_")
@@ -75,6 +82,7 @@ def _classifica(args, cfg):
                                     temi=[t for t, s in punteggi.items() if s >= soglia]),
                                ensure_ascii=False) + "\n")
     print(f"{len(passaggi)} passaggi classificati con {c.modello}, costo {c.costo:.4f} dollari")
+    _avvisa_incompleti(c)
     return 0
 
 
@@ -108,6 +116,12 @@ def _passaggi(args, cfg):
     print(f"\nSenza temi ({len(senza)})")
     for p in senza:
         print(_riga_passaggio(p))
+    temi = {tema["id"] for tema in classifica.carica_temi()}
+    incompleti = [p for p in passaggi if temi - p["punteggi"].keys()]
+    if incompleti:
+        print(f"\nPunteggi incompleti ({len(incompleti)}): per questi passaggi gli scartati non sono affidabili")
+        for p in incompleti:
+            print(_riga_passaggio(p))
     return 0
 
 
