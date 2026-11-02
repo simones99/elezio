@@ -187,7 +187,7 @@ Cosa questa misura non copre:
 - **Il modello di sintesi.** A soglia 0,1 il classificatore quasi non lascia temi vuoti, quindi è il modello di sintesi a dire `assente`, leggendo molti passaggi fuori tema. Non è misurato.
 - **Il peso sulle bozze.** Su AVS intero i temi assegnati sono 2,75 e 3,15 per passaggio, contro 1,61 e 1,64 a soglia 0,2. `istituzioni` riceve 223 e 247 passaggi su 494, di cui 34 e 51 da 0,5 in su.
 
-Raccomandazioni, da confermare dal maintainer. Non sono ancora nei criteri dei ticket citati né nella checklist di [Revisione](#revisione):
+Raccomandazioni, confermate dal maintainer il 2 novembre 2026 e riportate nei criteri dei ticket citati e nella checklist di [Revisione](#revisione):
 
 1. **Nessun intervento nella pipeline per ora.** Una seconda chiamata mirata sui temi rimasti vuoti, su queste due fonti, non partirebbe mai.
 2. **Controllo a mano di ogni posizione assente in revisione (#47):** passaggi assegnati, scartati e ricerca nel testo estratto, cronometrando il tempo.
@@ -224,9 +224,10 @@ Per il 2022, una PR per documento fonte (7 PR, fino a 36 schede per l'accordo di
 1. apre il PDF alla pagina citata e conferma che la citazione esiste e non è fuori contesto;
 2. conferma che la sintesi non aggiunge nulla oltre le citazioni;
 3. conferma il tema secondo gli esempi dentro/altrove;
-4. porta `stato` a `verificata`, oppure lascia bozza con una nota.
+4. se la posizione è assente, controlla con `pipeline passaggi` i passaggi assegnati e quelli scartati, cerca il tema nel testo estratto e segna quanto tempo ci mette;
+5. porta `stato` a `verificata`, oppure lascia bozza con una nota.
 
-Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 120 schede, circa 20 ore.
+Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 120 schede, circa 20 ore. Il tempo del controllo delle posizioni assenti non è ancora misurato ([#61](https://github.com/simones99/elezio/issues/61)): si misura in #47.
 
 ## Fase 2 (programmi 2027)
 
