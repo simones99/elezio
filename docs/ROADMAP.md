@@ -11,7 +11,7 @@ Ultimo aggiornamento: 2 novembre 2026. Le decisioni aperte vivono come ticket fi
 
 Conseguenza: ogni fase ha un budget in ore e un solo risultato. Quando una fase sfora, si taglia il contenuto, non si sposta la scadenza.
 
-## Fase 0: decidere (novembre e dicembre 2026, circa 30 ore)
+## Fase 0: decidere (chiusa il 2 novembre 2026, prevista per novembre e dicembre, circa 30 ore)
 
 Risultato: tutte le decisioni della mappa chiuse, dati 2022 strutturati, repo pubblico.
 
@@ -21,11 +21,15 @@ Risultato: tutte le decisioni della mappa chiuse, dati 2022 strutturati, repo pu
 - Nome, dominio, licenze, `CREDITS.md`, repo pubblico: nome elezio su `elezio.pages.dev`, senza dominio; repo pubblico dal 2 novembre 2026, con la checklist del ticket [Quando e come rendere pubblico il repository](https://github.com/simones99/elezio/issues/21) completata (README, CONTRIBUTING, codice di condotta, template di segnalazione, gitleaks, impostazioni).
 - Preparare i 7 documenti fonte 2022 (PDF, hash, testo estratto) nella struttura decisa: sono 7 e non 10 perché FdI, Lega e FI hanno depositato lo stesso accordo e Azione e Italia Viva un programma comune.
 
-Uscita della fase: ADR scritti, glossario aggiornato, mappa senza ticket aperti sul nucleo v1.
+Uscita della fase: ADR scritti, glossario aggiornato, mappa senza ticket aperti sul nucleo v1. Condizioni verificate il 2 novembre 2026, prima di aprire i ticket della Fase 1.
+
+Riserva sui dati 2022: fonti, testi estratti e passaggi sono pronti, ma i passaggi non sono ancora classificati e mancano i file dei partiti e le schede. Sono lavoro della Fase 1 ([#43](https://github.com/simones99/elezio/issues/43), [#44](https://github.com/simones99/elezio/issues/44), [#46](https://github.com/simones99/elezio/issues/46)).
 
 ## Fase 1: costruire la beta sui dati 2022 (gennaio e febbraio 2027, circa 50 ore)
 
 Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
+
+Il lavoro è diviso nei ticket da [#37](https://github.com/simones99/elezio/issues/37) a [#55](https://github.com/simones99/elezio/issues/55), figli della mappa, con le dipendenze su GitHub.
 
 - Scaffolding del sito: Astro in `sito/`, contenuti letti da `contenuti/`, Open Election Compass self-hostato in `/quiz/`, deploy su Cloudflare Pages (ADR 0006, `docs/stack.md`).
 - Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 120 schede, circa 20 ore.
