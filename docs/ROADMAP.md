@@ -29,7 +29,7 @@ Riserva sui dati 2022: fonti, testi estratti e passaggi sono pronti, ma i passag
 
 Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
 
-Il lavoro è diviso nei ticket da [#37](https://github.com/simones99/elezio/issues/37) a [#55](https://github.com/simones99/elezio/issues/55), figli della mappa, con le dipendenze su GitHub.
+Il lavoro è diviso nei ticket da [#37](https://github.com/simones99/elezio/issues/37) a [#55](https://github.com/simones99/elezio/issues/55), figli della mappa, con le dipendenze su GitHub. Dal 12 novembre 2026 si aggiungono [#65](https://github.com/simones99/elezio/issues/65), [#66](https://github.com/simones99/elezio/issues/66), [#67](https://github.com/simones99/elezio/issues/67) e [#68](https://github.com/simones99/elezio/issues/68), nati dall'analisi in [piano-fase-1.md](piano-fase-1.md), che dà anche l'ordine di lavoro.
 
 - Scaffolding del sito: Astro in `sito/`, contenuti letti da `contenuti/`, Open Election Compass self-hostato in `/quiz/`, deploy su Cloudflare Pages (ADR 0006, `docs/stack.md`).
 - Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 120 schede, circa 20 ore.
