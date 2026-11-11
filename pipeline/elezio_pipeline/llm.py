@@ -25,7 +25,7 @@ class ClienteLLM:
         self.tetto = float(cfg["ELEZIO_TETTO_DOLLARI"])
         self.costo = 0.0
         self.log = []
-        self.tetto_attivo = True
+        self.avvisato_senza_costo = False
 
     def _extra(self):
         extra = {"usage": {"include": True}}
@@ -58,11 +58,11 @@ class ClienteLLM:
                     raise
                 time.sleep(attesa)
         uso = risposta.usage.model_dump() if risposta.usage else {}
-        if uso.get("cost") is None and self.tetto_attivo:
+        if uso.get("cost") is None and not self.avvisato_senza_costo:
             # solo OpenRouter restituisce il costo: altrove resterebbe a 0 e il tetto non scatterebbe mai
-            self.tetto_attivo = False
+            self.avvisato_senza_costo = True
             print(f"{self.modello}: l'endpoint non restituisce il costo, il tetto di spesa non è attivo "
-                  "e il costo riportato è 0")
+                  "e il costo riportato non conta queste chiamate")
         self.costo += uso.get("cost") or 0.0
         self.log.append({"modello": self.modello, **da_registrare, "usage": uso})
         # contenuto nullo (rifiuto, risposta troncata): vale come JSON rotto, i chiamanti lo gestiscono già
