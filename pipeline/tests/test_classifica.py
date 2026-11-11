@@ -3,7 +3,7 @@
 import json
 
 import pytest
-from conftest import FONTE
+from conftest import FONTE, SENZA_CONTENUTO
 
 from elezio_pipeline.__main__ import main
 
@@ -68,6 +68,7 @@ RISPOSTE_INSERVIBILI = {
     "id non testo": {"passaggi": [{"id": ["x"], "punteggi": {"sanita": 0, "fisco": 0}}]},
     "punteggi nulli": {"passaggi": [{"id": f"{FONTE}-0001", "punteggi": None}]},
     "voce non oggetto": {"passaggi": ["x"]},
+    "senza contenuto": SENZA_CONTENUTO,
 }
 
 
@@ -196,6 +197,20 @@ def test_classifica_si_ferma_al_tetto_e_non_tocca_i_passaggi(progetto, modello, 
     assert main(["classifica", "--fonte", FONTE]) == 1
     assert len(modello.richieste) == 1
     assert "temi" not in progetto.passaggi()[0]
+
+
+def test_endpoint_senza_costo_avvisa_una_volta_che_il_tetto_non_e_attivo(progetto, modello, capsys):
+    modello.costo = None
+    molti = [dict(progetto.passaggi()[0], id=f"{FONTE}-{i:04d}") for i in range(1, 26)]
+    progetto.scrivi_passaggi(molti)
+    modello.risposte += [_risposta(*[(i, []) for i in range(1, 21)]), _risposta(*[(i, []) for i in range(21, 26)])]
+    assert not main(["classifica", "--fonte", FONTE])
+    assert capsys.readouterr().out.count("il tetto di spesa non è attivo") == 1
+
+
+def test_endpoint_con_il_costo_non_avvisa_sul_tetto(progetto, modello, capsys):
+    _classifica_prova(modello)
+    assert "tetto di spesa" not in capsys.readouterr().out
 
 
 def test_vista_del_revisore_divide_assegnati_scartati_e_senza_temi(progetto, modello, capsys):

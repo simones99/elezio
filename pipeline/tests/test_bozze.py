@@ -3,7 +3,7 @@
 import datetime
 import json
 
-from conftest import FONTE
+from conftest import FONTE, SENZA_CONTENUTO
 
 from elezio_pipeline.__main__ import main
 
@@ -296,6 +296,22 @@ def test_risposta_non_json_si_ritenta_e_poi_nessun_file(progetto, modello, capsy
     assert "non valida" in capsys.readouterr().out
 
 
+def test_risposta_senza_contenuto_si_ritenta_una_volta(progetto, modello):
+    _classificati(progetto)
+    modello.risposte += [SENZA_CONTENUTO, _dichiarata((2, CITAZIONE_VERA))]
+    assert not _bozze()
+    assert len(modello.richieste) == 2
+    assert progetto.leggi_scheda()[0]["titolo"] == "Più psicologi nei distretti"
+
+
+def test_risposta_senza_contenuto_due_volte_non_scrive_nessun_file(progetto, modello, capsys):
+    _classificati(progetto)
+    modello.risposte += [SENZA_CONTENUTO, SENZA_CONTENUTO]
+    assert _bozze() == 1
+    assert not progetto.scheda().exists()
+    assert "non valida" in capsys.readouterr().out
+
+
 def test_fonte_condivisa_scrive_la_stessa_bozza_per_ogni_partito(progetto, modello):
     percorso = progetto.contenuti / "fonti" / f"{FONTE}.yaml"
     percorso.write_text(percorso.read_text(encoding="utf-8").replace("- prova", "- prova\n- altro"), encoding="utf-8")
@@ -328,6 +344,14 @@ def test_il_tetto_ferma_il_nuovo_tentativo_e_non_scrive_niente(progetto, modello
     assert _bozze() == 1
     assert len(modello.richieste) == 1
     assert not progetto.scheda().exists()
+
+
+def test_endpoint_senza_costo_avvisa_che_il_tetto_non_e_attivo(progetto, modello, capsys):
+    modello.costo = None
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    assert "il tetto di spesa non è attivo" in capsys.readouterr().out
 
 
 def test_senza_classificazione_lo_dice_senza_chiamare_il_modello(progetto, modello, capsys):

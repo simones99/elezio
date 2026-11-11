@@ -1,7 +1,8 @@
 """Client unico per i passi con un modello, su un endpoint compatibile OpenAI.
 
 Tiene in un punto solo il blocco del provider per la residenza dell'inferenza,
-il conteggio dei costi e il tetto di spesa per run (docs/pipeline.md).
+il conteggio dei costi e il tetto di spesa per run (docs/pipeline.md). Il tetto
+vale solo dove l'endpoint restituisce il costo della chiamata: altrove si avvisa.
 """
 
 import json
@@ -24,6 +25,7 @@ class ClienteLLM:
         self.tetto = float(cfg["ELEZIO_TETTO_DOLLARI"])
         self.costo = 0.0
         self.log = []
+        self.tetto_attivo = True
 
     def _extra(self):
         extra = {"usage": {"include": True}}
@@ -56,6 +58,12 @@ class ClienteLLM:
                     raise
                 time.sleep(attesa)
         uso = risposta.usage.model_dump() if risposta.usage else {}
+        if uso.get("cost") is None and self.tetto_attivo:
+            # solo OpenRouter restituisce il costo: altrove resterebbe a 0 e il tetto non scatterebbe mai
+            self.tetto_attivo = False
+            print(f"{self.modello}: l'endpoint non restituisce il costo, il tetto di spesa non è attivo "
+                  "e il costo riportato è 0")
         self.costo += uso.get("cost") or 0.0
         self.log.append({"modello": self.modello, **da_registrare, "usage": uso})
-        return json.loads(risposta.choices[0].message.content)
+        # contenuto nullo (rifiuto, risposta troncata): vale come JSON rotto, i chiamanti lo gestiscono già
+        return json.loads(risposta.choices[0].message.content or "")
