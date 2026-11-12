@@ -1,0 +1,15 @@
+# Tutti i file di testo in LF, nel repo e sul disco, anche con core.autocrlf=true
+# su Windows: Astro, i diff e gli hash delle citazioni vedono gli stessi byte.
+* text=auto eol=lf
+
+# Binari: mai convertiti, mai diff testuale.
+*.pdf  binary
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.webp binary
+*.avif binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
