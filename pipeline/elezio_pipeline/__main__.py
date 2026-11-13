@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from openai import OpenAIError
 
 from . import bozze, classifica, config, estrai, fonti, ocr, schede, valuta
 from .llm import TettoSuperato
@@ -81,8 +82,7 @@ def _classifica(args, cfg):
         righe.append(json.dumps(dict(p, punteggi=punteggi,
                                      temi=[t for t, s in punteggi.items() if s >= soglia]),
                                 ensure_ascii=False) + "\n")
-    with open(percorso, "w", encoding="utf-8") as f:
-        f.writelines(righe)
+    classifica.salva(percorso.parent, righe, c.modello, soglia, c.incompleti)
     print(f"{len(passaggi)} passaggi classificati con {c.modello}, costo {c.costo:.4f} dollari")
     _avvisa_incompleti(c)
     return 0
@@ -127,18 +127,71 @@ def _passaggi(args, cfg):
     return 0
 
 
-def _bozze(args, cfg):
-    passaggi = _leggi_passaggi(_percorso_passaggi(cfg, args.fonte))
-    log = []
+TUTTI = ("tutte", "tutti")
+ESITI = [("dichiarata", "scritte"), ("assente", "assenti"), ("revisionata", "saltate perché già revisionate"),
+         ("scritta", "saltate perché già scritte (--rigenera per rifarle)"), ("fallita", "fallite")]
+
+
+def _scegli(valore, ammessi, nome):
+    """I valori di --fonte o --tema: separati da virgola, oppure `tutte`/`tutti` nell'ordine di `ammessi`."""
+    if valore in TUTTI:
+        return list(ammessi)
+    scelti = list(dict.fromkeys(v.strip() for v in valore.split(",") if v.strip()))
+    ignoti = [v for v in scelti if v not in ammessi]
+    if ignoti or not scelti:
+        raise ValueError(f"{nome} inesistente: {', '.join(ignoti) or valore}")
+    return scelti
+
+
+def _passaggi_classificati(cfg, fonte):
+    percorso = _percorso_passaggi(cfg, fonte)
+    if not percorso.exists():
+        raise bozze.BozzaImpossibile(f"{fonte}: passaggi mancanti, lancia prima pipeline estrai")
+    return _leggi_passaggi(percorso)
+
+
+def _bozza(cfg, lancio, fonte, tema, rigenera, cache):
+    """Esito di una coppia fonte-tema; un errore della coppia non ferma il lancio."""
+    coppia = f"{fonte}/{tema}"
+    inizio, costo = len(lancio.log), lancio.costo
     try:
-        costo = bozze.genera(cfg, args.fonte, args.tema, passaggi, log)
-    except (bozze.BozzaImpossibile, TettoSuperato) as e:
-        print(f"{args.fonte}/{args.tema}: {e}")
-        return 1
+        fatta = None if rigenera else bozze.gia_fatta(fonte, tema)
+        if fatta == "scritta":
+            print(f"{coppia}: già scritta, non la rigenero")
+        if fatta:
+            return fatta
+        if fonte not in cache:
+            cache[fonte] = _passaggi_classificati(cfg, fonte)
+        esito = bozze.genera(lancio, fonte, tema, cache[fonte], rigenera)
+    except (RuntimeError, OpenAIError, ValueError, OSError) as e:
+        # BozzaImpossibile, TettoSuperato, chiave mancante, endpoint, file della coppia illeggibili
+        print(f"{coppia}: {e}")
+        return "fallita"
     finally:
-        _registra(cfg, f"bozze-{args.fonte}-{args.tema}", log)
-    print(f"{args.fonte}/{args.tema}: {len(log)} chiamate, costo {costo:.4f} dollari")
-    return 0
+        _registra(cfg, f"bozze-{fonte}-{tema}", lancio.log[inizio:])
+    if esito in ("dichiarata", "assente"):
+        print(f"{coppia}: {len(lancio.log) - inizio} chiamate, costo {lancio.costo - costo:.4f} dollari")
+    return esito
+
+
+def _bozze(args, cfg):
+    try:
+        scelte = _scegli(args.fonte, sorted(p.stem for p in fonti.contenuti_fonti().glob("*.yaml")), "fonte")
+        temi = _scegli(args.tema, [t["id"] for t in classifica.carica_temi()], "tema")
+    except ValueError as e:
+        print(e)
+        return 1
+    lancio = bozze.Lancio(cfg)
+    esiti = {k: [] for k, _ in ESITI}
+    cache = {}
+    for fonte in scelte:
+        for tema in temi:
+            esiti[_bozza(cfg, lancio, fonte, tema, args.rigenera, cache)].append(f"{fonte}/{tema}")
+    print(f"\nRiepilogo: {sum(map(len, esiti.values()))} coppie, costo {lancio.costo:.4f} dollari")
+    for k, nome in ESITI:
+        coppie = esiti[k]
+        print(f"  {nome}: {len(coppie)}" + (f" ({', '.join(coppie)})" if coppie else ""))
+    return 1 if esiti["fallita"] else 0
 
 
 def _acquisisci(args, cfg):
@@ -220,9 +273,11 @@ def main(argv=None):
     w = sub.add_parser("passaggi", help="per il revisore: passaggi assegnati a un tema e possibili perdite")
     w.add_argument("--fonte", required=True)
     w.add_argument("--tema", required=True)
-    b = sub.add_parser("bozze", help="passi 6-7: scheda in bozza con le citazioni verificate")
-    b.add_argument("--fonte", required=True)
-    b.add_argument("--tema", required=True)
+    b = sub.add_parser("bozze", help="passi 6-7: schede in bozza con le citazioni verificate")
+    b.add_argument("--fonte", required=True, help="slug separati da virgola, oppure tutte")
+    b.add_argument("--tema", required=True, help="slug separati da virgola, oppure tutti")
+    b.add_argument("--rigenera", action="store_true",
+                   help="rifà anche le coppie con le schede già scritte; verificate e contestate restano intatte")
     args = p.parse_args(argv)
     cfg = config.carica()
     comandi = {"valuta-classificatore": _valuta_classificatore, "classifica": _classifica,

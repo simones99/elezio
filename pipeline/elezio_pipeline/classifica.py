@@ -5,7 +5,9 @@ definizione, sotto-questioni ed esempi dentro/altrove di ogni tema, uscita
 JSON strutturata con un punteggio per tema. Il backend `jev` non c'è ancora.
 """
 
+import datetime
 import json
+import shutil
 
 import yaml
 
@@ -58,6 +60,44 @@ def _schema(temi):
         "required": ["passaggi"],
         "additionalProperties": False,
     }
+
+
+REGISTRO = "classificazione.json"
+ARCHIVIO = "classificazioni"
+
+
+def registro(lavoro):
+    """Modello, prompt e soglia della classificazione in `passaggi.jsonl`, o None se non registrati."""
+    p = lavoro / REGISTRO
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+
+def salva(lavoro, righe, modello, soglia, incompleti):
+    """Scrive i passaggi classificati e il loro registro, con una copia in `classificazioni/`.
+
+    La copia non si cancella mai: una bozza nata da questa classificazione la ritrova
+    anche dopo un nuovo `pipeline classifica` (docs/pipeline.md, sezione Bozza).
+    """
+    passaggi = lavoro / "passaggi.jsonl"
+    archivio = lavoro / ARCHIVIO
+    archivio.mkdir(parents=True, exist_ok=True)
+    if registro(lavoro) is None and passaggi.exists() and '"temi"' in passaggi.read_text(encoding="utf-8"):
+        # classificazione precedente al registro: si conserva comunque, una bozza può venire da lì
+        momento = datetime.datetime.fromtimestamp(passaggi.stat().st_mtime).strftime("%Y%m%d-%H%M%S")
+        shutil.copyfile(passaggi, archivio / f"{momento}-senza-registro.jsonl")
+    momento = base = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    n = 1
+    while (archivio / f"{momento}.jsonl").exists():  # due classificazioni nello stesso secondo
+        n += 1
+        momento = f"{base}-{n}"
+    reg = {"id": momento, "modello": modello, "prompt": PROMPT, "soglia": soglia,
+           "data": datetime.date.today().isoformat(), "passaggi": len(righe),
+           "incompleti": incompleti, "copia": f"{ARCHIVIO}/{momento}.jsonl"}
+    (archivio / f"{momento}.jsonl").write_text("".join(righe), encoding="utf-8")
+    with open(passaggi, "w", encoding="utf-8") as f:
+        f.writelines(righe)
+    (lavoro / REGISTRO).write_text(json.dumps(reg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return reg
 
 
 def _punteggio_valido(s):

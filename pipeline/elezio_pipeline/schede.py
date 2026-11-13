@@ -28,12 +28,16 @@ def percorso(elezione, partito, tema):
 
 
 def leggi(p):
-    """(frontmatter, corpo) di un file scheda. ValueError se il frontmatter non c'è."""
+    """(frontmatter, corpo) di un file scheda. ValueError se il frontmatter non c'è o non
+    è un elenco di campi, yaml.YAMLError se non è YAML valido."""
     testo = p.read_text(encoding="utf-8")
     if not testo.startswith("---\n") or "\n---\n" not in testo:
         raise ValueError("frontmatter mancante")
     fronte, corpo = testo[4:].split("\n---\n", 1)
-    return yaml.safe_load(fronte), corpo.strip()
+    f = yaml.safe_load(fronte)
+    if not isinstance(f, dict):
+        raise ValueError("frontmatter vuoto o senza campi")
+    return f, corpo.strip()
 
 
 def scrivi(p, fronte, corpo):

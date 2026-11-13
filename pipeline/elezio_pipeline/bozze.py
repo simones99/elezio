@@ -8,6 +8,8 @@ riprova una volta e se fallisce ancora il problema finisce nelle note.
 import datetime
 import json
 
+import yaml
+
 from . import classifica, fonti, schede
 from .citazioni import pagine_del_testo, verifica_citazione
 from .config import PIPELINE
@@ -140,38 +142,119 @@ def _fronte(partito, tema, y, posizione, titolo, citazioni, note, bozza_da):
     return f
 
 
-def _gia_revisionate(y, tema_id):
-    """{partito: stato} per le schede già passate dal revisore: la pipeline non le tocca."""
-    revisionate = {}
+CAMPI_FONTE = ("id", "elezione", "partiti", "testo_estratto")
+
+
+def _leggi_fonte(fonte):
+    """Il YAML della fonte, con i campi che servono alle bozze; BozzaImpossibile se non si legge."""
+    try:
+        y = fonti.leggi(fonte)
+    except (OSError, yaml.YAMLError) as e:
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte illeggibile: {e}") from e
+    if not isinstance(y, dict):
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte vuoto")
+    mancanti = [k for k in CAMPI_FONTE if not y.get(k)]
+    if mancanti or not isinstance(y["partiti"], list):
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte senza " + ", ".join(mancanti or ["un elenco di partiti"]))
+    return y
+
+
+def _stati(y, tema_id):
+    """{partito: stato della scheda già scritta, o None se la scheda non c'è}."""
+    stati = {}
     for partito in y["partiti"]:
         p = schede.percorso(y["elezione"], partito, tema_id)
-        if p.exists():
-            stato = schede.leggi(p)[0].get("stato")
-            if stato != "bozza":
-                revisionate[partito] = stato
-    return revisionate
+        if not p.exists():
+            stati[partito] = None
+            continue
+        try:
+            stati[partito] = schede.leggi(p)[0].get("stato")
+        except (ValueError, yaml.YAMLError) as e:  # una scheda rotta non si sovrascrive senza guardarla
+            raise BozzaImpossibile(f"scheda {partito}/{tema_id} illeggibile, correggila a mano: {e}") from e
+    return stati
 
 
-def genera(cfg, fonte, tema_id, passaggi, log):
-    """Scrive le schede del tema per i partiti della fonte e restituisce il costo in dollari.
+def gia_fatta(fonte, tema_id):
+    """"revisionata" se tutte le schede della coppia sono passate dal revisore, "scritta" se
+    esistono tutte, None se ne manca almeno una: allora la coppia si genera."""
+    stati = _stati(_leggi_fonte(fonte), tema_id)
+    if all(s not in (None, "bozza") for s in stati.values()):
+        _annuncia(stati, tema_id)
+        return "revisionata"
+    if all(s is not None for s in stati.values()):
+        return "scritta"
+    return None
 
-    Le chiamate finiscono in `log`, anche se il passo si ferma a metà. Senza passaggi
+
+def _annuncia(stati, tema_id):
+    for p, stato in stati.items():
+        if stato not in (None, "bozza"):
+            print(f"{p}/{tema_id}: scheda in stato {stato}, non la tocco")
+
+
+class Lancio:
+    """Un lancio di `pipeline bozze`: un solo client, quindi un solo tetto di spesa per
+    tutte le coppie, creato alla prima coppia che chiama il modello."""
+
+    def __init__(self, cfg):
+        self.cfg = cfg
+        self.log = []
+        self._llm = None
+
+    @property
+    def llm(self):
+        if self._llm is None:
+            self._llm = ClienteLLM(self.cfg, self.cfg["ELEZIO_MODELLO_SINTESI"])
+            self._llm.log = self.log
+        return self._llm
+
+    @property
+    def costo(self):
+        return self._llm.costo if self._llm else 0.0
+
+
+def _salva(base, fonte, tema_id, reg, risposta, bozza_da):
+    """Accanto alla bozza, nel repo privato: la risposta del modello e la classificazione da cui nasce."""
+    salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
+    salvata.parent.mkdir(parents=True, exist_ok=True)
+    dati = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
+    salvata.write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
+    """Scrive le schede del tema per i partiti della fonte e restituisce l'esito:
+    "dichiarata", "assente", oppure "revisionata" o "scritta" se nessuna scheda era da scrivere.
+
+    Scrive solo le schede che mancano; con `rigenera` riscrive anche quelle in bozza. Le
+    schede verificate e contestate non si toccano mai. Su una fonte condivisa quindi una
+    bozza già scritta di un partito resta com'è anche se si genera quella di un altro.
+
+    Le chiamate finiscono in `lancio.log`, anche se il passo si ferma a metà. Senza passaggi
     del tema la posizione è assente e il modello non viene chiamato, a meno che qualche
     passaggio non abbia il punteggio del tema: allora l'assenza non è dimostrata e il
-    passo si ferma con BozzaImpossibile.
+    passo si ferma con BozzaImpossibile. Senza il registro della classificazione si ferma
+    anche: la bozza non saprebbe da quale classificazione è nata.
     """
     tema = next((t for t in classifica.carica_temi() if t["id"] == tema_id), None)
     if tema is None:
         raise BozzaImpossibile(f"tema {tema_id} inesistente")
     if any("temi" not in p for p in passaggi):
         raise BozzaImpossibile(f"{fonte}: passaggi non classificati, lancia prima pipeline classifica")
-    y = fonti.leggi(fonte)
-    revisionate = _gia_revisionate(y, tema_id)
-    partiti = [p for p in y["partiti"] if p not in revisionate]
-    for p, stato in revisionate.items():
-        print(f"{p}/{tema_id}: scheda in stato {stato}, non la tocco")
+    y = _leggi_fonte(fonte)
+    stati = _stati(y, tema_id)
+    _annuncia(stati, tema_id)
+    da_scrivere = (None, "bozza") if rigenera else (None,)
+    partiti = [p for p, s in stati.items() if s in da_scrivere]
+    for p, s in stati.items():
+        if s == "bozza" and not rigenera:
+            print(f"{p}/{tema_id}: bozza già scritta, non la tocco (--rigenera per rifarla)")
     if not partiti:
-        return 0.0
+        return "scritta" if "bozza" in stati.values() else "revisionata"
+    base = fonti.cartella_fonti(lancio.cfg)
+    reg = classifica.registro(base / "lavoro" / fonte)
+    if reg is None:
+        raise BozzaImpossibile(f"{fonte}: la classificazione non dice modello, prompt e soglia, "
+                               "rilancia pipeline classifica")
     del_tema = [p for p in passaggi if tema_id in p["temi"]]
     id_senza_punteggio = [p["id"] for p in passaggi if classifica.temi_mancanti(p.get("punteggi", {}), [tema])]
     if not del_tema:
@@ -179,26 +262,23 @@ def genera(cfg, fonte, tema_id, passaggi, log):
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
                                    + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
+        _salva(base, fonte, tema_id, reg, None, None)
         for partito in partiti:
             schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
                           _fronte(partito, tema, y, "assente", "", [],
                                   ["il classificatore non ha assegnato al tema nessun passaggio"], None),
                           CORPO_ASSENTE)
-        return 0.0
-    base = fonti.cartella_fonti(cfg)
+        return "assente"
     pagine = pagine_del_testo((base / y["testo_estratto"]).read_text(encoding="utf-8"))
-    llm = ClienteLLM(cfg, cfg["ELEZIO_MODELLO_SINTESI"])
-    llm.log = log
+    llm = lancio.llm
     risposta, valide, note = _genera(llm, tema, del_tema, pagine)
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
-    salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
-    salvata.parent.mkdir(parents=True, exist_ok=True)
-    salvata.write_text(json.dumps(risposta, ensure_ascii=False, indent=2), encoding="utf-8")
-    assente = risposta["posizione"] == "assente"
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}
+    _salva(base, fonte, tema_id, reg, risposta, bozza_da)
+    assente = risposta["posizione"] == "assente"
     for partito in partiti:
         schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
                       _fronte(partito, tema, y, risposta["posizione"], risposta.get("titolo"), valide, note, bozza_da),
                       CORPO_ASSENTE if assente else risposta["sintesi"].strip())
-    return llm.costo
+    return risposta["posizione"]

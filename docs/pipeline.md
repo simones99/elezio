@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 12 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 13 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -26,12 +26,14 @@ pipeline acquisisci --url <url> --fonte <id> --partiti <slug,...> --elezione <an
 pipeline estrai --fonte <id>                 # passi 2-4: testo nativo oppure OCR, poi passaggi
 pipeline classifica --fonte <id>             # passo 5
 pipeline passaggi --fonte <id> --tema <slug> # per il revisore: passaggi assegnati al tema e possibili perdite
-pipeline bozze --fonte <id> --tema <slug>    # passi 6-7
+pipeline bozze --fonte <id,...|tutte> --tema <slug,...|tutti> [--rigenera]   # passi 6-7
 pipeline verifica                            # passo 9: YAML delle fonti, schede e citazioni; in CI con #41
 pipeline valuta-classificatore               # precisione e richiamo sul campione d'oro
 ```
 
-`pipeline acquisisci --elezione 2027` non c'è ancora: arriva con la preparazione della Fase 2. `pipeline bozze` lavora per ora su una coppia fonte-tema alla volta.
+`pipeline acquisisci --elezione 2027` non c'è ancora: arriva con la preparazione della Fase 2.
+
+`pipeline bozze` accetta più fonti e più temi separati da virgola, oppure `tutte` e `tutti`: tutte le fonti in `contenuti/fonti/`, in ordine alfabetico, e tutti i temi nell'ordine di `temi.yaml`. Genera una coppia fonte-tema alla volta, nell'ordine fonte per fonte, e si comporta come descritto in [Bozza](#bozza). Per le 84 coppie del 2022 basta `pipeline bozze --fonte tutte --tema tutti` (`tutte` comprende anche le fonti di altre elezioni, quando ci saranno).
 
 Python standalone in `pipeline/`, indipendente dallo stack del sito. Si installa in due passi: le dipendenze bloccate con `pip install --require-hashes -r pipeline/requirements.lock`, poi il pacchetto con `pip install --no-deps -e ./pipeline`, in modalità modificabile perché prompt e `pipeline.toml` si leggono dalla cartella. `pyproject.toml` dichiara gli intervalli ammessi, `requirements.lock` fissa versioni e hash per Python 3.12 e successivi su tutti i sistemi. Dopo una modifica alle dipendenze il lockfile si rigenera con il comando scritto in testa al file (serve `uv`, solo per questo passo). I test si lanciano con `python -m pytest` da `pipeline/`. L'umano interviene due volte: conferma il YAML della fonte dopo l'acquisizione (titolo, tipo, partiti condivisi, copia canonica) e revisiona le schede.
 
@@ -213,6 +215,21 @@ oppure `{"posizione": "assente"}` se nessun passaggio tratta il tema. Lo script 
 
 Casi limite. Se il classificatore non assegna al tema nessun passaggio, la scheda è assente senza chiamare il modello, senza `bozza_da` e con una nota per il revisore. Se però qualche passaggio non ha il punteggio del tema, l'assenza non è dimostrata: `pipeline bozze` esce con codice 1, elenca quei passaggi e non scrive nulla, lasciando intatta una scheda già esistente. Se invece al tema sono assegnati dei passaggi e altri non hanno il suo punteggio, la bozza si scrive con una nota che li elenca, anche quando il modello risponde assente. Un passaggio senza il punteggio di un altro tema non conta. Se dopo il nuovo tentativo non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce: la scheda non diventa mai assente per un errore del modello, e un `assente` arrivato al secondo tentativo, dopo una risposta scartata di qualunque tipo, porta una nota. Una scheda già `verificata` o `contestata` non si sovrascrive: se lo sono tutte quelle della fonte, il comando esce con codice 0 senza guardare i punteggi. Una risposta inservibile anche al secondo tentativo non scrive nessun file.
 
+### Lancio su più coppie
+
+- **Tetto di spesa.** Il tetto di `pipeline.toml` vale per l'intero lancio, non per coppia: tutte le coppie usano lo stesso client e quando la spesa lo raggiunge le coppie che restano e chiamano il modello falliscono. Quelle che non lo chiamano (assenti per il classificatore, già scritte, già revisionate) si chiudono comunque.
+- **Errori.** Una coppia che fallisce non ferma le altre: passaggi mancanti o non classificati, classificazione senza registro, risposta del modello inservibile, tetto raggiunto, errore dell'endpoint, YAML della fonte illeggibile o senza `id`, `elezione`, `partiti` o `testo_estratto`, scheda esistente con YAML rotto o frontmatter vuoto. Una scheda illeggibile non si sovrascrive: va corretta a mano. Alla fine un riepilogo elenca le coppie scritte, assenti, saltate perché già revisionate, saltate perché già scritte e fallite, con il costo totale. Il codice di uscita è 1 se almeno una coppia è fallita.
+- **Ripresa.** Una coppia è già scritta se esiste la scheda di ogni partito della fonte, in qualunque stato. Rilanciare lo stesso comando dopo un'interruzione rifà solo le coppie mancanti o fallite. Su una fonte condivisa con solo alcune schede scritte (un partito aggiunto, una scheda cancellata) si scrivono solo quelle che mancano: le bozze degli altri partiti restano come sono, anche se corrette a mano. `--rigenera` rifà anche quelle già scritte, e vale anche per una coppia sola: senza, rilanciare `pipeline bozze` su una bozza esistente non la riscrive. Le schede `verificata` e `contestata` non si toccano mai, con o senza `--rigenera`.
+- **Log.** L'uso di ogni chiamata va in `lavoro/log/<momento>-bozze-<fonte>-<tema>.jsonl`, un file per coppia come con un lancio singolo.
+
+### Classificazione accanto alla bozza
+
+`pipeline classifica` scrive accanto a `passaggi.jsonl` il registro `classificazione.json`: id (data e ora), modello, prompt, soglia, data, numero di passaggi, passaggi incompleti e `copia`, il percorso di una copia dei passaggi classificati in `lavoro/<fonte>/classificazioni/<id>.jsonl`. La copia si scrive a ogni classificazione e non si cancella mai. `pipeline bozze` mette il registro dentro `lavoro/<fonte>/bozze/<tema>.json`, insieme a `bozza_da` e alla risposta del modello (`null` se la scheda è assente senza chiamarlo).
+
+Si è scelta la copia e non un avviso prima di riscrivere `passaggi.jsonl`: rilanciare `pipeline classifica` è un'operazione normale (punteggi incompleti, nuovo prompt), e un avviso si ignora. Con la copia ogni bozza ritrova i punteggi da cui è nata anche dopo una nuova classificazione, e la pagina metodologia può pubblicare modello, prompt e soglia di ogni bozza. Il costo è un file di qualche centinaio di kB per classificazione, nel repo privato.
+
+Una classificazione fatta prima del registro (M5S e AVS 2022, ticket #37, #58 e #61) non dice modello, prompt e soglia: `pipeline bozze` fallisce su quella fonte e chiede di rilanciare `pipeline classifica`, che costa pochi centesimi per fonte. Prima di riscriverla, `pipeline classifica` ne salva comunque una copia in `classificazioni/<data del file>-senza-registro.jsonl`, perché una bozza già scritta può venire da lì (Sanità di M5S, #37).
+
 Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modifica è un nuovo file. `bozza_da.modello` è l'id completo del modello, `bozza_da.prompt` il nome del file. La pagina metodologia pubblica i prompt.
 
 ## Verifica delle citazioni
@@ -243,7 +260,7 @@ Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-
 
 Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
 
-La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run, dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
+La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run (per `pipeline bozze`, l'intero lancio), dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
 
 ## Repo privato `elezio-fonti`
 
@@ -255,7 +272,9 @@ elezio-fonti/
 ├── lavoro/<fonte>/ocr/motore.txt    # motore che ha prodotto le pagine
 ├── lavoro/<fonte>/ocr-log.jsonl     # usage e costo di ogni pagina
 ├── lavoro/<fonte>/passaggi.jsonl    # passaggi segmentati, poi classificati
-├── lavoro/<fonte>/bozze/<tema>.json
+├── lavoro/<fonte>/classificazione.json            # modello, prompt e soglia della classificazione in passaggi.jsonl
+├── lavoro/<fonte>/classificazioni/<id>.jsonl      # copia di ogni classificazione, mai cancellata
+├── lavoro/<fonte>/bozze/<tema>.json               # risposta del modello, bozza_da e registro della classificazione
 └── lavoro/log/<run>.jsonl
 ```
 
