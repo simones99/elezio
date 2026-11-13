@@ -1,6 +1,6 @@
 # Schema dati: schede, partiti, documenti fonte, temi
 
-Ultimo aggiornamento: 13 novembre 2026 (contrassegno di un partito senza deposito). Prima: 27 ottobre 2026 (temi, campi della fonte per la pipeline, `id` delle citazioni e `sigla` dei partiti per il quiz). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
+Ultimo aggiornamento: 13 novembre 2026 (contrassegno di un partito senza deposito, `fonte` dell'inclusione per parlamentari). Prima: 27 ottobre 2026 (temi, campi della fonte per la pipeline, `id` delle citazioni e `sigla` dei partiti per il quiz). Decisioni di fondo in [ADR 0004](adr/0004-schema-dati-della-scheda.md); termini in [GLOSSARY.md](../GLOSSARY.md). Questo file è la vista campo per campo e cambia più spesso dell'ADR.
 
 ## Layout dei file
 
@@ -63,7 +63,7 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 | `alias` | no | Lista di nomi alternativi e sigle usati per riconoscere il partito nei documenti. |
 | `logo` | sì | Percorso del contrassegno preso dalla sezione Elezioni trasparenti del Ministero. Un partito senza deposito (Futuro Nazionale) usa quello del suo sito ufficiale, con la provenienza in `contenuti/partiti/loghi/README.md`. Non coperto dalla licenza dei dati. |
 | `sito` | sì | URL ufficiale. |
-| `inclusione` | sì | Oggetto `{via, verificata_il, fonte}`. `via` è `percentuale` (più del 2 percento alle ultime politiche) oppure `parlamentari` (almeno 5 in carica che dichiarano l'appartenenza). `fonte` è l'URL della pagina usata per la verifica (risultati ufficiali o elenco di Camera e Senato). |
+| `inclusione` | sì | Oggetto `{via, verificata_il, fonte}`. `via` è `percentuale` (più del 2 percento alle ultime politiche) oppure `parlamentari` (almeno 5 in carica che dichiarano l'appartenenza). `fonte` è l'URL della pagina usata per la verifica: i risultati ufficiali per `percentuale`; per `parlamentari` la pagina del partito che elenca i suoi parlamentari, incrociata con l'elenco di Camera o Senato, citato nel commento del file. |
 
 ## Documento fonte (`fonti/<fonte>.yaml`)
 

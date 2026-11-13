@@ -1,7 +1,9 @@
-# Inclusione: 10 deputati in carica nel gruppo "Azione-Popolari europeisti riformatori-Renew Europe"
-# della Camera, contati il 13 novembre 2026 sul JSON dell'elenco dei
-# deputati (/deputati/ws/elenco_deputati?_format=json&leg=19). Il
-# conteggio è per gruppo parlamentare; la soglia è 5, il Senato non serve.
+# Inclusione: 10 deputati in carica che il partito elenca nel suo Direttivo
+# nazionale (fonte): Benzoni, Bonetti, D'Alessio, Grippo, Onori, Pastorella,
+# Richetti, Rosato, Ruffino, Sottanelli. Tutti in carica e nel gruppo
+# "Azione-Popolari europeisti riformatori-Renew Europe" secondo l'elenco della
+# Camera (https://www.camera.it/deputati/elenco), incrociati il 13 novembre
+# 2026. La soglia è 5: il Senato non serve.
 # Nel 2022 si è presentato nella lista unica "Azione - Italia Viva - Calenda",
 # il cui risultato non è attribuibile a un solo partito: per questo la via è
 # parlamentari, e il contrassegno è quello della lista.
@@ -13,4 +15,4 @@ sito: https://www.azione.it/
 inclusione:
   via: parlamentari
   verificata_il: 2026-11-13
-  fonte: https://www.camera.it/deputati/elenco
+  fonte: https://www.azione.it/direttivo-nazionale/
