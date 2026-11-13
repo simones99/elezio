@@ -1,0 +1,72 @@
+---
+import '../styles/tokens.css';
+import { ELEZIONE } from '../lib/dati';
+
+interface Props {
+  /** Titolo della pagina, senza il nome del sito. Vuoto per la home. */
+  titolo?: string;
+  descrizione: string;
+  /** Ultimo livello del percorso nella testata (es. "Temi"). */
+  percorso?: string;
+}
+
+const { titolo, descrizione, percorso } = Astro.props;
+const titoloCompleto = titolo ? `${titolo} · elezio` : 'elezio';
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titoloCompleto}</title>
+    <meta name="description" content={descrizione} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+  </head>
+  <body>
+    <header class="testata">
+      <a class="marchio" href="/">Elezio</a>
+      <nav class="meta percorso" aria-label="Percorso">
+        <a href="/">Politiche {ELEZIONE}</a>{percorso && <> · <span>{percorso}</span></>}
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .testata {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 8px var(--gutter);
+    border-bottom: 1px solid var(--linea);
+  }
+
+  /* link della testata: area di tocco di 44px */
+  .marchio,
+  .percorso a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .marchio {
+    font-family: var(--capitali);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+  }
+
+  .percorso {
+    text-align: right;
+  }
+
+  .percorso a {
+    color: var(--inchiostro);
+  }
+</style>

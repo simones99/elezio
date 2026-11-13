@@ -1,0 +1,253 @@
+---
+// Scheda di un partito su un tema (DESIGN.md, "Scheda del partito"): stessa
+// sequenza e stesso spazio per una posizione dichiarata e per un'assenza.
+import { render } from 'astro:content';
+import type { SchedaMostrata } from '../lib/dati';
+
+interface Props {
+  scheda: SchedaMostrata;
+}
+
+const { scheda } = Astro.props;
+const { partito } = scheda;
+const idTitolo = `scheda-${scheda.id.replaceAll('/', '-')}`;
+const { Content } = await render(scheda.entry);
+const numeroCitazioni = scheda.citazioni.length;
+---
+
+<article class="scheda" aria-labelledby={idTitolo}>
+  <div class="chi">
+    <img src={partito.logo.src} alt="" width="40" height="40" decoding="async" />
+    <div>
+      <p class="sigla">{partito.sigla}</p>
+      <p class="nome">{partito.nome}</p>
+    </div>
+  </div>
+
+  {
+    scheda.posizione === 'dichiarata' ? (
+      <>
+        <h2 class="titolo" id={idTitolo}>{scheda.titolo}</h2>
+        <div class="sintesi">
+          <Content />
+        </div>
+      </>
+    ) : (
+      <>
+        <h2 class="titolo assente" id={idTitolo}>Il programma non tratta il tema</h2>
+        <p class="sintesi">
+          Nel documento del partito non c'è nessuna proposta su questo tema. Non è un giudizio: è quello che il
+          documento dice, o non dice.
+        </p>
+      </>
+    )
+  }
+
+  <p class="meta etichetta">
+    {scheda.tipi.map((t) => <span>{t}</span>)}
+    {scheda.livelli.map((l) => <span>{l}</span>)}
+    <span class="stato">{scheda.stato === 'verificata' ? 'Verificata' : 'Contestata'}</span>
+  </p>
+  {
+    scheda.stato === 'contestata' && (
+      <p class="avviso">Questa scheda è stata contestata ed è in revisione: il testo può cambiare.</p>
+    )
+  }
+
+  {
+    scheda.posizione === 'dichiarata' ? (
+      <details>
+        <summary>
+          <span class="link-caps">
+            Leggi nel programma · {numeroCitazioni} {numeroCitazioni === 1 ? 'citazione' : 'citazioni'}
+          </span>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.6" fill="none" />
+          </svg>
+        </summary>
+        {scheda.citazioni.map((c) => (
+          <figure class="citazione">
+            <blockquote>«{c.testo}»</blockquote>
+            <figcaption class="meta rif">
+              <span>{c.documento}</span>
+              <a href={c.href}>{c.pagina}</a>
+            </figcaption>
+          </figure>
+        ))}
+      </details>
+    ) : (
+      <a class="azione" href={scheda.documentoDaAprire!.url}>
+        <span class="tondo" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" fill="none" />
+          </svg>
+        </span>
+        <span class="link-caps">Controlla tu: apri il programma</span>
+      </a>
+    )
+  }
+</article>
+
+<style>
+  .scheda {
+    padding: 32px 0 34px;
+    border-top: 1px solid var(--linea);
+  }
+
+  .chi {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .chi img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .sigla {
+    font-weight: 700;
+    font-stretch: 118%;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+  }
+
+  .nome {
+    font-size: 13px;
+    color: var(--inchiostro-2);
+    line-height: 1.3;
+  }
+
+  .titolo {
+    font-weight: 700;
+    font-stretch: 112%;
+    font-size: 21px;
+    line-height: 1.22;
+    margin-top: 16px;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  .titolo.assente {
+    font-weight: 500;
+  }
+
+  .sintesi {
+    margin-top: 10px;
+    max-width: 62ch;
+  }
+
+  .sintesi :global(p + p) {
+    margin-top: 0.6em;
+  }
+
+  .etichetta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    margin-top: 12px;
+  }
+
+  .stato {
+    color: var(--inchiostro);
+    font-weight: 700;
+  }
+
+  .avviso {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--inchiostro-2);
+    max-width: 62ch;
+  }
+
+  details {
+    margin-top: 16px;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary .link-caps,
+  .azione .link-caps {
+    border-bottom: 1px solid currentColor;
+  }
+
+  summary svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s var(--curva);
+  }
+
+  details[open] summary svg {
+    transform: rotate(45deg);
+  }
+
+  .citazione {
+    background: var(--pietra-2);
+    padding: 16px 18px;
+    margin-top: 12px;
+  }
+
+  .citazione blockquote {
+    font-size: 16px;
+    line-height: 1.55;
+    overflow-wrap: break-word;
+  }
+
+  .rif {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  /* area di tocco di 44px senza allargare la riga */
+  .rif a {
+    color: var(--inchiostro);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -12px;
+    padding-inline: 4px;
+    margin-inline-end: -4px;
+  }
+
+  .azione {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    margin-top: 28px;
+  }
+
+  .tondo {
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--inchiostro);
+    color: var(--carta);
+    flex: none;
+  }
+
+  .tondo svg {
+    width: 20px;
+    height: 20px;
+  }
+</style>

@@ -1,0 +1,12 @@
+# Documento inventato per i test: non esiste.
+id: 2022-beta-programma
+titolo: Programma di prova del partito Beta
+tipo: programma
+elezione: 2022
+partiti:
+- beta
+url: https://example.org/beta/programma.pdf
+hash: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+acquisito_il: 2026-11-13
+pagine: 20
+testo_estratto: testo/2022-beta-programma.txt

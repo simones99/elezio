@@ -1,0 +1,10 @@
+# Partito inventato per i test: non esiste.
+id: gamma
+nome: Partito Gamma di prova
+sigla: Gamma
+logo: ./loghi/gamma.svg
+sito: https://example.org/gamma
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://example.org/risultati

@@ -1,0 +1,12 @@
+# Inclusione: 15,43% alla Camera nelle politiche del 25 settembre 2022
+# (proporzionale, Italia esclusa la Valle d'Aosta), letto dal maintainer
+# sull'Archivio storico delle elezioni del Ministero dell'Interno.
+id: m5s
+nome: Movimento 5 Stelle
+sigla: M5S
+logo: ./loghi/m5s.png
+sito: https://www.movimento5stelle.eu/
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://elezionistorico.interno.gov.it/index.php?tpel=C&dtel=25/09/2022&es0=S&tpa=I&lev0=0&levsut0=0&ms=S&tpe=A

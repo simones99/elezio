@@ -1,6 +1,6 @@
 # Stack tecnico di v1: vista operativa
 
-Ultimo aggiornamento: 10 novembre 2026. Decisioni di fondo in [ADR 0006](adr/0006-stack-tecnico-v1.md); deciso nel ticket [Stack tecnico di v1](https://github.com/simones99/elezio/issues/7). Questo file cambia quando cambiano versioni, comandi o configurazione.
+Ultimo aggiornamento: 13 novembre 2026. Decisioni di fondo in [ADR 0006](adr/0006-stack-tecnico-v1.md); deciso nel ticket [Stack tecnico di v1](https://github.com/simones99/elezio/issues/7). Questo file cambia quando cambiano versioni, comandi o configurazione.
 
 ## Layout del repo
 
@@ -26,16 +26,22 @@ elezio/
     ├── public/
     │   ├── vendor/open-election-compass.umd.min.js   # self-hostato, versione fissata
     │   ├── _headers                                 # CSP e header per Cloudflare Pages
-    │   └── loghi/
-    └── tests/smoke.spec.ts
+    │   └── fonts/                                   # Cinzel e Archivo, con le licenze OFL
+    └── tests/
+        ├── smoke.spec.ts
+        └── contenuti-prova/                         # contenuti finti per il test di fumo
 ```
 
-Astro legge `../contenuti` con il loader `glob` del content layer; nessun file di dati vive in `sito/`.
+Astro legge `../contenuti` con i loader `glob` e `file` del content layer; nessun dato pubblicato vive in `sito/`, che ha solo i contenuti inventati dei test (`tests/contenuti-prova/`). I contrassegni stanno accanto ai file dei partiti, in `contenuti/partiti/loghi/`, e il campo `logo` li indica con un percorso relativo (`./loghi/m5s.png`): la build fallisce se il file manca.
+
+Con la variabile `ELEZIO_CONTENUTI` (percorso relativo a `sito/`) il sito si costruisce da un'altra cartella, con build e cache separate (`dist-prova/`, `node_modules/.astro-prova/`). La usano i test: `tests/contenuti-prova/` ha tre partiti inventati con una scheda verificata, una assente e una bozza, casi che i contenuti veri non hanno ancora.
 
 ## Strumenti e versioni
 
-- Node LTS corrente, pnpm. Versioni fissate in `sito/package.json` e `.nvmrc`.
-- Astro, ultima major stabile al momento dello scaffolding. Nessun framework UI; isole in TypeScript vanilla.
+- Node 26 (LTS corrente), pnpm 11. Versioni fissate in `sito/package.json` (`packageManager`, versioni esatte) e `sito/.nvmrc`.
+- Astro 7.4, scaffolding del 13 novembre 2026. Nessun framework UI; isole in TypeScript vanilla.
+- TypeScript 6: `astro check` non supporta ancora TypeScript 7.
+- Playwright con il solo Chromium, viewport da telefono (390 px) e JavaScript spento.
 - Open Election Compass: pacchetto `@open-election-compass/client` 2.0.0-alpha.5, file `dist/open-election-compass.umd.min.js` copiato in `public/vendor/` con la versione nel nome del file e la licenza GPL-3.0 in `CREDITS.md`. Modalità "friends" spenta.
 - Python 3.12 o successivo per `pipeline/` (vedi `docs/pipeline.md`).
 
@@ -63,9 +69,11 @@ Lo schema zod rifiuta la build su campi mancanti, enum sbagliati, slug non coere
 Su ogni PR, due workflow filtrati per percorso:
 
 1. `pipeline.yml` (su `contenuti/**`, `pipeline/**`): esegue i test della pipeline, poi clona `elezio-fonti` con un token di sola lettura ed esegue `pipeline verifica`.
-2. `sito.yml` (su `sito/**`, `contenuti/**`): `pnpm install --frozen-lockfile`, `astro check`, `astro build`, `lychee` sui link interni del build, Playwright con un solo test che apre home, una scheda, un confronto e `/quiz/` e verifica che Open Election Compass si sia montato. Non c'è ancora: arriva con lo scaffolding di `sito/`.
+2. `sito.yml` (su `sito/**`, `contenuti/**`): `pnpm install --frozen-lockfile`, `astro check`, `astro build` sui contenuti veri, `lychee` offline sui link interni del build, Playwright sui contenuti di prova. Oggi il test di fumo apre la home e la pagina tema e controlla schede, citazioni, assenza, bozza nascosta e niente scorrimento orizzontale; confronto e `/quiz/` (con Open Election Compass montato) si aggiungono con i loro ticket.
 
-Il filtro per percorso sta dentro il workflow (job `percorsi toccati`), non in `on.pull_request.paths`: un controllo richiesto dalla protezione di `main` che non parte resterebbe in attesa e bloccherebbe la PR, mentre un job saltato vale come superato.
+Il filtro per percorso sta dentro ogni workflow (job `percorsi toccati` in `pipeline.yml`, `percorsi toccati dal sito` in `sito.yml`), non in `on.pull_request.paths`: un controllo richiesto dalla protezione di `main` che non parte resterebbe in attesa e bloccherebbe la PR, mentre un job saltato vale come superato.
+
+`sito.yml` ha il job `build del sito`, con Node da `sito/.nvmrc` e permessi `contents: read`; se Playwright fallisce carica `test-results/` come artefatto.
 
 `pipeline.yml` ha due job, entrambi con Python 3.12 e permessi `contents: read`:
 

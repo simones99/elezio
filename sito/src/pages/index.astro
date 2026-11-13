@@ -1,0 +1,106 @@
+---
+// Home provvisoria: solo l'indice dei temi. La home con copertina, promessa e
+// quiz è il ticket #53.
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const temi = await getCollection('temi');
+---
+
+<Base descrizione="I programmi elettorali per tema, con la citazione alla lettera e la pagina del documento ufficiale.">
+  <div class="capo">
+    <h1>Elezio</h1>
+    <p class="promessa">I programmi elettorali per tema, con le parole esatte dei partiti.</p>
+  </div>
+
+  <nav aria-labelledby="temi">
+    <h2 id="temi" class="meta">I temi</h2>
+    <ol class="temi">
+      {
+        temi.map((tema, i) => (
+          <li>
+            <span class="numero meta">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <a class="nome" href={`/temi/${tema.id}/`}>
+                {tema.data.nome}
+              </a>
+              <p class="definizione">{tema.data.definizione}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+</Base>
+
+<style>
+  .capo {
+    padding: 44px var(--gutter) 8px;
+  }
+
+  h1 {
+    font-family: var(--capitali);
+    font-weight: 500;
+    font-size: clamp(56px, 17vw, 120px);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .promessa {
+    margin-top: 18px;
+    max-width: 24ch;
+    font-weight: 700;
+    font-stretch: 112%;
+    font-size: 21px;
+    line-height: 1.22;
+    text-wrap: balance;
+  }
+
+  nav {
+    padding: 44px var(--gutter) 64px;
+  }
+
+  .temi {
+    margin-top: 12px;
+  }
+
+  .temi li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    padding: 8px 0 18px;
+    border-top: 1px solid var(--linea);
+  }
+
+  .numero {
+    padding-top: 14px;
+  }
+
+  .nome {
+    font-family: var(--capitali);
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .definizione {
+    margin-top: 4px;
+    font-size: 15px;
+    color: var(--inchiostro-2);
+    max-width: 52ch;
+  }
+
+  @media (min-width: 900px) {
+    .temi {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 56px;
+    }
+  }
+</style>
