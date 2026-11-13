@@ -22,18 +22,19 @@ PR sul codice benvenute. Per modifiche non piccole apri prima una issue, così n
 
 ## PR da fork e verifica delle citazioni
 
-Su `main` entrano solo PR con tutti i controlli della CI superati. Uno di questi, `verifica delle citazioni`, legge i testi estratti dei documenti fonte da un repository privato e per farlo usa il secret `ELEZIO_FONTI_TOKEN`. GitHub non passa i secret alle PR aperte da un fork, quindi:
+Su `main` entrano solo PR con tutti i controlli della CI superati. Uno di questi, `verifica delle citazioni`, legge i PDF e i testi estratti dei documenti fonte da un repository privato, e per farlo usa il secret `ELEZIO_FONTI_TOKEN`. GitHub non passa i secret alle PR aperte da un fork, quindi:
 
-- se la tua PR non tocca `contenuti/`, `pipeline/` né `.github/workflows/pipeline.yml`, il controllo viene saltato e la PR si può mergiare come le altre;
-- se li tocca, `test della pipeline` gira lo stesso (schema e test, senza secret), mentre `verifica delle citazioni` diventa rossa con il messaggio "Il secret ELEZIO_FONTI_TOKEN non è disponibile". Non è un errore tuo, e non serve correggere nulla.
+- se la tua PR non tocca `contenuti/`, `pipeline/` né `.github/`, il controllo non serve: viene saltato, vale come superato e la PR segue la strada normale;
+- se tocca `contenuti/` o `pipeline/`, `test della pipeline` gira lo stesso (schema e test, senza secret), mentre `verifica delle citazioni` diventa rossa con il messaggio "Il secret ELEZIO_FONTI_TOKEN non è disponibile". Non è un errore tuo, e non serve correggere nulla;
+- se tocca `.github/`, i suoi controlli non contano, di qualunque colore siano: una PR da fork gira con i workflow che lei stessa modifica, quindi potrebbe cambiare proprio i controlli che dovrebbero fermarla.
 
-In questo secondo caso il maintainer:
+Negli ultimi due casi il maintainer:
 
-1. legge tutta la PR, in particolare ogni modifica a `.github/` e al codice che la CI esegue, perché nel repository quel codice girerà con il secret;
-2. riporta i tuoi commit, senza cambiarli, su un ramo del repository (`task/<numero della tua PR>-<slug>`) e apre una PR gemella che rimanda alla tua: lì la CI gira con il secret;
-3. se la verifica passa, mergia la PR gemella e chiude la tua con il link. I commit restano a tuo nome. Se fallisce, riporta l'errore nella tua PR, così puoi correggere, e il passaggio si ripete.
+1. legge tutta la PR, in particolare ogni modifica a `.github/`: nel repository i workflow della PR girerebbero con accesso al secret;
+2. riporta i tuoi commit, senza cambiarli, su un ramo del repository (`task/<n>-<slug>`, con il numero del ticket o, se non c'è, della tua PR) e apre una PR gemella che rimanda alla tua: lì la CI gira con il secret e con i workflow già letti;
+3. se i controlli passano, mergia la PR gemella con un merge commit (mai squash né rebase, e il ramo si aggiorna con un merge), così i commit restano a tuo nome con i loro messaggi originali. Se un controllo fallisce, riporta l'errore nella tua PR: correggi lì e il passaggio si ripete.
 
-La verifica delle citazioni non si salta mai: niente merge con i controlli rossi, niente `pull_request_target` (darebbe il secret a codice non ancora letto).
+La verifica delle citazioni non resta mai saltata senza che si veda: niente merge con i controlli rossi, niente `pull_request_target`, che darebbe il secret a codice non ancora letto.
 
 ## Licenze dei contributi
 
