@@ -14,10 +14,10 @@ test('la build rifiuta un partito senza inclusione', () => {
   try {
     const contenuti = join(cartella, 'contenuti');
     cpSync('tests/contenuti-prova', contenuti, { recursive: true });
-    const alfa = join(contenuti, 'partiti', 'alfa.yaml');
-    const senzaInclusione = readFileSync(alfa, 'utf8').replace(/^inclusione:\n(?:[ ]+.*\n)+/m, '');
+    const fileAlfa = join(contenuti, 'partiti', 'alfa.yaml');
+    const senzaInclusione = readFileSync(fileAlfa, 'utf8').replace(/^inclusione:\n(?:[ ]+.*\n)+/m, '');
     expect(senzaInclusione, 'il file di prova deve avere un blocco inclusione da togliere').not.toContain('inclusione');
-    writeFileSync(alfa, senzaInclusione);
+    writeFileSync(fileAlfa, senzaInclusione);
 
     const build = spawnSync(process.execPath, ['node_modules/astro/bin/astro.mjs', 'build', '--outDir', join(cartella, 'dist')], {
       env: { ...process.env, ELEZIO_CONTENUTI: contenuti },
@@ -25,7 +25,10 @@ test('la build rifiuta un partito senza inclusione', () => {
     });
 
     expect(build.status, 'la build doveva fallire').not.toBe(0);
-    expect(build.stdout + build.stderr).toMatch(/alfa[\s\S]*inclusione/);
+    // L'errore di schema di Astro, senza i colori del terminale.
+    const uscita = (build.stdout + build.stderr).replace(/\x1b\[[0-9;]*m/g, '');
+    expect(uscita).toContain('partiti → alfa data does not match collection schema');
+    expect(uscita).toMatch(/inclusione: Required/);
   } finally {
     rmSync(cartella, { recursive: true, force: true });
   }
