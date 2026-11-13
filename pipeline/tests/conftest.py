@@ -10,6 +10,7 @@ import pytest
 import yaml
 
 FONTE = "2022-prova-programma"
+SENZA_CONTENUTO = object()  # in coda alle risposte: il modello risponde con `content` nullo
 
 TEMI = [
     {"id": "sanita", "nome": "Sanità", "definizione": "Servizio sanitario nazionale.",
@@ -57,13 +58,18 @@ class ModelloFinto:
                 corpo = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
                 finto.richieste.append(corpo)
                 contenuto = finto.risposte.pop(0)
-                if not isinstance(contenuto, str):
+                if contenuto is SENZA_CONTENUTO:
+                    contenuto = None
+                elif not isinstance(contenuto, str):
                     contenuto = json.dumps(contenuto, ensure_ascii=False)
+                uso = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+                if finto.costo is not None:  # None: un endpoint che non dice il costo, come api.mistral.ai
+                    uso["cost"] = finto.costo
                 dati = json.dumps({
                     "id": "finta", "object": "chat.completion", "created": 0, "model": corpo["model"],
                     "choices": [{"index": 0, "finish_reason": "stop",
                                  "message": {"role": "assistant", "content": contenuto}}],
-                    "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2, "cost": finto.costo},
+                    "usage": uso,
                 }).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
