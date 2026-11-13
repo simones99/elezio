@@ -1,0 +1,15 @@
+# Inclusione: 9 deputati in carica nel gruppo "MISTO-Futuro Nazionale Vannacci - Free"
+# della Camera, contati il 13 novembre 2026 sul JSON dell'elenco dei
+# deputati (/deputati/ws/elenco_deputati?_format=json&leg=19). Il
+# conteggio è per gruppo parlamentare; la soglia è 5, il Senato non serve.
+# Il partito non esisteva nel 2022; il contrassegno viene dal suo sito
+# (contenuti/partiti/loghi/README.md).
+id: futuro-nazionale
+nome: Futuro Nazionale
+sigla: FN
+logo: ./loghi/futuro-nazionale.svg
+sito: https://futuronazionale.it/
+inclusione:
+  via: parlamentari
+  verificata_il: 2026-11-13
+  fonte: https://www.camera.it/deputati/elenco

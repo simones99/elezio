@@ -1,0 +1,12 @@
+# Inclusione: 8,11% alla Camera nelle politiche del 25 settembre 2022
+# (lista "Forza Italia", proporzionale, Italia esclusa la Valle d'Aosta), letto dal
+# maintainer sull'Archivio storico delle elezioni del Ministero dell'Interno.
+id: fi
+nome: Forza Italia
+sigla: FI
+logo: ./loghi/fi.png
+sito: https://forzaitalia.it/
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://elezionistorico.interno.gov.it/index.php?tpel=C&dtel=25/09/2022&es0=S&tpa=I&lev0=0&levsut0=0&ms=S&tpe=A

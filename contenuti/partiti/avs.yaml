@@ -1,0 +1,12 @@
+# Inclusione: 3,64% alla Camera nelle politiche del 25 settembre 2022
+# (lista "Alleanza Verdi e Sinistra", proporzionale, Italia esclusa la Valle d'Aosta), letto dal
+# maintainer sull'Archivio storico delle elezioni del Ministero dell'Interno.
+id: avs
+nome: Alleanza Verdi e Sinistra
+sigla: AVS
+logo: ./loghi/avs.png
+sito: https://verdisinistra.it/
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://elezionistorico.interno.gov.it/index.php?tpel=C&dtel=25/09/2022&es0=S&tpa=I&lev0=0&levsut0=0&ms=S&tpe=A

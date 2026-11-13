@@ -35,7 +35,8 @@ Regole per aggiungere una voce:
 
 | Fonte | Link | Condizioni | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
-| Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi, in `contenuti/partiti/loghi/` con l'URL di origine di ognuno | incluso |
+| Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi dei nove partiti in perimetro presenti nel 2022 (Azione e Italia Viva con quello della loro lista unica), in `contenuti/partiti/loghi/` con l'URL di origine di ognuno | incluso |
+| Futuro Nazionale, sito ufficiale | https://futuronazionale.it/ | Diritti del partito | Contrassegno a fini identificativi, SVG senza modifiche preso il 13 novembre 2026, perché il partito non ha un deposito 2022 al Ministero; `contenuti/partiti/loghi/futuro-nazionale.svg`, URL di origine e hash nel README accanto | incluso |
 
 ## Servizi
 
