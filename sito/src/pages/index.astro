@@ -69,12 +69,12 @@ const temi = await getCollection('temi');
     display: grid;
     grid-template-columns: 34px 1fr;
     gap: 10px;
-    padding: 16px 0 18px;
+    padding: 8px 0 18px;
     border-top: 1px solid var(--linea);
   }
 
   .numero {
-    padding-top: 3px;
+    padding-top: 14px;
   }
 
   .nome {
@@ -84,8 +84,9 @@ const temi = await getCollection('temi');
     line-height: 1.15;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    display: inline-block;
-    padding: 4px 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .definizione {

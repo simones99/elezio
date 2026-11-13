@@ -32,7 +32,7 @@ elezio/
         └── contenuti-prova/                         # contenuti finti per il test di fumo
 ```
 
-Astro legge `../contenuti` con i loader `glob` e `file` del content layer; nessun file di dati vive in `sito/`. I contrassegni stanno accanto ai file dei partiti, in `contenuti/partiti/loghi/`, e il campo `logo` li indica con un percorso relativo (`./loghi/m5s.png`): la build fallisce se il file manca.
+Astro legge `../contenuti` con i loader `glob` e `file` del content layer; nessun dato pubblicato vive in `sito/`, che ha solo i contenuti inventati dei test (`tests/contenuti-prova/`). I contrassegni stanno accanto ai file dei partiti, in `contenuti/partiti/loghi/`, e il campo `logo` li indica con un percorso relativo (`./loghi/m5s.png`): la build fallisce se il file manca.
 
 Con la variabile `ELEZIO_CONTENUTI` (percorso relativo a `sito/`) il sito si costruisce da un'altra cartella, con build e cache separate (`dist-prova/`, `node_modules/.astro-prova/`). La usano i test: `tests/contenuti-prova/` ha tre partiti inventati con una scheda verificata, una assente e una bozza, casi che i contenuti veri non hanno ancora.
 
@@ -71,7 +71,7 @@ Su ogni PR, due workflow filtrati per percorso:
 1. `pipeline.yml` (su `contenuti/**`, `pipeline/**`): esegue i test della pipeline, poi clona `elezio-fonti` con un token di sola lettura ed esegue `pipeline verifica`.
 2. `sito.yml` (su `sito/**`, `contenuti/**`): `pnpm install --frozen-lockfile`, `astro check`, `astro build` sui contenuti veri, `lychee` offline sui link interni del build, Playwright sui contenuti di prova. Oggi il test di fumo apre la home e la pagina tema e controlla schede, citazioni, assenza, bozza nascosta e niente scorrimento orizzontale; confronto e `/quiz/` (con Open Election Compass montato) si aggiungono con i loro ticket.
 
-Il filtro per percorso sta dentro il workflow (job `percorsi toccati`), non in `on.pull_request.paths`: un controllo richiesto dalla protezione di `main` che non parte resterebbe in attesa e bloccherebbe la PR, mentre un job saltato vale come superato.
+Il filtro per percorso sta dentro ogni workflow (job `percorsi toccati` in `pipeline.yml`, `percorsi toccati dal sito` in `sito.yml`), non in `on.pull_request.paths`: un controllo richiesto dalla protezione di `main` che non parte resterebbe in attesa e bloccherebbe la PR, mentre un job saltato vale come superato.
 
 `sito.yml` ha il job `build del sito`, con Node da `sito/.nvmrc` e permessi `contents: read`; se Playwright fallisce carica `test-results/` come artefatto.
 

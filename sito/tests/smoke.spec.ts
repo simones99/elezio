@@ -11,8 +11,19 @@ async function senzaScorrimentoOrizzontale(page: Page) {
   expect(larghezza, 'la pagina scorre in orizzontale').toBeLessThanOrEqual(visibile);
 }
 
+// DESIGN.md: ogni elemento toccabile almeno 44px.
+async function elementiToccabiliDa44px(page: Page) {
+  const bassi = await page.locator('a, summary').evaluateAll((elementi) =>
+    elementi
+      .map((e) => ({ testo: e.textContent?.trim() ?? '', altezza: e.getBoundingClientRect().height }))
+      .filter((e) => e.altezza > 0 && e.altezza < 44),
+  );
+  expect(bassi, 'elementi toccabili sotto i 44px').toEqual([]);
+}
+
 test('la home porta alla pagina del tema', async ({ page }) => {
   await page.goto('/');
+  await elementiToccabiliDa44px(page);
   await page.getByRole('link', { name: 'Sanità' }).click();
   await expect(page).toHaveURL('/temi/sanita/');
 });
@@ -52,6 +63,7 @@ test('una posizione dichiarata mostra titolo, sintesi e citazioni con la pagina'
   await expect(alfa.getByRole('link', { name: 'pp. 8-9' })).toHaveAttribute('href', 'https://example.org/alfa/programma.pdf#page=8');
 
   await senzaScorrimentoOrizzontale(page);
+  await elementiToccabiliDa44px(page);
 });
 
 test('una posizione assente ha lo stesso posto e il link al programma', async ({ page }) => {

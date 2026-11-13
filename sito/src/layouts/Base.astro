@@ -42,8 +42,16 @@ const titoloCompleto = titolo ? `${titolo} · elezio` : 'elezio';
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    padding: 18px var(--gutter);
+    padding: 8px var(--gutter);
     border-bottom: 1px solid var(--linea);
+  }
+
+  /* link della testata: area di tocco di 44px */
+  .marchio,
+  .percorso a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .marchio {

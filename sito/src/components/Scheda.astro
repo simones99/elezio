@@ -12,7 +12,7 @@ const { scheda } = Astro.props;
 const { partito } = scheda;
 const idTitolo = `scheda-${scheda.id.replaceAll('/', '-')}`;
 const { Content } = await render(scheda.entry);
-const n = scheda.citazioni.length;
+const numeroCitazioni = scheda.citazioni.length;
 ---
 
 <article class="scheda" aria-labelledby={idTitolo}>
@@ -59,7 +59,7 @@ const n = scheda.citazioni.length;
       <details>
         <summary>
           <span class="link-caps">
-            Leggi nel programma · {n} {n === 1 ? 'citazione' : 'citazioni'}
+            Leggi nel programma · {numeroCitazioni} {numeroCitazioni === 1 ? 'citazione' : 'citazioni'}
           </span>
           <svg viewBox="0 0 20 20" aria-hidden="true">
             <path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.6" fill="none" />
@@ -76,7 +76,7 @@ const n = scheda.citazioni.length;
         ))}
       </details>
     ) : (
-      <a class="azione" href={scheda.programma!.url}>
+      <a class="azione" href={scheda.documentoDaAprire!.url}>
         <span class="tondo" aria-hidden="true">
           <svg viewBox="0 0 20 20">
             <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.6" fill="none" />
@@ -181,7 +181,8 @@ const n = scheda.citazioni.length;
     display: none;
   }
 
-  summary .link-caps {
+  summary .link-caps,
+  .azione .link-caps {
     border-bottom: 1px solid currentColor;
   }
 
@@ -214,9 +215,16 @@ const n = scheda.citazioni.length;
     margin-top: 10px;
   }
 
+  /* area di tocco di 44px senza allargare la riga */
   .rif a {
     color: var(--inchiostro);
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -12px;
+    padding-inline: 4px;
+    margin-inline-end: -4px;
   }
 
   .azione {
@@ -225,10 +233,6 @@ const n = scheda.citazioni.length;
     gap: 14px;
     text-decoration: none;
     margin-top: 28px;
-  }
-
-  .azione .link-caps {
-    border-bottom: 1px solid currentColor;
   }
 
   .tondo {

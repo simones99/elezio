@@ -1,22 +1,26 @@
 // Lettura dei contenuti per le pagine e campi derivati in build
 // (docs/schema-scheda.md, "Campi derivati in build, mai scritti nei file").
+//
+// Gli errori qui sotto non duplicano `pipeline verifica`: la pagina ha
+// bisogno di partito e documento per disegnare la scheda, e senza non può
+// che fermarsi.
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { estremi, etichetta } from './pagina';
 
 /** Elezione mostrata dal sito. Cambia quando arrivano le schede 2027. */
 export const ELEZIONE = 2022;
 
 type Fonte = CollectionEntry<'fonti'>['data'];
 type Partito = CollectionEntry<'partiti'>['data'];
-type Citazione = CollectionEntry<'schede'>['data']['citazioni'][number];
 
-const TIPO: Record<Fonte['tipo'], string> = {
+const ETICHETTA_TIPO: Record<Fonte['tipo'], string> = {
   programma: 'Programma depositato',
   programma_esteso: 'Programma esteso',
   accordo_coalizione: 'Accordo di coalizione',
   documento_programmatico: 'Documento programmatico',
 };
 
-const TIPO_BREVE: Record<Fonte['tipo'], string> = {
+const ETICHETTA_TIPO_BREVE: Record<Fonte['tipo'], string> = {
   programma: 'Programma',
   programma_esteso: 'Programma esteso',
   accordo_coalizione: 'Accordo',
@@ -39,25 +43,17 @@ export interface SchedaMostrata {
   posizione: 'dichiarata' | 'assente';
   titolo: string | undefined;
   stato: 'verificata' | 'contestata';
-  /** Tipi di documento delle fonti, senza ripetizioni (es. "Programma depositato"). */
+  /** Tipi di documento, senza ripetizioni (es. "Programma depositato"). */
   tipi: string[];
   /** "Partito" oppure "Coalizione", senza ripetizioni. */
   livelli: string[];
   citazioni: CitazioneMostrata[];
-  /** Documento da aprire per controllare un'assenza. */
-  programma: { url: string } | undefined;
+  /** Documento fonte da aprire per controllare un'assenza. */
+  documentoDaAprire: { url: string } | undefined;
   entry: CollectionEntry<'schede'>;
 }
 
-const unici = <T,>(valori: T[]) => [...new Set(valori)];
-
-function etichettaPagina(pagina: Citazione['pagina']) {
-  return typeof pagina === 'number' ? `p. ${pagina}` : `pp. ${pagina}`;
-}
-
-function primaPagina(pagina: Citazione['pagina']) {
-  return typeof pagina === 'number' ? pagina : Number(pagina.split('-')[0]);
-}
+const senzaRipetizioni = <T,>(valori: T[]) => [...new Set(valori)];
 
 const livello = (fonte: Fonte) => (fonte.partiti.length > 1 ? 'Coalizione' : 'Partito');
 
@@ -73,52 +69,54 @@ export async function schedeDelTema(tema: string): Promise<SchedaMostrata[]> {
   ]);
   const partitoDa = new Map(partiti.map((p) => [p.id, p.data]));
   const fonteDa = new Map(fonti.map((f) => [f.id, f.data]));
-  const sigla = (id: string) => partitoDa.get(id)?.sigla ?? id.toUpperCase();
 
   const mostrate = schede.map((entry): SchedaMostrata => {
-    const s = entry.data;
-    if (s.stato === 'bozza') throw new Error(`${entry.id}: una bozza non si pubblica`);
-    const partito = partitoDa.get(s.partito);
-    if (!partito) {
-      throw new Error(`${entry.id}: manca contenuti/partiti/${s.partito}.yaml (nessuna scheda senza partito in perimetro)`);
-    }
+    const scheda = entry.data;
+    if (scheda.stato === 'bozza') throw new Error(`${entry.id}: una bozza non si pubblica`);
 
-    const fontiCitate = s.citazioni.map((c) => {
+    const partitoInPerimetro = (id: string) => {
+      const partito = partitoDa.get(id);
+      if (!partito) throw new Error(`${entry.id}: manca contenuti/partiti/${id}.yaml (nessun partito senza inclusione)`);
+      return partito;
+    };
+    const partito = partitoInPerimetro(scheda.partito);
+
+    const fontiCitate = scheda.citazioni.map((c) => {
       const fonte = fonteDa.get(c.fonte);
       if (!fonte) throw new Error(`${entry.id}: la citazione punta alla fonte "${c.fonte}", che non esiste`);
       return fonte;
     });
 
-    const fontiDelPartito = fonti
+    const documentoDaAprire = fonti
       .map((f) => f.data)
-      .filter((f) => f.elezione === s.elezione && f.partiti.includes(s.partito))
-      .sort((a, b) => PRIORITA_TIPO.indexOf(a.tipo) - PRIORITA_TIPO.indexOf(b.tipo));
-    const programma = fontiDelPartito[0];
-    if (s.posizione === 'assente' && !programma) {
-      throw new Error(`${entry.id}: posizione assente, ma nessuna fonte ${s.elezione} elenca il partito "${s.partito}"`);
+      .filter((f) => f.elezione === scheda.elezione && f.partiti.includes(scheda.partito))
+      .sort((a, b) => PRIORITA_TIPO.indexOf(a.tipo) - PRIORITA_TIPO.indexOf(b.tipo))[0];
+    if (scheda.posizione === 'assente' && !documentoDaAprire) {
+      throw new Error(`${entry.id}: posizione assente, ma nessuna fonte ${scheda.elezione} elenca il partito "${scheda.partito}"`);
     }
 
     // Per un'assenza tipo e livello vengono dal documento che non tratta il tema.
-    const fontiDiRiferimento = s.posizione === 'dichiarata' ? fontiCitate : [programma!];
+    const fontiDellaPosizione = scheda.posizione === 'dichiarata' ? fontiCitate : [documentoDaAprire!];
 
     return {
       id: entry.id,
       partito,
-      posizione: s.posizione,
-      titolo: s.titolo,
-      stato: s.stato,
-      tipi: unici(fontiDiRiferimento.map((f) => TIPO[f.tipo])),
-      livelli: unici(fontiDiRiferimento.map(livello)),
-      citazioni: s.citazioni.map((c, i) => {
+      posizione: scheda.posizione,
+      titolo: scheda.titolo,
+      stato: scheda.stato,
+      tipi: senzaRipetizioni(fontiDellaPosizione.map((f) => ETICHETTA_TIPO[f.tipo])),
+      livelli: senzaRipetizioni(fontiDellaPosizione.map(livello)),
+      citazioni: scheda.citazioni.map((c, i) => {
         const fonte = fontiCitate[i]!;
+        const sigle = fonte.partiti.map((id) => partitoInPerimetro(id).sigla).join(' - ');
         return {
           testo: c.testo,
-          documento: `${TIPO_BREVE[fonte.tipo]} ${fonte.partiti.map(sigla).join(' - ')} ${fonte.elezione}`,
-          pagina: etichettaPagina(c.pagina),
-          href: `${fonte.url}#page=${primaPagina(c.pagina)}`,
+          documento: `${ETICHETTA_TIPO_BREVE[fonte.tipo]} ${sigle} ${fonte.elezione}`,
+          pagina: etichetta(c.pagina),
+          href: `${fonte.url}#page=${estremi(c.pagina)[0]}`,
         };
       }),
-      programma: programma && { url: programma.url },
+      documentoDaAprire: documentoDaAprire && { url: documentoDaAprire.url },
       entry,
     };
   });

@@ -21,8 +21,8 @@ Regole per aggiungere una voce:
 
 | Componente | Link | Licenza | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
-| Cinzel, di Natanael Gama | https://github.com/NDISCOVER/Cinzel | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per le capitali dei titoli; `sito/public/fonts/cinzel-var-latin.woff2`, licenza in `OFL-cinzel.txt` accanto | incluso |
-| Archivo, di Omnibus-Type | https://github.com/Omnibus-Type/Archivo | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per il testo; `sito/public/fonts/archivo-var-latin.woff2`, licenza in `OFL-archivo.txt` accanto | incluso |
+| Cinzel, di Natanael Gama | https://github.com/NDISCOVER/Cinzel | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per le capitali dei titoli; `sito/public/fonts/cinzel-var-latin.woff2`, preso il 28 ottobre 2026 per il prototipo (#10), licenza in `OFL-cinzel.txt` accanto | incluso |
+| Archivo, di Omnibus-Type | https://github.com/Omnibus-Type/Archivo | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per il testo; `sito/public/fonts/archivo-var-latin.woff2`, preso il 28 ottobre 2026 per il prototipo (#10), licenza in `OFL-archivo.txt` accanto | incluso |
 
 ## Fotografie
 
@@ -35,7 +35,7 @@ Regole per aggiungere una voce:
 
 | Fonte | Link | Condizioni | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
-| Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi | prototipo |
+| Ministero dell'Interno, Elezioni trasparenti, politiche 2022 | https://dait.interno.gov.it/elezioni/trasparenza/elezioni-politiche-2022 | Documenti pubblicati per legge (art. 4 l. 165/2017); diritti dei rispettivi partiti | Programmi depositati, solo come link con hash e citazioni brevi con pagina; contrassegni a fini identificativi, in `contenuti/partiti/loghi/` con l'URL di origine di ognuno | incluso |
 
 ## Servizi
 

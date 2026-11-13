@@ -11,6 +11,7 @@ import { z } from 'astro/zod';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { cartellaContenuti } from './lib/cartella-contenuti.mjs';
+import { estremi } from './lib/pagina';
 
 const contenuti = cartellaContenuti();
 // I loader vogliono URL `file:` (un percorso assoluto di Windows non passa).
@@ -21,7 +22,9 @@ const slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'slug: minuscole, cifr
 const data = z.coerce.date();
 const url = z.url({ protocol: /^https?$/ });
 const elezione = z.number().int().min(2018).max(2100);
-const una_riga = z.string().trim().min(1).regex(/^[^\n]*$/, 'una riga sola');
+const RIGA_SOLA = /^[^\n]*$/;
+const unaRiga = z.string().trim().min(1).regex(RIGA_SOLA, 'una riga sola');
+const sha256 = z.string().regex(/^[0-9a-f]{64}$/, 'SHA-256 in esadecimale minuscolo');
 
 /** Il file `<id>.yaml` deve dichiarare `id: <id>`. */
 function idDalNomeFile({ entry, data }: { entry: string; data: Record<string, unknown> }) {
@@ -36,11 +39,11 @@ const temi = defineCollection({
   loader: file(percorso('temi.yaml')),
   schema: z.strictObject({
     id: slug,
-    nome: una_riga,
-    definizione: una_riga,
-    sotto_questioni: z.array(una_riga).min(3).max(6),
-    dentro: z.array(una_riga).min(1),
-    altrove: z.array(una_riga).min(1),
+    nome: unaRiga,
+    definizione: unaRiga,
+    sotto_questioni: z.array(unaRiga).min(3).max(6),
+    dentro: z.array(unaRiga).min(1),
+    altrove: z.array(unaRiga).min(1),
   }),
 });
 
@@ -49,10 +52,10 @@ const partiti = defineCollection({
   schema: ({ image }) =>
     z.strictObject({
       id: slug,
-      nome: una_riga,
-      sigla: una_riga,
-      nomi_precedenti: z.array(z.strictObject({ nome: una_riga, fino_al: data })).optional(),
-      alias: z.array(una_riga).optional(),
+      nome: unaRiga,
+      sigla: unaRiga,
+      nomi_precedenti: z.array(z.strictObject({ nome: unaRiga, fino_al: data })).optional(),
+      alias: z.array(unaRiga).optional(),
       logo: image(),
       sito: url,
       inclusione: z.strictObject({
@@ -67,19 +70,19 @@ const fonti = defineCollection({
   loader: glob({ pattern: '*.yaml', base: cartella('fonti'), generateId: idDalNomeFile }),
   schema: z.strictObject({
     id: slug,
-    titolo: una_riga,
+    titolo: unaRiga,
     tipo: z.enum(['programma', 'programma_esteso', 'accordo_coalizione', 'documento_programmatico']),
     elezione,
     partiti: z.array(slug).min(1),
     url,
-    hash: z.string().regex(/^[0-9a-f]{64}$/, 'SHA-256 in esadecimale minuscolo'),
+    hash: sha256,
     acquisito_il: data,
     archivio: url.optional(),
     pagine: z.number().int().positive(),
     testo_estratto: z.string().min(1),
     data_documento: data.optional(),
     copie_equivalenti: z
-      .array(z.strictObject({ url, hash: z.string().regex(/^[0-9a-f]{64}$/), partito: slug }))
+      .array(z.strictObject({ url, hash: sha256, partito: slug }))
       .optional(),
     ocr: z.enum(['mistral-ocr', 'tesseract']).optional(),
     ocr_versione: z.string().optional(),
@@ -89,10 +92,13 @@ const fonti = defineCollection({
 /** Intero, oppure intervallo "12-13" con la prima pagina minore della seconda. */
 const pagina = z.union([
   z.number().int().positive(),
-  z.string().regex(/^\d+-\d+$/, 'pagina: intero oppure intervallo "12-13"').refine((s) => {
-    const [da, a] = s.split('-').map(Number);
-    return da! > 0 && da! < a!;
-  }, 'intervallo di pagine non crescente'),
+  z
+    .string()
+    .regex(/^\d+-\d+$/, 'pagina: intero oppure intervallo "12-13"')
+    .refine((s) => {
+      const [da, a] = estremi(s);
+      return da > 0 && da < a;
+    }, 'intervallo di pagine non crescente'),
 ]);
 
 const citazione = z.strictObject({
@@ -125,7 +131,7 @@ const schede = defineCollection({
       tema: slug,
       elezione,
       posizione: z.enum(['dichiarata', 'assente']),
-      titolo: z.string().trim().regex(/^[^\n]*$/, 'una riga sola').optional(),
+      titolo: z.string().trim().regex(RIGA_SOLA, 'una riga sola').optional(),
       citazioni: z.array(citazione).default([]),
       stato: z.enum(['bozza', 'verificata', 'contestata']),
       verificata_il: data.optional(),
