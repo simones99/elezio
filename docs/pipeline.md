@@ -33,7 +33,7 @@ pipeline valuta-classificatore               # precisione e richiamo sul campion
 
 `pipeline acquisisci --elezione 2027` non c'è ancora: arriva con la preparazione della Fase 2. `pipeline bozze` lavora per ora su una coppia fonte-tema alla volta.
 
-Python standalone in `pipeline/`, indipendente dallo stack del sito. Si installa con `pip install -e "./pipeline[test]"`, in modalità modificabile perché prompt e `pipeline.toml` si leggono dalla cartella; i test si lanciano con `python -m pytest` da `pipeline/`. L'umano interviene due volte: conferma il YAML della fonte dopo l'acquisizione (titolo, tipo, partiti condivisi, copia canonica) e revisiona le schede.
+Python standalone in `pipeline/`, indipendente dallo stack del sito. Si installa in due passi: le dipendenze bloccate con `pip install --require-hashes -r pipeline/requirements.lock`, poi il pacchetto con `pip install --no-deps -e ./pipeline`, in modalità modificabile perché prompt e `pipeline.toml` si leggono dalla cartella. `pyproject.toml` dichiara gli intervalli ammessi, `requirements.lock` fissa versioni e hash per Python 3.12 e successivi su tutti i sistemi. Dopo una modifica alle dipendenze il lockfile si rigenera con il comando scritto in testa al file (serve `uv`, solo per questo passo). I test si lanciano con `python -m pytest` da `pipeline/`. L'umano interviene due volte: conferma il YAML della fonte dopo l'acquisizione (titolo, tipo, partiti condivisi, copia canonica) e revisiona le schede.
 
 ## Configurazione
 
