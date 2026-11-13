@@ -1,0 +1,108 @@
+# CI della pipeline (docs/stack.md, ticket #41): test e verifica delle citazioni.
+#
+# Il workflow parte su ogni PR e filtra i percorsi dentro il job `percorsi`,
+# non con `on.pull_request.paths`: un controllo richiesto dalla protezione di
+# `main` che non parte resta in attesa e blocca la PR, mentre un job saltato
+# vale come superato.
+name: pipeline
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  percorsi:
+    name: percorsi toccati
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      toccati: ${{ steps.diff.outputs.toccati }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # il commit di merge della PR e i suoi due genitori: HEAD^1 è la base
+          fetch-depth: 2
+          persist-credentials: false
+      - id: diff
+        run: |
+          if git diff --name-only HEAD^1 HEAD | grep -qE '^(contenuti/|pipeline/|\.github/workflows/pipeline\.yml$)'; then
+            echo "toccati=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "toccati=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    name: test della pipeline
+    needs: percorsi
+    if: needs.percorsi.outputs.toccati == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/pyproject.toml
+      - run: pip install -e "./pipeline[test]"
+      - name: pytest
+        working-directory: pipeline
+        run: python -m pytest
+      - name: Schema di fonti e schede (senza elezio-fonti)
+        working-directory: pipeline
+        run: pipeline verifica
+
+  citazioni:
+    name: verifica delle citazioni
+    needs: percorsi
+    if: needs.percorsi.outputs.toccati == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Solo un booleano arriva allo script: il token non entra nell'ambiente.
+      # Le PR da fork non ricevono il secret e si fermano qui, in rosso:
+      # la verifica delle citazioni non resta mai saltata senza che si veda.
+      - name: Token di elezio-fonti
+        env:
+          PRESENTE: ${{ secrets.ELEZIO_FONTI_TOKEN != '' }}
+        run: |
+          if [ "$PRESENTE" != "true" ]; then
+            messaggio="Il secret ELEZIO_FONTI_TOKEN non è disponibile (manca nel repo, oppure la PR arriva da un fork): le citazioni non sono state verificate sul testo estratto."
+            echo "::error::$messaggio"
+            echo "$messaggio Vedi docs/stack.md, sezione CI." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          path: elezio
+          persist-credentials: false
+      # Accanto al repo pubblico, dove pipeline.toml lo cerca (fonti = "../elezio-fonti").
+      - uses: actions/checkout@v7
+        with:
+          repository: simones99/elezio-fonti
+          token: ${{ secrets.ELEZIO_FONTI_TOKEN }}
+          path: elezio-fonti
+          persist-credentials: false
+          sparse-checkout: |
+            pdf
+            testo
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: elezio/pipeline/pyproject.toml
+      - run: pip install -e "./elezio/pipeline"
+      - name: pipeline verifica
+        working-directory: elezio/pipeline
+        run: |
+          # senza la cartella `pipeline verifica` ripiega sul solo schema ed esce con 0
+          test -d ../../elezio-fonti/testo
+          pipeline verifica

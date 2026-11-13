@@ -1,6 +1,6 @@
 # Stack tecnico di v1: vista operativa
 
-Ultimo aggiornamento: 27 ottobre 2026. Decisioni di fondo in [ADR 0006](adr/0006-stack-tecnico-v1.md); deciso nel ticket [Stack tecnico di v1](https://github.com/simones99/elezio/issues/7). Questo file cambia quando cambiano versioni, comandi o configurazione.
+Ultimo aggiornamento: 10 novembre 2026. Decisioni di fondo in [ADR 0006](adr/0006-stack-tecnico-v1.md); deciso nel ticket [Stack tecnico di v1](https://github.com/simones99/elezio/issues/7). Questo file cambia quando cambiano versioni, comandi o configurazione.
 
 ## Layout del repo
 
@@ -62,8 +62,21 @@ Lo schema zod rifiuta la build su campi mancanti, enum sbagliati, slug non coere
 
 Su ogni PR, due workflow filtrati per percorso:
 
-1. `pipeline.yml` (su `contenuti/**`, `pipeline/**`): clona `elezio-fonti` con un token di sola lettura, esegue `pipeline verifica`.
-2. `sito.yml` (su `sito/**`, `contenuti/**`): `pnpm install --frozen-lockfile`, `astro check`, `astro build`, `lychee` sui link interni del build, Playwright con un solo test che apre home, una scheda, un confronto e `/quiz/` e verifica che Open Election Compass si sia montato.
+1. `pipeline.yml` (su `contenuti/**`, `pipeline/**`): esegue i test della pipeline, poi clona `elezio-fonti` con un token di sola lettura ed esegue `pipeline verifica`.
+2. `sito.yml` (su `sito/**`, `contenuti/**`): `pnpm install --frozen-lockfile`, `astro check`, `astro build`, `lychee` sui link interni del build, Playwright con un solo test che apre home, una scheda, un confronto e `/quiz/` e verifica che Open Election Compass si sia montato. Non c'è ancora: arriva con lo scaffolding di `sito/`.
+
+Il filtro per percorso sta dentro il workflow (job `percorsi toccati`), non in `on.pull_request.paths`: un controllo richiesto dalla protezione di `main` che non parte resterebbe in attesa e bloccherebbe la PR, mentre un job saltato vale come superato.
+
+`pipeline.yml` ha due job, entrambi con Python 3.12 e permessi `contents: read`:
+
+- `test della pipeline`: `python -m pytest` da `pipeline/` e `pipeline verifica` sul solo schema di fonti e schede. Non ha bisogno di secret, quindi gira anche sulle PR da fork.
+- `verifica delle citazioni`: clona `pdf/` e `testo/` di `elezio-fonti` accanto al repo ed esegue `pipeline verifica` completa (hash dei PDF, citazioni nel testo estratto).
+
+### Token di `elezio-fonti`
+
+`verifica delle citazioni` dipende dal secret `ELEZIO_FONTI_TOKEN` del repo `elezio`: un fine-grained personal access token limitato al solo repo `simones99/elezio-fonti`, con il solo permesso Contents in lettura. Lo inserisce il maintainer (Settings, Secrets and variables, Actions) e lo rinnova alla scadenza. Il token passa solo all'azione `actions/checkout`, che lo maschera nei log e con `persist-credentials: false` non lo lascia nella configurazione di git; nessuno script lo riceve.
+
+Senza il secret il job fallisce con un messaggio esplicito invece di ripiegare sul solo schema: la verifica delle citazioni non resta mai saltata senza che si veda. Vale anche per le PR da fork, a cui GitHub non passa i secret.
 
 Deploy: Cloudflare Pages collegato al repo, build da `main`, anteprima per ogni PR. Nessun unit test sul sito in v1.
 
