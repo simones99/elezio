@@ -20,6 +20,21 @@ Schema dei file in [docs/schema-scheda.md](docs/schema-scheda.md), affermazioni 
 
 PR sul codice benvenute. Per modifiche non piccole apri prima una issue, così ne parliamo prima che tu ci lavori. Le decisioni di fondo sono negli [ADR](docs/adr/) e nella [mappa](https://github.com/simones99/elezio/issues/1): una PR che le contraddice va discussa lì.
 
+## PR da fork e verifica delle citazioni
+
+Su `main` entrano solo PR con tutti i controlli della CI superati. Uno di questi, `verifica delle citazioni`, legge i testi estratti dei documenti fonte da un repository privato e per farlo usa il secret `ELEZIO_FONTI_TOKEN`. GitHub non passa i secret alle PR aperte da un fork, quindi:
+
+- se la tua PR non tocca `contenuti/`, `pipeline/` né `.github/workflows/pipeline.yml`, il controllo viene saltato e la PR si può mergiare come le altre;
+- se li tocca, `test della pipeline` gira lo stesso (schema e test, senza secret), mentre `verifica delle citazioni` diventa rossa con il messaggio "Il secret ELEZIO_FONTI_TOKEN non è disponibile". Non è un errore tuo, e non serve correggere nulla.
+
+In questo secondo caso il maintainer:
+
+1. legge tutta la PR, in particolare ogni modifica a `.github/` e al codice che la CI esegue, perché nel repository quel codice girerà con il secret;
+2. riporta i tuoi commit, senza cambiarli, su un ramo del repository (`task/<numero della tua PR>-<slug>`) e apre una PR gemella che rimanda alla tua: lì la CI gira con il secret;
+3. se la verifica passa, mergia la PR gemella e chiude la tua con il link. I commit restano a tuo nome. Se fallisce, riporta l'errore nella tua PR, così puoi correggere, e il passaggio si ripete.
+
+La verifica delle citazioni non si salta mai: niente merge con i controlli rossi, niente `pull_request_target` (darebbe il secret a codice non ancora letto).
+
 ## Licenze dei contributi
 
 Chi contribuisce lo fa con la stessa licenza del progetto: [AGPL-3.0](LICENSE) per il codice, [CC BY-SA 4.0](contenuti/LICENSE) per i contenuti in `contenuti/`. Non serve firmare nulla. Non aggiungere materiale di terze parti senza licenza; se ne aggiungi con licenza, aggiungi la voce in [CREDITS.md](CREDITS.md) seguendo le regole scritte lì.

@@ -77,7 +77,7 @@ jobs:
           if [ "$PRESENTE" != "true" ]; then
             messaggio="Il secret ELEZIO_FONTI_TOKEN non è disponibile (manca nel repo, oppure la PR arriva da un fork): le citazioni non sono state verificate sul testo estratto."
             echo "::error::$messaggio"
-            echo "$messaggio Vedi docs/stack.md, sezione CI." >> "$GITHUB_STEP_SUMMARY"
+            echo "$messaggio Per le PR da fork vedi CONTRIBUTING.md, sezione «PR da fork e verifica delle citazioni»; per il token docs/stack.md, sezione CI." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
       - uses: actions/checkout@v7
