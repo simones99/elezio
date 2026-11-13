@@ -317,7 +317,7 @@ Il riquadro della prova.
 - **Pagina:** "p. N" è un link al PDF ufficiale aperto a quella pagina (`#page=N`), in inchiostro pieno, e non va mai a capo.
 
 ### Contrassegno
-- **Forma:** il contrassegno depositato, nella sua forma circolare, a 40px nelle schede e nel pop-up, 30px nella testa della mappa, 32px nella riga aperta.
+- **Forma:** il contrassegno depositato (per un partito senza deposito, quello del suo sito ufficiale), nella sua forma circolare, a 40px nelle schede e nel pop-up, 30px nella testa della mappa, 32px nella riga aperta.
 - **Regola:** sempre con la sigla scritta accanto o sotto; con alternativa testuale ("Contrassegno di …") quando è l'unica identificazione, `alt=""` quando la sigla è già scritta accanto.
 
 ### Mappa "chi parla di cosa"

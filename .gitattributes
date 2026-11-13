@@ -13,3 +13,5 @@
 *.ico  binary
 *.woff binary
 *.woff2 binary
+# Contrassegni SVG: byte invariati, perché l'hash nel README dei loghi regga.
+contenuti/partiti/loghi/*.svg -text

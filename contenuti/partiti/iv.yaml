@@ -1,0 +1,22 @@
+# Inclusione: 6 deputati in carica che il partito elenca come suo gruppo alla
+# Camera (fonte): Boschi, Bonifazi, Del Barba, Faraone, Gadda, Giachetti.
+# Tutti in carica e nel gruppo "Italia Viva-Casa Riformista" secondo l'elenco
+# della Camera (https://www.camera.it/deputati/elenco), incrociati il 13
+# novembre 2026; il settimo deputato del gruppo non è nell'elenco del partito.
+# La soglia è 5: il Senato non serve.
+# Copia d'archivio della fonte, con i 6 nomi:
+# https://web.archive.org/web/20261113123050/https://www.italiaviva.it/gruppo_parlamentare_camera
+# Copia d'archivio dell'elenco della Camera (JSON), identica a quella usata
+# per il conteggio: https://archive.ph/vNh9e
+# Nel 2022 si è presentato nella lista unica "Azione - Italia Viva - Calenda",
+# il cui risultato non è attribuibile a un solo partito: per questo la via è
+# parlamentari, e il contrassegno è quello della lista.
+id: iv
+nome: Italia Viva
+sigla: IV
+logo: ./loghi/azione-iv.png
+sito: https://www.italiaviva.it/
+inclusione:
+  via: parlamentari
+  verificata_il: 2026-11-13
+  fonte: https://www.italiaviva.it/gruppo_parlamentare_camera

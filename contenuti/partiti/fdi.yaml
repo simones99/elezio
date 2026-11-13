@@ -1,0 +1,12 @@
+# Inclusione: 25,98% alla Camera nelle politiche del 25 settembre 2022
+# (lista "Fratelli d'Italia con Giorgia Meloni", proporzionale, Italia esclusa la Valle d'Aosta), letto dal
+# maintainer sull'Archivio storico delle elezioni del Ministero dell'Interno.
+id: fdi
+nome: Fratelli d'Italia
+sigla: FdI
+logo: ./loghi/fdi.png
+sito: https://www.fratelli-italia.it/
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://elezionistorico.interno.gov.it/index.php?tpel=C&dtel=25/09/2022&es0=S&tpa=I&lev0=0&levsut0=0&ms=S&tpe=A
