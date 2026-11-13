@@ -115,6 +115,27 @@ class Progetto:
         self.percorso_passaggi.write_text(
             "".join(json.dumps(p, ensure_ascii=False) + "\n" for p in passaggi), encoding="utf-8")
 
+    def registra_classificazione(self, **valori):
+        """Il registro che scrive `pipeline classifica` accanto ai passaggi."""
+        registro = {"id": "20261113-120000", "modello": "finto/classifica", "prompt": "classificazione-v3.md",
+                    "soglia": 0.2, "data": "2026-11-13", "passaggi": len(PASSAGGI), "incompleti": [],
+                    "copia": "classificazioni/20261113-120000.jsonl"} | valori
+        (self.percorso_passaggi.parent / "classificazione.json").write_text(json.dumps(registro), encoding="utf-8")
+        return registro
+
+    def aggiungi_fonte(self, fonte, partiti):
+        """Un'altra fonte con lo stesso testo e gli stessi passaggi della fonte di prova."""
+        y = yaml.safe_load((self.contenuti / "fonti" / f"{FONTE}.yaml").read_text(encoding="utf-8"))
+        y |= {"id": fonte, "partiti": partiti, "testo_estratto": f"testo/{fonte}.txt"}
+        (self.contenuti / "fonti" / f"{fonte}.yaml").write_text(yaml.safe_dump(y), encoding="utf-8")
+        (self.fonti_dir / "pdf" / f"{fonte}.pdf").write_bytes((self.fonti_dir / "pdf" / f"{FONTE}.pdf").read_bytes())
+        (self.fonti_dir / "testo" / f"{fonte}.txt").write_text(TESTO_ESTRATTO, encoding="utf-8")
+        lavoro = self.fonti_dir / "lavoro" / fonte
+        lavoro.mkdir(parents=True)
+        (lavoro / "passaggi.jsonl").write_text("".join(
+            json.dumps(dict(p, id=p["id"].replace(FONTE, fonte)), ensure_ascii=False) + "\n" for p in PASSAGGI),
+            encoding="utf-8")
+
     def scheda(self, partito="prova", tema="sanita", elezione=2022):
         return self.contenuti / "schede" / str(elezione) / partito / f"{tema}.md"
 

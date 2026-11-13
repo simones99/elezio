@@ -19,6 +19,7 @@ def _classificati(progetto):
         p["punteggi"] = {"sanita": 0, "fisco": 0} | ({tema: 0.9} if tema else {})
         p["temi"] = [tema] if tema else []
     progetto.scrivi_passaggi(passaggi)
+    progetto.registra_classificazione()
 
 
 def _senza_temi(progetto):
@@ -27,6 +28,7 @@ def _senza_temi(progetto):
     for p in passaggi:
         p["punteggi"], p["temi"] = {"sanita": 0, "fisco": 0}, []
     progetto.scrivi_passaggi(passaggi)
+    progetto.registra_classificazione()
 
 
 def _togli_punteggio(progetto, numero, tema):
@@ -44,8 +46,8 @@ def _dichiarata(*citazioni, sintesi="Il partito propone più psicologi nei distr
 ASSENTE = {"posizione": "assente", "titolo": "", "sintesi": "", "citazioni": []}
 
 
-def _bozze():
-    return main(["bozze", "--fonte", FONTE, "--tema", "sanita"])
+def _bozze(*opzioni):
+    return main(["bozze", "--fonte", FONTE, "--tema", "sanita", *opzioni])
 
 
 def test_bozza_scrive_la_scheda_con_citazioni_verificate(progetto, modello):
@@ -85,7 +87,7 @@ def test_salva_il_json_della_bozza_e_il_log_nel_repo_privato(progetto, modello):
     modello.risposte.append(risposta)
     assert not _bozze()
     salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita.json"
-    assert json.loads(salvato.read_text(encoding="utf-8")) == risposta
+    assert json.loads(salvato.read_text(encoding="utf-8"))["risposta"] == risposta
     log = list((progetto.fonti_dir / "lavoro" / "log").glob("*bozze*.jsonl"))
     assert len(log) == 1
     assert json.loads(log[0].read_text(encoding="utf-8").splitlines()[0])["usage"]["cost"] == 0.001
@@ -174,7 +176,7 @@ def test_nessun_passaggio_del_tema_e_uno_senza_punteggio_lascia_intatta_la_sched
     progetto.scrivi_scheda(fronte)
     _senza_temi(progetto)
     _togli_punteggio(progetto, 4, "sanita")
-    assert _bozze() == 1
+    assert _bozze("--rigenera") == 1
     assert progetto.leggi_scheda()[0]["titolo"] == "Vecchia"
 
 
