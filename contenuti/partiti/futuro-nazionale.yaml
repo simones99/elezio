@@ -7,7 +7,8 @@
 # è 5: il Senato non serve.
 # Copia d'archivio della fonte, con gli 8 nomi:
 # https://web.archive.org/web/20261113123111/https://futuronazionale.it/esecutivo-nazionale/
-# L'elenco della Camera non ha una copia di quel giorno: Save Page Now fallisce.
+# Copia d'archivio dell'elenco della Camera (JSON), identica a quella usata
+# per il conteggio: https://archive.ph/vNh9e
 # Il partito non esisteva nel 2022; il contrassegno viene dal suo sito
 # (contenuti/partiti/loghi/README.md).
 id: futuro-nazionale

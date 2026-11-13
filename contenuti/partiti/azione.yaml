@@ -6,7 +6,8 @@
 # 2026. La soglia è 5: il Senato non serve.
 # Copia d'archivio della fonte, con i 10 nomi:
 # https://web.archive.org/web/20261113123018/https://www.azione.it/direttivo-nazionale/
-# L'elenco della Camera non ha una copia di quel giorno: Save Page Now fallisce.
+# Copia d'archivio dell'elenco della Camera (JSON), identica a quella usata
+# per il conteggio: https://archive.ph/vNh9e
 # Nel 2022 si è presentato nella lista unica "Azione - Italia Viva - Calenda",
 # il cui risultato non è attribuibile a un solo partito: per questo la via è
 # parlamentari, e il contrassegno è quello della lista.
