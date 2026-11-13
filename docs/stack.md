@@ -84,7 +84,7 @@ Il filtro per percorso sta dentro ogni workflow (job `percorsi toccati` in `pipe
 
 `verifica delle citazioni` dipende dal secret `ELEZIO_FONTI_TOKEN` del repo `elezio`: un fine-grained personal access token limitato al solo repo `simones99/elezio-fonti`, con il solo permesso Contents in lettura. Lo inserisce il maintainer (Settings, Secrets and variables, Actions) e lo rinnova alla scadenza. Il token passa solo all'azione `actions/checkout`, che lo maschera nei log e con `persist-credentials: false` non lo lascia nella configurazione di git; nessuno script lo riceve.
 
-Senza il secret il job fallisce con un messaggio esplicito invece di ripiegare sul solo schema: la verifica delle citazioni non resta mai saltata senza che si veda. Vale anche per le PR da fork, a cui GitHub non passa i secret.
+Senza il secret il job fallisce con un messaggio esplicito invece di ripiegare sul solo schema: la verifica delle citazioni non resta mai saltata senza che si veda. Vale anche per le PR da fork, a cui GitHub non passa i secret: cosa succede dopo lo dice `CONTRIBUTING.md`.
 
 Deploy: Cloudflare Pages collegato al repo, build da `main`, anteprima per ogni PR. Nessun unit test sul sito in v1.
 
