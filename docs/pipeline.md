@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 2 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 12 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -49,12 +49,14 @@ Python standalone in `pipeline/`, indipendente dallo stack del sito. Si installa
 | `provider` | `ELEZIO_LLM_PROVIDER` | `mistral` (su OpenRouter: `provider.order=["mistral"]`, `allow_fallbacks=false`) |
 | `classificatore` | `ELEZIO_CLASSIFICATORE` | `llm` (alternativa: `jev`) |
 | chiave JEV | `ELEZIO_JEV_API_KEY` | nessuna |
-| `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30` |
+| `tetto_dollari_per_run` | `ELEZIO_TETTO_DOLLARI` | `30`. Funziona solo su OpenRouter, vedi sotto |
 | `fonti` | `ELEZIO_FONTI` | `../elezio-fonti`, il clone locale del repo privato accanto al repo pubblico |
 | `contenuti` | `ELEZIO_CONTENUTI` | `contenuti`, relativo alla radice del repo |
 | `soglia_classificazione` | `ELEZIO_SOGLIA_CLASSIFICAZIONE` | `0.1` |
 
 Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, Ollama (`http://localhost:11434/v1`), LM Studio, vLLM. Il backend `jev` usa l'API TypeSafe e vale solo per il passo 5.
+
+Tetto di spesa: la pipeline somma il costo che l'endpoint restituisce in `usage.cost` e si ferma prima della chiamata successiva quando il tetto è raggiunto. Solo OpenRouter restituisce quel campo. Su `api.mistral.ai`, Ollama, LM Studio e vLLM il costo resta 0 e il tetto non scatta: alla prima risposta senza costo il comando stampa una volta `il tetto di spesa non è attivo`, e il costo che riporta alla fine è 0. Lì la spesa si limita dal pannello del fornitore. Si è scelto l'avviso e non una stima dai token perché i prezzi per modello in `pipeline.toml` invecchierebbero senza che nessuno se ne accorga (#68).
 
 Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono verificati il 30 ottobre 2026 su OpenRouter e su `api.mistral.ai` (tabella sotto); il modello di sintesi si fissa alla prima run delle bozze, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
 
@@ -94,7 +96,7 @@ Un passaggio è un paragrafo del testo estratto con la sua pagina, spezzato se s
 
 Nei PDF con testo nativo `segmenta` toglie prima intestazioni e piè di pagina (righe identiche su almeno metà delle pagine). Se il documento ha titoli in un corpo maggiore del testo, come il programma M5S 2022, il titolo è la riga più grande: il maiuscolo a corpo testo è il nome di una proposta. In questo caso chiudono il paragrafo anche uno spazio verticale oltre 1,6 volte l'interlinea e il cambio pagina. Negli altri documenti (Azione-IV, Futuro Nazionale) il titolo è la riga in maiuscolo. I test sono in `pipeline/tests/`: `python -m pytest tests` da `pipeline/` (#33).
 
-Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato con il punteggio di tutti i 12 temi per ogni passaggio, imposto dallo schema con una chiave obbligatoria per tema. Un endpoint che non rispetta lo schema può comunque saltare temi o passaggi, o dare risposte inservibili: un punteggio che non è un numero tra 0 e 1 e una risposta rotta valgono come mancanti. I passaggi incompleti si ripetono una volta in una chiamata a parte, e quelli che restano incompleti si salvano così come sono, con un avviso nel comando e una sezione apposita in `pipeline passaggi`. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
+Backend `llm`: 20 passaggi per chiamata, prompt con definizione, sotto-questioni, esempi dentro/altrove di ogni tema, output JSON strutturato con il punteggio di tutti i 12 temi per ogni passaggio, imposto dallo schema con una chiave obbligatoria per tema. Un endpoint che non rispetta lo schema può comunque saltare temi o passaggi, o dare risposte inservibili: un punteggio che non è un numero tra 0 e 1, una risposta rotta e una risposta senza contenuto (rifiuto, risposta troncata) valgono come mancanti. I passaggi incompleti si ripetono una volta in una chiamata a parte, e quelli che restano incompleti si salvano così come sono, con un avviso nel comando e una sezione apposita in `pipeline passaggi`. Backend `jev`: stato = un passaggio, 12 domande `Noul` "questo passaggio propone qualcosa su <tema>?", una per tema, con definizione ed esempi nella descrizione; probabilità sotto la soglia scartata.
 
 Campione d'oro: 120 passaggi del programma AVS 2022 depositato etichettati a mano dal maintainer in `pipeline/campione/avs-2022.jsonl` nel repo pubblico (sono citazioni brevi con pagina, entro i limiti decisi nel ticket #4). La copia depositata è una scansione: il testo viene da Mistral OCR, segmentato con `segmenta_markdown`. Due lotti da 60, scelti da `pipeline/campione/seleziona.py`: il primo ha 48 passaggi stratificati per sezione e 12 casi limite, uno per confine di `temi.yaml` (seme 28); il secondo aggiunge un secondo caso limite per i confini che ne hanno un altro (9) e stratificati fino a 120 (seme 29). Ogni riga dice lotto e origine. Le etichette seguono la regola "ogni proposta un solo tema" degli esempi dentro/altrove. Comando: `python -m elezio_pipeline valuta-classificatore --modelli <id>,<id>` da `pipeline/`. `pipeline valuta-classificatore` stampa precisione e richiamo per tema per ogni backend. Il backend con il richiamo migliore diventa il default; sotto il 90 percento di richiamo nessun backend è accettato senza revisione umana della classificazione.
 
@@ -241,7 +243,7 @@ Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-
 
 Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
 
-La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run. La pagina metodologia pubblica il costo reale di generazione per elezione.
+La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run, dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
 
 ## Repo privato `elezio-fonti`
 
