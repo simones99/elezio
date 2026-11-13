@@ -1,0 +1,12 @@
+# Documento inventato per i test: non esiste.
+id: 2022-gamma-programma
+titolo: Programma di prova del partito Gamma
+tipo: programma
+elezione: 2022
+partiti:
+- gamma
+url: https://example.org/gamma/programma.pdf
+hash: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+acquisito_il: 2026-11-13
+pagine: 20
+testo_estratto: testo/2022-gamma-programma.txt

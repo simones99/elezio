@@ -1,0 +1,10 @@
+# Partito inventato per i test: non esiste.
+id: alfa
+nome: Partito Alfa di prova
+sigla: Alfa
+logo: ./loghi/alfa.svg
+sito: https://example.org/alfa
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://example.org/risultati

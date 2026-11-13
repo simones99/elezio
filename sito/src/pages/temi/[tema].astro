@@ -1,0 +1,97 @@
+---
+// Pagina tema (DESIGN.md, "Layout"): titolo, definizione, nota, poi le schede
+// dei partiti in ordine alfabetico. Mappa "chi parla di cosa", copertina e
+// azione verso il confronto arrivano con #45 e #48.
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Scheda from '../../components/Scheda.astro';
+import Base from '../../layouts/Base.astro';
+import { schedeDelTema } from '../../lib/dati';
+
+export const getStaticPaths = (async () => {
+  const temi = await getCollection('temi');
+  return temi.map((tema, i) => ({
+    params: { tema: tema.id },
+    props: { tema, numero: i + 1, totale: temi.length },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  tema: CollectionEntry<'temi'>;
+  numero: number;
+  totale: number;
+}
+
+const { tema, numero, totale } = Astro.props;
+const schede = await schedeDelTema(tema.id);
+---
+
+<Base titolo={tema.data.nome} descrizione={`${tema.data.nome}: ${tema.data.definizione}`} percorso="Temi">
+  <div class="capo">
+    <h1>{tema.data.nome}</h1>
+    <p class="definizione">{tema.data.definizione}</p>
+    <p class="nota">Tema {numero} di {totale} · partiti in ordine alfabetico</p>
+  </div>
+
+  {
+    schede.length > 0 ? (
+      <ol class="elenco">
+        {schede.map((scheda) => (
+          <li>
+            <Scheda scheda={scheda} />
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="vuoto">Le schede di questo tema sono ancora in revisione.</p>
+    )
+  }
+</Base>
+
+<style>
+  .capo {
+    padding: 44px var(--gutter) 8px;
+  }
+
+  h1 {
+    font-family: var(--capitali);
+    font-weight: 500;
+    font-size: clamp(50px, 13vw, 104px);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .definizione {
+    margin: 18px 0 0 var(--rientro);
+    max-width: 52ch;
+    font-size: 17px;
+  }
+
+  .nota {
+    margin: 10px 0 0 var(--rientro);
+    font-size: 13px;
+    color: var(--inchiostro-2);
+  }
+
+  .elenco {
+    padding: 24px var(--gutter) 64px;
+  }
+
+  .vuoto {
+    margin: 34px var(--gutter) 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--linea);
+    color: var(--inchiostro-2);
+  }
+
+  @media (min-width: 900px) {
+    .elenco {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 56px;
+    }
+  }
+</style>

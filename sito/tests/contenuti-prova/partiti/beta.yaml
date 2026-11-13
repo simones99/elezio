@@ -1,0 +1,10 @@
+# Partito inventato per i test: non esiste.
+id: beta
+nome: Partito Beta di prova
+sigla: Beta
+logo: ./loghi/beta.svg
+sito: https://example.org/beta
+inclusione:
+  via: percentuale
+  verificata_il: 2026-11-13
+  fonte: https://example.org/risultati

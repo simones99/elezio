@@ -1,0 +1,36 @@
+# Due temi copiati da contenuti/temi.yaml, per i contenuti di prova dei test.
+
+- id: fisco
+  nome: Fisco e conti pubblici
+  definizione: Tasse, riscossione e regole del bilancio dello Stato.
+  sotto_questioni:
+    - IRPEF e flat tax
+    - Cuneo fiscale
+    - Evasione e riscossione
+    - Patrimoniale e successioni
+    - Debito e regole UE di bilancio
+  dentro:
+    - Flat tax per le partite IVA
+    - Superbonus e bonus edilizi (sono crediti d'imposta)
+    - Pace fiscale e rottamazione delle cartelle
+  altrove:
+    - Caro bollette e prezzo dell'energia (ambiente)
+    - Incentivi alle assunzioni (lavoro)
+
+- id: sanita
+  nome: Sanità
+  definizione: Servizio sanitario nazionale, accesso alle cure e personale sanitario.
+  sotto_questioni:
+    - Finanziamento del SSN e liste d'attesa
+    - Medicina territoriale
+    - Personale sanitario
+    - Salute mentale
+    - Pubblico e privato convenzionato
+  dentro:
+    - Abolizione del numero chiuso a Medicina
+    - Case di comunità e medici di base
+    - Psicologo di base
+  altrove:
+    - Non autosufficienza e assistenza domiciliare (famiglia)
+    - Fine vita (giustizia)
+

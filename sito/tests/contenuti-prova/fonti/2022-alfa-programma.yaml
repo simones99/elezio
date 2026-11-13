@@ -1,0 +1,12 @@
+# Documento inventato per i test: non esiste.
+id: 2022-alfa-programma
+titolo: Programma di prova del partito Alfa
+tipo: programma
+elezione: 2022
+partiti:
+- alfa
+url: https://example.org/alfa/programma.pdf
+hash: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+acquisito_il: 2026-11-13
+pagine: 20
+testo_estratto: testo/2022-alfa-programma.txt

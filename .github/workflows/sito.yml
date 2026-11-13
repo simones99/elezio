@@ -1,0 +1,84 @@
+# CI del sito (docs/stack.md, ticket #39 e #41): controllo dei tipi, build sui
+# contenuti veri, link interni e test di fumo sui contenuti di prova.
+#
+# Come pipeline.yml, il workflow parte su ogni PR e filtra i percorsi dentro il
+# job `percorsi`, non con `on.pull_request.paths`: un controllo richiesto dalla
+# protezione di `main` che non parte resta in attesa e blocca la PR, mentre un
+# job saltato vale come superato.
+name: sito
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sito-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  percorsi:
+    name: percorsi toccati dal sito
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      toccati: ${{ steps.diff.outputs.toccati }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # il commit di merge della PR e i suoi due genitori: HEAD^1 è la base
+          fetch-depth: 2
+          persist-credentials: false
+      - id: diff
+        run: |
+          if git diff --name-only HEAD^1 HEAD | grep -qE '^(contenuti/|sito/|\.github/workflows/sito\.yml$)'; then
+            echo "toccati=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "toccati=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  sito:
+    name: build del sito
+    needs: percorsi
+    if: needs.percorsi.outputs.toccati == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: sito
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: sito/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: sito/.nvmrc
+          cache: pnpm
+          cache-dependency-path: sito/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: astro check
+        run: pnpm astro check
+      # Sui contenuti veri: uno schema violato in contenuti/ ferma la build.
+      - name: astro build
+        run: pnpm astro build
+      - name: Link interni
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --no-progress --root-dir ${{ github.workspace }}/sito/dist 'sito/dist/**/*.html'
+          fail: true
+          jobSummary: true
+      - name: Browser per Playwright
+        run: pnpm exec playwright install --with-deps chromium
+      # Sui contenuti di prova (tests/contenuti-prova): li costruisce il webServer di playwright.config.ts.
+      - name: Test di fumo
+        run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright
+          path: sito/test-results/
+          retention-days: 7

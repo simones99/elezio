@@ -1,0 +1,124 @@
+/* Token e base del mondo visivo di DESIGN.md: un inchiostro bruno su carta
+   crema, Cinzel solo per nominare, Archivo sempre allargato. */
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-var-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/cinzel-var-latin.woff2') format('woff2');
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+:root {
+  --inchiostro: #271002;
+  --inchiostro-2: #5c4636;
+  --carta: #faf8f1; /* valore fissato dall'utente: non va schiarito */
+  --pietra-2: #ece7df;
+  --linea: rgba(39, 16, 2, 0.18);
+
+  --capitali: 'Cinzel', serif;
+  --testo: 'Archivo', sans-serif;
+
+  --gutter: 20px;
+  --rientro: clamp(0px, 8vw, 180px);
+  --curva: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: max(48px, calc((100vw - 1120px) / 2));
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--carta);
+  color: var(--inchiostro);
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--inchiostro-2) var(--carta);
+}
+
+body {
+  background: var(--carta);
+  color: var(--inchiostro);
+  min-height: 100vh;
+  font-family: var(--testo);
+  font-stretch: 108%;
+  font-size: 16.5px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--inchiostro);
+  color: var(--carta);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--inchiostro);
+  outline-offset: 3px;
+}
+
+img,
+svg {
+  display: block;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+/* Etichette e link in maiuscoletto largo (Label) */
+.link-caps {
+  font-size: 13px;
+  font-weight: 600;
+  font-stretch: 118%;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Metadati in maiuscoletto (Meta) */
+.meta {
+  font-size: 12.5px;
+  font-stretch: 118%;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--inchiostro-2);
+}
+
+.solo-lettori {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

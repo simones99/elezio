@@ -21,8 +21,8 @@ Regole per aggiungere una voce:
 
 | Componente | Link | Licenza | Cosa è stato preso | Stato |
 | --- | --- | --- | --- | --- |
-| Cinzel, di Natanael Gama | https://github.com/NDISCOVER/Cinzel | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per le capitali dei titoli | prototipo |
-| Archivo, di Omnibus-Type | https://github.com/Omnibus-Type/Archivo | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per il testo | prototipo |
+| Cinzel, di Natanael Gama | https://github.com/NDISCOVER/Cinzel | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per le capitali dei titoli; `sito/public/fonts/cinzel-var-latin.woff2`, licenza in `OFL-cinzel.txt` accanto | incluso |
+| Archivo, di Omnibus-Type | https://github.com/Omnibus-Type/Archivo | SIL Open Font License 1.1 | File variabile, sottoinsieme latino in WOFF2, per il testo; `sito/public/fonts/archivo-var-latin.woff2`, licenza in `OFL-archivo.txt` accanto | incluso |
 
 ## Fotografie
 
