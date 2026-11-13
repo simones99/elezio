@@ -162,14 +162,14 @@ def _bozza(cfg, lancio, fonte, tema, rigenera, cache):
             return fatta
         if fonte not in cache:
             cache[fonte] = _passaggi_classificati(cfg, fonte)
-        esito = bozze.genera(lancio, fonte, tema, cache[fonte])
+        esito = bozze.genera(lancio, fonte, tema, cache[fonte], rigenera)
     except (RuntimeError, OpenAIError, ValueError, OSError) as e:
         # BozzaImpossibile, TettoSuperato, chiave mancante, endpoint, file della coppia illeggibili
         print(f"{coppia}: {e}")
         return "fallita"
     finally:
         _registra(cfg, f"bozze-{fonte}-{tema}", lancio.log[inizio:])
-    if esito != "revisionata":
+    if esito in ("dichiarata", "assente"):
         print(f"{coppia}: {len(lancio.log) - inizio} chiamate, costo {lancio.costo - costo:.4f} dollari")
     return esito
 

@@ -8,6 +8,8 @@ riprova una volta e se fallisce ancora il problema finisce nelle note.
 import datetime
 import json
 
+import yaml
+
 from . import classifica, fonti, schede
 from .citazioni import pagine_del_testo, verifica_citazione
 from .config import PIPELINE
@@ -140,19 +142,42 @@ def _fronte(partito, tema, y, posizione, titolo, citazioni, note, bozza_da):
     return f
 
 
+CAMPI_FONTE = ("id", "elezione", "partiti", "testo_estratto")
+
+
+def _leggi_fonte(fonte):
+    """Il YAML della fonte, con i campi che servono alle bozze; BozzaImpossibile se non si legge."""
+    try:
+        y = fonti.leggi(fonte)
+    except (OSError, yaml.YAMLError) as e:
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte illeggibile: {e}") from e
+    if not isinstance(y, dict):
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte vuoto")
+    mancanti = [k for k in CAMPI_FONTE if not y.get(k)]
+    if mancanti or not isinstance(y["partiti"], list):
+        raise BozzaImpossibile(f"{fonte}: YAML della fonte senza " + ", ".join(mancanti or ["un elenco di partiti"]))
+    return y
+
+
 def _stati(y, tema_id):
     """{partito: stato della scheda già scritta, o None se la scheda non c'è}."""
     stati = {}
     for partito in y["partiti"]:
         p = schede.percorso(y["elezione"], partito, tema_id)
-        stati[partito] = schede.leggi(p)[0].get("stato") if p.exists() else None
+        if not p.exists():
+            stati[partito] = None
+            continue
+        try:
+            stati[partito] = schede.leggi(p)[0].get("stato")
+        except (ValueError, yaml.YAMLError) as e:  # una scheda rotta non si sovrascrive senza guardarla
+            raise BozzaImpossibile(f"scheda {partito}/{tema_id} illeggibile, correggila a mano: {e}") from e
     return stati
 
 
 def gia_fatta(fonte, tema_id):
     """"revisionata" se tutte le schede della coppia sono passate dal revisore, "scritta" se
     esistono tutte, None se ne manca almeno una: allora la coppia si genera."""
-    stati = _stati(fonti.leggi(fonte), tema_id)
+    stati = _stati(_leggi_fonte(fonte), tema_id)
     if all(s not in (None, "bozza") for s in stati.values()):
         _annuncia(stati, tema_id)
         return "revisionata"
@@ -196,9 +221,13 @@ def _salva(base, fonte, tema_id, reg, risposta, bozza_da):
     salvata.write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def genera(lancio, fonte, tema_id, passaggi):
+def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     """Scrive le schede del tema per i partiti della fonte e restituisce l'esito:
-    "dichiarata", "assente" o "revisionata" se nessuna scheda era da scrivere.
+    "dichiarata", "assente", oppure "revisionata" o "scritta" se nessuna scheda era da scrivere.
+
+    Scrive solo le schede che mancano; con `rigenera` riscrive anche quelle in bozza. Le
+    schede verificate e contestate non si toccano mai. Su una fonte condivisa quindi una
+    bozza già scritta di un partito resta com'è anche se si genera quella di un altro.
 
     Le chiamate finiscono in `lancio.log`, anche se il passo si ferma a metà. Senza passaggi
     del tema la posizione è assente e il modello non viene chiamato, a meno che qualche
@@ -211,12 +240,16 @@ def genera(lancio, fonte, tema_id, passaggi):
         raise BozzaImpossibile(f"tema {tema_id} inesistente")
     if any("temi" not in p for p in passaggi):
         raise BozzaImpossibile(f"{fonte}: passaggi non classificati, lancia prima pipeline classifica")
-    y = fonti.leggi(fonte)
+    y = _leggi_fonte(fonte)
     stati = _stati(y, tema_id)
     _annuncia(stati, tema_id)
-    partiti = [p for p, s in stati.items() if s in (None, "bozza")]
+    da_scrivere = (None, "bozza") if rigenera else (None,)
+    partiti = [p for p, s in stati.items() if s in da_scrivere]
+    for p, s in stati.items():
+        if s == "bozza" and not rigenera:
+            print(f"{p}/{tema_id}: bozza già scritta, non la tocco (--rigenera per rifarla)")
     if not partiti:
-        return "revisionata"
+        return "scritta" if "bozza" in stati.values() else "revisionata"
     base = fonti.cartella_fonti(lancio.cfg)
     reg = classifica.registro(base / "lavoro" / fonte)
     if reg is None:

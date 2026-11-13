@@ -217,6 +217,107 @@ def test_un_log_per_coppia(progetto, modello):
     assert log[0].endswith(f"bozze-{FONTE}-fisco.jsonl") or log[1].endswith(f"bozze-{FONTE}-fisco.jsonl")
 
 
+# File rotti: falliscono solo le loro coppie
+
+def _scrivi_scheda_grezza(progetto, partito, tema, testo):
+    p = progetto.scheda(partito, tema)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(testo, encoding="utf-8")
+
+
+def test_scheda_con_yaml_rotto_fa_fallire_solo_la_sua_coppia(progetto, modello, capsys):
+    _due_fonti(progetto)
+    _scrivi_scheda_grezza(progetto, "altra", "sanita", "---\npartito: [altra\n---\n\nTesto.\n")
+    modello.risposte += [SU_SANITA, SU_FISCO, SU_SANITA]
+    assert _bozze("tutte", "tutti") == 1
+    assert progetto.scheda("prova", "fisco").exists()
+    assert progetto.scheda("altra", "sanita").read_text(encoding="utf-8").startswith("---\npartito: [altra")
+    uscita = capsys.readouterr().out
+    assert "scheda altra/sanita illeggibile" in uscita
+    assert f"fallite: 1 ({ALTRA}/sanita)" in _riepilogo(uscita)
+
+
+def test_scheda_con_frontmatter_vuoto_fa_fallire_solo_la_sua_coppia(progetto, modello, capsys):
+    _due_fonti(progetto)
+    _scrivi_scheda_grezza(progetto, "altra", "sanita", "---\n\n---\n\nTesto.\n")
+    modello.risposte += [SU_SANITA]
+    assert _bozze("tutte", "sanita") == 1
+    assert progetto.scheda("prova", "sanita").exists()
+    uscita = capsys.readouterr().out
+    assert "frontmatter vuoto" in uscita
+    assert f"fallite: 1 ({ALTRA}/sanita)" in _riepilogo(uscita)
+
+
+def test_fonte_senza_un_campo_fa_fallire_solo_le_sue_coppie(progetto, modello, capsys):
+    _due_fonti(progetto)
+    percorso = progetto.contenuti / "fonti" / f"{ALTRA}.yaml"
+    percorso.write_text("".join(r for r in percorso.read_text(encoding="utf-8").splitlines(keepends=True)
+                                if not r.startswith("elezione:")), encoding="utf-8")
+    modello.risposte += [SU_SANITA]
+    assert _bozze("tutte", "sanita") == 1
+    assert progetto.scheda("prova", "sanita").exists()
+    uscita = capsys.readouterr().out
+    assert "YAML della fonte senza elezione" in uscita
+    assert f"fallite: 1 ({ALTRA}/sanita)" in _riepilogo(uscita)
+
+
+def test_fonte_con_yaml_rotto_fa_fallire_solo_le_sue_coppie(progetto, modello, capsys):
+    _due_fonti(progetto)
+    (progetto.contenuti / "fonti" / f"{ALTRA}.yaml").write_text("id: [rotto\n", encoding="utf-8")
+    modello.risposte += [SU_SANITA]
+    assert _bozze("tutte", "sanita") == 1
+    assert progetto.scheda("prova", "sanita").exists()
+    assert "YAML della fonte illeggibile" in capsys.readouterr().out
+
+
+def test_verifica_segnala_il_frontmatter_vuoto_senza_fermarsi(progetto, modello, capsys):
+    _scrivi_scheda_grezza(progetto, "prova", "sanita", "---\n\n---\n\nTesto.\n")
+    assert main(["verifica"]) == 1
+    assert "frontmatter vuoto" in capsys.readouterr().out
+
+
+# Fonte condivisa con solo alcune schede scritte
+
+def _condivisa(progetto):
+    progetto.aggiungi_fonte(ALTRA, ["altra", "terza"])
+    _classifica(progetto, ALTRA)
+    progetto.scrivi_scheda({
+        "partito": "altra", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata",
+        "titolo": "Corretta a mano", "citazioni": [{"fonte": ALTRA, "pagina": 2, "testo": SANITA}],
+        "stato": "bozza", "aggiornata_il": datetime.date(2026, 11, 2)})
+
+
+def test_fonte_condivisa_scrive_solo_le_schede_mancanti(progetto, modello, capsys):
+    _condivisa(progetto)
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita")
+    assert progetto.leggi_scheda(partito="altra")[0]["titolo"] == "Corretta a mano"
+    assert progetto.leggi_scheda(partito="terza")[0]["titolo"] == "Più psicologi"
+    uscita = capsys.readouterr().out
+    assert "altra/sanita: bozza già scritta, non la tocco" in uscita
+    assert f"scritte: 1 ({ALTRA}/sanita)" in _riepilogo(uscita)
+
+
+def test_fonte_condivisa_con_rigenera_riscrive_anche_le_bozze(progetto, modello):
+    _condivisa(progetto)
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita", "--rigenera")
+    assert progetto.leggi_scheda(partito="altra")[0]["titolo"] == "Più psicologi"
+    assert progetto.leggi_scheda(partito="terza")[0]["titolo"] == "Più psicologi"
+
+
+def test_fonte_condivisa_con_una_verificata_e_una_bozza_non_genera_nulla(progetto, modello, capsys):
+    _condivisa(progetto)
+    progetto.scrivi_scheda({
+        "partito": "terza", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata", "titolo": "A mano",
+        "citazioni": [{"fonte": ALTRA, "pagina": 2, "testo": SANITA}], "stato": "verificata",
+        "verificata_il": datetime.date(2026, 11, 2), "revisore": "revisore", "aggiornata_il": datetime.date(2026, 11, 2),
+    })
+    assert not _bozze(ALTRA, "sanita")
+    assert modello.richieste == []
+    assert "saltate perché già scritte" in capsys.readouterr().out
+
+
 # `pipeline classifica`: registro e copia di ogni classificazione
 
 def _risposta_classifica(fonte):
