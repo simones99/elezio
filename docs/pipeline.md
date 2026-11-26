@@ -253,7 +253,7 @@ Per il 2022, una PR per documento fonte (7 PR, fino a 36 schede per l'accordo di
 4. se la posizione è assente, controlla con `pipeline passaggi` i passaggi assegnati e quelli scartati, cerca il tema nel testo estratto e segna quanto tempo ci mette;
 5. porta `stato` a `verificata`, oppure lascia bozza con una nota.
 
-Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 120 schede, circa 20 ore. Il tempo del controllo delle posizioni assenti non è ancora misurato ([#61](https://github.com/simones99/elezio/issues/61)): si misura in #47.
+Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 108 schede 2022, circa 18 ore. Il tempo del controllo delle posizioni assenti non è ancora misurato ([#61](https://github.com/simones99/elezio/issues/61)): si misura in #47.
 
 ## Fase 2 (programmi 2027)
 
