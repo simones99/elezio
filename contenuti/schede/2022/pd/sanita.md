@@ -58,6 +58,7 @@ aggiornata_il: 2026-11-26
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
+note: 'Da controllare: la citazione di pagina 20 sui 10 miliardi al Fondo Sanitario Nazionale è una misura già fatta ("Nel vivo della pandemia sono state fatte scelte"), non una proposta; la sintesi la presenta come proposta (#44).'
 ---
 
 Il documento propone di aumentare il Fondo Sanitario Nazionale e di dimezzare entro il 2027 i tempi massimi delle liste d'attesa per esami e interventi. Vuole potenziare la medicina del territorio attraverso le Case della Comunità, la telemedicina e la farmacia dei servizi. Prevede un nuovo piano di assunzione per i Medici di Medicina Generale e contratti di lavoro formativo per il personale. Lancia un piano straordinario per la salute mentale con Centri di Salute Mentale di piccola scala e l'istituzione di uno psicologo per le cure primarie. Si impegna inoltre a investire nella sanità pubblica e universale.

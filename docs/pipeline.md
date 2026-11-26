@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 13 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 26 novembre 2026 (modello di sintesi, documento intero, Sanità 2022, costi reali). Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -326,4 +326,4 @@ elezio-fonti/
 
 Il repo pubblico tiene solo `contenuti/fonti/<fonte>.yaml` con URL, hash e percorso relativo (`testo_estratto`, `copie_equivalenti`, `ocr`). La CI pubblica clona `elezio-fonti` con un token di sola lettura per `pipeline verifica`.
 
-`pipeline acquisisci` registra in `archivio` la prima copia su Wayback identica al byte al PDF scaricato (confronto del digest SHA-1 dell'API CDX), così l'archivio prova anche che il documento non è cambiato. Una fonte riceve `ocr` quando il PDF non ha testo nativo: più di un quarto delle pagine coperte da un'immagine, oppure meno di 50 parole a pagina. Le pagine OCR già salvate non si rifanno, quindi `pipeline estrai` si può rilanciare senza ripagarle. Per il 2022 le fonti sono 7, di cui 4 da OCR (accordo di centrodestra, PD, AVS, +Europa); la scelta della copia canonica dell'accordo è motivata in testa al suo YAML.
+`pipeline acquisisci` registra in `archivio` la prima copia su Wayback identica al byte al PDF scaricato (confronto del digest SHA-1 dell'API CDX), così l'archivio prova anche che il documento non è cambiato. Una fonte riceve `ocr` quando il PDF non ha testo nativo: più di un quarto delle pagine coperte da un'immagine, oppure meno di 50 parole a pagina. Le pagine OCR già salvate non si rifanno, quindi `pipeline estrai` si può rilanciare senza ripagarle. Per il 2022 le fonti sono 6, di cui 4 da OCR (accordo di centrodestra, PD, AVS, +Europa); la scelta della copia canonica dell'accordo è motivata in testa al suo YAML.
