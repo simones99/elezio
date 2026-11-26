@@ -268,8 +268,11 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     schede verificate e contestate non si toccano mai. Su una fonte condivisa quindi una
     bozza già scritta di un partito resta com'è anche se si genera quella di un altro.
 
-    Le chiamate finiscono in `lancio.log`, anche se il passo si ferma a metà. Senza passaggi
-    del tema la posizione è assente e il modello non viene chiamato, a meno che qualche
+    Sotto la soglia `ELEZIO_DOCUMENTO_INTERO_SOTTO_PAROLE` del testo estratto il modello riceve
+    tutti i passaggi della fonte e decide lui se il tema c'è (#42); il record lo dice in `ingresso`.
+
+    Le chiamate finiscono in `lancio.log`, anche se il passo si ferma a metà. Sopra la soglia,
+    senza passaggi del tema la posizione è assente e il modello non viene chiamato, a meno che qualche
     passaggio non abbia il punteggio del tema: allora l'assenza non è dimostrata e il
     passo si ferma con BozzaImpossibile. Senza il registro della classificazione si ferma
     anche: la bozza non saprebbe da quale classificazione è nata.
@@ -294,29 +297,36 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     if reg is None:
         raise BozzaImpossibile(f"{fonte}: la classificazione non dice modello, prompt e soglia, "
                                "rilancia pipeline classifica")
-    del_tema = [p for p in passaggi if tema_id in p["temi"]]
-    id_senza_punteggio = [p["id"] for p in passaggi if classifica.temi_mancanti(p.get("punteggi", {}), [tema])]
-    if not del_tema:
+    testo = (base / y["testo_estratto"]).read_text(encoding="utf-8")
+    if len(testo.split()) < int(lancio.cfg["ELEZIO_DOCUMENTO_INTERO_SOTTO_PAROLE"]):
+        # documento breve: il modello legge tutto, una classificazione persa non fa un'assenza falsa
+        ingresso, inviati, id_senza_punteggio = "documento_intero", passaggi, []
+    else:
+        ingresso = "passaggi_classificati"
+        inviati = [p for p in passaggi if tema_id in p["temi"]]
+        id_senza_punteggio = [p["id"] for p in passaggi
+                              if classifica.temi_mancanti(p.get("punteggi", {}), [tema])]
+    if not inviati:
         if id_senza_punteggio:  # l'assenza non è dimostrata: la scheda direbbe più di quello che si sa
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
                                    + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
-        record = {"bozza_da": None, "classificazione": reg, "risposta": None}
+        record = {"bozza_da": None, "ingresso": ingresso, "classificazione": reg, "risposta": None}
         for partito in partiti:
             _scrivi(base, fonte, y, tema_id, partito,
                     _fronte(partito, tema, y, "assente", "", [],
                             ["il classificatore non ha assegnato al tema nessun passaggio"], None),
                     CORPO_ASSENTE, record)
         return "assente"
-    pagine = pagine_del_testo((base / y["testo_estratto"]).read_text(encoding="utf-8"))
+    pagine = pagine_del_testo(testo)
     llm = lancio.llm
-    risposta, valide, note = _genera(llm, tema, del_tema, pagine)
+    risposta, valide, note = _genera(llm, tema, inviati, pagine)
     valide, note_sq = _sotto_questioni(valide, tema)
     note += note_sq
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}
-    record = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
+    record = {"bozza_da": bozza_da, "ingresso": ingresso, "classificazione": reg, "risposta": risposta}
     assente = risposta["posizione"] == "assente"
     for partito in partiti:
         _scrivi(base, fonte, y, tema_id, partito,

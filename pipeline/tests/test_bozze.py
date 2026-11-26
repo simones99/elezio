@@ -400,3 +400,60 @@ def test_tema_sconosciuto_si_rifiuta(progetto, modello, capsys):
     assert main(["bozze", "--fonte", FONTE, "--tema", "inesistente"]) == 1
     assert modello.richieste == []
     assert "inesistente" in capsys.readouterr().out
+
+
+# Documento intero sotto la soglia di parole (#42, decisione 3.3)
+
+def _documento_intero(monkeypatch):
+    """Il documento di prova ha 19 parole: con la soglia a 6000 passa intero."""
+    monkeypatch.setenv("ELEZIO_DOCUMENTO_INTERO_SOTTO_PAROLE", "6000")
+
+
+def _record(progetto):
+    return json.loads((progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json")
+                      .read_text(encoding="utf-8"))
+
+
+def test_sotto_la_soglia_al_modello_arriva_tutto_il_documento(progetto, modello, monkeypatch):
+    _documento_intero(monkeypatch)
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    testo = json.dumps(modello.richieste[0]["messages"], ensure_ascii=False)
+    assert "Riforma dell'Irpef con tre aliquote" in testo
+    assert "Introduzione generale al programma" in testo
+    assert _record(progetto)["ingresso"] == "documento_intero"
+
+
+def test_sotto_la_soglia_senza_passaggi_del_tema_decide_il_modello(progetto, modello, monkeypatch):
+    _documento_intero(monkeypatch)
+    _senza_temi(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    assert len(modello.richieste) == 1
+    assert progetto.leggi_scheda()[0]["posizione"] == "dichiarata"
+
+
+def test_sotto_la_soglia_i_punteggi_mancanti_non_contano(progetto, modello, monkeypatch, capsys):
+    _documento_intero(monkeypatch)
+    _senza_temi(progetto)
+    _togli_punteggio(progetto, 2, "sanita")
+    modello.risposte.append(ASSENTE)
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["posizione"] == "assente"
+    assert "note" not in fronte
+
+
+def test_sopra_la_soglia_il_record_dice_passaggi_classificati(progetto, modello):
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    assert _record(progetto)["ingresso"] == "passaggi_classificati"
+
+
+def test_assenza_senza_modello_registra_l_ingresso(progetto, modello):
+    _senza_temi(progetto)
+    assert not _bozze()
+    assert modello.richieste == []
+    assert _record(progetto)["ingresso"] == "passaggi_classificati"
