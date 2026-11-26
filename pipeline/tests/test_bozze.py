@@ -114,12 +114,12 @@ def test_al_modello_arrivano_solo_i_passaggi_del_tema_con_la_pagina(progetto, mo
     assert "Salute mentale" in testo
 
 
-def test_la_risposta_del_modello_ha_un_tetto_di_20000_token(progetto, modello):
+def test_la_risposta_del_modello_ha_un_tetto_di_32000_token(progetto, modello):
     # un ciclo di ragionamento ha prodotto 131.072 token senza risposta: 0,28 dollari e 18 minuti (#46)
     _classificati(progetto)
     modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
     assert not _bozze()
-    assert modello.richieste[0]["max_tokens"] == 20000
+    assert modello.richieste[0]["max_tokens"] == 32000
 
 
 def test_salva_il_json_della_bozza_e_il_log_nel_repo_privato(progetto, modello):
