@@ -120,13 +120,14 @@ def _esamina(risposta, pagine):
 
 
 def _genera(llm, tema, passaggi, pagine):
-    """(risposta finale, citazioni valide, note): con un solo nuovo tentativo."""
+    """(risposta finale, risposta scartata o None, citazioni valide, note): con un solo nuovo tentativo."""
     messaggi = _messaggi(tema, passaggi)
     risposta = _chiedi(llm, messaggi, tema)
     difetti, valide = _esamina(risposta, pagine)
     if not difetti:
-        return risposta, valide, []
-    risposta = _chiedi(llm, messaggi + _correzione(risposta, difetti), tema)
+        return risposta, None, valide, []
+    scartata = risposta
+    risposta = _chiedi(llm, messaggi + _correzione(scartata, difetti), tema)
     difetti, valide = _esamina(risposta, pagine)
     if risposta is None or _difetto_struttura(risposta):
         raise BozzaImpossibile(f"risposta del modello non valida anche al secondo tentativo: {difetti[0]}")
@@ -134,7 +135,7 @@ def _genera(llm, tema, passaggi, pagine):
     if risposta["posizione"] == "assente":
         note.append("assente solo al secondo tentativo, dopo una risposta scartata: "
                     "controllare che la posizione non sia in realtà dichiarata")
-    return risposta, valide, note
+    return risposta, scartata, valide, note
 
 
 def _sotto_questioni(citazioni, tema):
@@ -248,7 +249,8 @@ class Lancio:
 
 def _scrivi(base, fonte, y, tema_id, partito, fronte, corpo, record):
     """Scrive la scheda del partito e subito dopo, nel repo privato, il suo record: risposta
-    del modello, `bozza_da` e registro della classificazione da cui nasce.
+    del modello, risposta scartata al primo tentativo se c'è, `bozza_da` e registro della
+    classificazione da cui nasce.
 
     Il record è uno per partito, in `lavoro/<fonte>/bozze/<tema>/<partito>.json`: su una fonte
     condivisa la scheda di un partito generata dopo non tocca il record di quelle già
@@ -301,7 +303,7 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
                                    + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
-        record = {"bozza_da": None, "classificazione": reg, "risposta": None}
+        record = {"bozza_da": None, "classificazione": reg, "risposta": None, "risposta_scartata": None}
         for partito in partiti:
             _scrivi(base, fonte, y, tema_id, partito,
                     _fronte(partito, tema, y, "assente", "", [],
@@ -310,13 +312,13 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
         return "assente"
     pagine = pagine_del_testo((base / y["testo_estratto"]).read_text(encoding="utf-8"))
     llm = lancio.llm
-    risposta, valide, note = _genera(llm, tema, del_tema, pagine)
+    risposta, scartata, valide, note = _genera(llm, tema, del_tema, pagine)
     valide, note_sq = _sotto_questioni(valide, tema)
     note += note_sq
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}
-    record = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
+    record = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta, "risposta_scartata": scartata}
     assente = risposta["posizione"] == "assente"
     for partito in partiti:
         _scrivi(base, fonte, y, tema_id, partito,

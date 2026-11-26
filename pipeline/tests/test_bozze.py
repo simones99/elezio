@@ -147,6 +147,25 @@ def test_citazione_falsa_si_scarta_e_il_modello_riprova_una_volta(progetto, mode
     assert "note" not in fronte
 
 
+def test_il_record_conserva_la_risposta_scartata_al_primo_tentativo(progetto, modello):
+    _classificati(progetto)
+    scartata = _dichiarata((2, CITAZIONE_VERA), (2, INVENTATA))
+    modello.risposte += [scartata, _dichiarata((2, CITAZIONE_VERA))]
+    assert not _bozze()
+    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json"
+    record = json.loads(salvato.read_text(encoding="utf-8"))
+    assert [c["testo"] for c in record["risposta_scartata"]["citazioni"]] == [CITAZIONE_VERA, INVENTATA]
+    assert [c["testo"] for c in record["risposta"]["citazioni"]] == [CITAZIONE_VERA]
+
+
+def test_senza_secondo_tentativo_il_record_non_ha_risposta_scartata(progetto, modello):
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json"
+    assert json.loads(salvato.read_text(encoding="utf-8"))["risposta_scartata"] is None
+
+
 def test_se_fallisce_ancora_resta_bozza_senza_la_citazione_e_con_la_nota(progetto, modello):
     _classificati(progetto)
     modello.risposte += [_dichiarata((2, CITAZIONE_VERA), (2, INVENTATA))] * 2
