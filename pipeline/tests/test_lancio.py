@@ -188,7 +188,7 @@ def test_la_bozza_salva_la_classificazione_da_cui_nasce(progetto, modello):
     assert salvata["classificazione"]["prompt"] == "classificazione-v3.md"
     assert salvata["classificazione"]["soglia"] == 0.2
     assert salvata["classificazione"]["copia"] == "classificazioni/20261113-120000.jsonl"
-    assert salvata["bozza_da"] == {"modello": "finto/sintesi", "prompt": "bozza-v1.md"}
+    assert salvata["bozza_da"] == {"modello": "finto/sintesi", "prompt": "bozza-v2.md"}
     assert salvata["risposta"] == SU_SANITA
 
 

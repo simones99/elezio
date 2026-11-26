@@ -30,6 +30,7 @@ La preparazione è finita quando è tutta spuntata, prima di T-44.
 - [ ] Action di monitoraggio deployata e testata sul JSON di Elezioni trasparenti 2022.
 - [ ] `pipeline acquisisci --elezione 2022` funzionante end-to-end dal JSON del Ministero.
 - [ ] `alias` aggiornati in tutti i file partito, Futuro Nazionale compreso.
+- [ ] Futuro Nazionale, fuori dalla beta 2022 (#42): criterio di inclusione riverificato al rilascio, contrassegno del Ministero se depositato, fonte `2026-futuro-nazionale-programmatico` (già `elezione: 2027`): se il partito deposita un programma, si usa solo per i temi che il depositato non copre.
 - [ ] Credito API caricato, tetto di spesa impostato in `pipeline.toml`.
 - [ ] Template della PR per tema (sotto).
 - [ ] Striscia di copertura in home, avviso "programmi 2027 in revisione" sui temi e avviso del quiz 2022 già nel sito, spenti.

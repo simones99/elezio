@@ -32,7 +32,7 @@ Risultato: sito online in beta pubblica entro il 28 febbraio 2027.
 Il lavoro è diviso nei ticket da [#37](https://github.com/simones99/elezio/issues/37) a [#55](https://github.com/simones99/elezio/issues/55), figli della mappa, con le dipendenze su GitHub. Dal 12 novembre 2026 si aggiungono [#65](https://github.com/simones99/elezio/issues/65), [#66](https://github.com/simones99/elezio/issues/66), [#67](https://github.com/simones99/elezio/issues/67) e [#68](https://github.com/simones99/elezio/issues/68), nati dall'analisi in [piano-fase-1.md](piano-fase-1.md), che dà anche l'ordine di lavoro.
 
 - Scaffolding del sito: Astro in `sito/`, contenuti letti da `contenuti/`, Open Election Compass self-hostato in `/quiz/`, deploy su Cloudflare Pages (ADR 0006, `docs/stack.md`).
-- Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 120 schede, circa 20 ore.
+- Pipeline: dal PDF alla bozza di scheda con LLM, revisione umana, pubblicazione. Budget di revisione: circa 10 minuti per scheda, 108 schede 2022, circa 18 ore.
 - Pagine: elenco partiti, pagina tema con schede, confronto tra 2-3 partiti, quiz, risultato del quiz, metodologia, crediti.
 - Quiz 2022: 24 affermazioni scritte a mano con le risposte dei partiti, circa 6-8 ore dopo la verifica delle schede (ADR 0007, `docs/quiz.md`).
 - Analytics senza cookie con l'evento "quiz completato".

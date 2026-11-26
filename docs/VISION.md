@@ -20,7 +20,7 @@ Tre funzioni, niente altro:
 2. **Confronto tematico.** Le schede di due o tre partiti affiancate sullo stesso tema.
 3. **Quiz di orientamento.** Tra 20 e 25 affermazioni; le posizioni dei partiti derivano dalle stesse schede, con le stesse citazioni; il punteggio è spiegato in linguaggio semplice.
 
-Perimetro v1: 10 partiti (Fratelli d'Italia, Partito Democratico, Movimento 5 Stelle, Lega, Forza Italia, Alleanza Verdi e Sinistra, Azione, Italia Viva, +Europa, Futuro Nazionale) per 12 temi, cioè 120 schede. La beta esce sui programmi delle politiche 2022; il rilascio pubblico avviene sui programmi 2027 appena vengono pubblicati.
+Perimetro v1: 10 partiti (Fratelli d'Italia, Partito Democratico, Movimento 5 Stelle, Lega, Forza Italia, Alleanza Verdi e Sinistra, Azione, Italia Viva, +Europa, Futuro Nazionale) per 12 temi, cioè 120 schede. La beta esce sui programmi delle politiche 2022, con i 9 partiti che hanno un documento per quell'elezione (108 schede): Futuro Nazionale, nato nel 2026, entra con i programmi 2027, perché un documento si usa solo per l'elezione per cui è scritto (#42); il rilascio pubblico avviene sui programmi 2027 appena vengono pubblicati.
 
 ## Principi
 
@@ -38,4 +38,4 @@ Finanziamenti ai partiti, network map dei legami, storia e risultati elettorali,
 
 ## Successo
 
-v1 è riuscita se il sito è online entro il 28 febbraio 2027 con 120 schede verificate e un quiz funzionante, e se almeno 500 persone completano il quiz entro il giorno del voto.
+v1 è riuscita se il sito è online entro il 28 febbraio 2027 con le 108 schede 2022 verificate e un quiz funzionante, e se almeno 500 persone completano il quiz entro il giorno del voto.

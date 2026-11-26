@@ -1,6 +1,6 @@
 # Pipeline: dal documento fonte alle schede verificate
 
-Ultimo aggiornamento: 13 novembre 2026. Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
+Ultimo aggiornamento: 26 novembre 2026 (modello di sintesi, documento intero, Sanità 2022, costi reali). Decisioni di fondo in [ADR 0005](adr/0005-pipeline-da-programma-a-schede.md); termini in [GLOSSARY.md](../GLOSSARY.md); schema dei file in [schema-scheda.md](schema-scheda.md). Questo file è la vista operativa e cambia a ogni run: modelli, prompt, comandi, costi, checklist. Deciso nel ticket [Pipeline da programma a schede verificate](https://github.com/simones99/elezio/issues/9).
 
 ## Passi
 
@@ -60,7 +60,7 @@ Client: SDK `openai` con `base_url`, così lo stesso codice gira su OpenRouter, 
 
 Tetto di spesa: la pipeline somma il costo che l'endpoint restituisce in `usage.cost` e si ferma prima della chiamata successiva quando il tetto è raggiunto. Solo OpenRouter restituisce quel campo. Su `api.mistral.ai`, Ollama, LM Studio e vLLM il costo resta 0 e il tetto non scatta: alla prima risposta senza costo il comando stampa una volta `il tetto di spesa non è attivo`, e il costo che riporta alla fine è 0. Lì la spesa si limita dal pannello del fornitore. Si è scelto l'avviso e non una stima dai token perché i prezzi per modello in `pipeline.toml` invecchierebbero senza che nessuno se ne accorga (#68).
 
-Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono verificati il 30 ottobre 2026 su OpenRouter e su `api.mistral.ai` (tabella sotto); il modello di sintesi si fissa al primo lancio delle bozze, provando due o tre modelli su un documento. Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
+Default dei modelli: famiglia Mistral, perché il maintainer vuole l'inferenza in UE. Large 4 per la sintesi, Ministral 3 14B per la classificazione, Mistral OCR per le scansioni. Gli id sono verificati il 30 ottobre 2026 su OpenRouter e su `api.mistral.ai` (tabella sotto); il modello di sintesi è fissato in #44 provando due modelli su un documento ([misura](#modello-di-sintesi-misura-di-44)). Criterio: sintesi su un modello della fascia Large/Pro con contesto di almeno 32k; classificazione su un modello della fascia Small/Ministral o un 8-14B locale (Ministral 3 è Apache 2.0 e gira anche su Ollama). Mai usare alias come `mistral-large-latest` in `bozza_da`: l'id registrato deve restare risolvibile.
 
 Residenza UE: i modelli Mistral su OpenRouter vanno bloccati sul provider `mistral` (`provider.order` più `allow_fallbacks=false`), altrimenti OpenRouter può instradare su un altro host. Il gateway OpenRouter stesso però processa la richiesta negli USA sul piano gratuito: la base URL regionale `https://eu.openrouter.ai` è solo sui piani Business ed Enterprise. Per una residenza UE stretta si punta `base_url` direttamente a `https://api.mistral.ai/v1` (endpoint compatibile OpenAI, stesso client) con gli id nativi di Mistral; la stessa API offre anche Mistral OCR in modo nativo.
 
@@ -207,11 +207,11 @@ Una chiamata per coppia fonte-tema. Input: i passaggi del tema con pagina, defin
   "posizione": "dichiarata",
   "titolo": "...",
   "sintesi": "...",
-  "citazioni": [{"pagina": 12, "testo": "..."}]
+  "citazioni": [{"pagina": 12, "sotto_questione": "Personale sanitario", "testo": "..."}]
 }
 ```
 
-oppure `{"posizione": "assente"}` se nessun passaggio tratta il tema. Lo script valida contro lo schema, esegue la verifica delle citazioni e scrive `contenuti/schede/<elezione>/<partito>/<tema>.md` con `stato: bozza` e `bozza_da: {modello, prompt}`. Per una fonte condivisa (accordo di coalizione) la stessa bozza viene scritta per ogni partito che la condivide. Se una citazione non passa, lo script la scarta e ritenta una volta chiedendo la correzione; se fallisce ancora, la scheda resta bozza con il problema in `note`.
+oppure `{"posizione": "assente"}` se nessun passaggio tratta il tema. Dal prompt `bozza-v2.md` (#42) ogni citazione porta una `sotto_questione`: lo schema JSON ammette solo le sotto-questioni del tema, scritte come in `temi.yaml`, più `altro` per una citazione del tema che non ne tocca nessuna. Lo schema vuole il campo sempre, perché l'output strutturato richiede tutti i campi; nella scheda `altro` diventa campo assente. Un valore fuori dall'elenco, possibile con un endpoint che non applica lo schema, si toglie dalla citazione con una nota per il revisore, senza far ripetere la chiamata. Lo script valida contro lo schema, esegue la verifica delle citazioni e scrive `contenuti/schede/<elezione>/<partito>/<tema>.md` con `stato: bozza` e `bozza_da: {modello, prompt}`. Per una fonte condivisa (accordo di coalizione) la stessa bozza viene scritta per ogni partito che la condivide. Se una citazione non passa, lo script la scarta e ritenta una volta chiedendo la correzione; se fallisce ancora, la scheda resta bozza con il problema in `note`.
 
 Casi limite. Se il classificatore non assegna al tema nessun passaggio, la scheda è assente senza chiamare il modello, senza `bozza_da` e con una nota per il revisore. Se però qualche passaggio non ha il punteggio del tema, l'assenza non è dimostrata: `pipeline bozze` esce con codice 1, elenca quei passaggi e non scrive nulla, lasciando intatta una scheda già esistente. Se invece al tema sono assegnati dei passaggi e altri non hanno il suo punteggio, la bozza si scrive con una nota che li elenca, anche quando il modello risponde assente. Un passaggio senza il punteggio di un altro tema non conta. Se dopo il nuovo tentativo non resta nessuna citazione valida, la posizione resta `dichiarata` senza citazioni e `pipeline verifica` fallisce: la scheda non diventa mai assente per un errore del modello, e un `assente` arrivato al secondo tentativo, dopo una risposta scartata di qualunque tipo, porta una nota. Una scheda già `verificata` o `contestata` non si sovrascrive: se lo sono tutte quelle della fonte, il comando esce con codice 0 senza guardare i punteggi. Una risposta inservibile anche al secondo tentativo non scrive nessun file.
 
@@ -236,13 +236,53 @@ Vale anche per `pipeline estrai`, che riscrive `passaggi.jsonl` da capo e senza 
 
 Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modifica è un nuovo file. `bozza_da.modello` è l'id completo del modello, `bozza_da.prompt` il nome del file. La pagina metodologia pubblica i prompt.
 
+### Modello di sintesi (misura di #44)
+
+Misura del 26 novembre 2026 sul programma PD 2022, temi Sanità, Lavoro e Ambiente, con `bozza-v2.md`. Due modelli Mistral: `mistralai/mistral-large-4-0`, della fascia Large/Pro chiesta dal criterio, e `mistralai/mistral-medium-3-5`, un gradino sotto, provato per vedere se un modello più economico bastava. Tutte e tre le coppie sono `dichiarata` con entrambi.
+
+- **Large 4 resta il default.** Cita pezzi più corti e precisi (Sanità: 10 citazioni, 228 parole) e assegna meglio le sotto-questioni. Medium 3.5 cita pezzi lunghi, a volte fuori tema (Ambiente: 299 parole, quasi al tetto di 300), e la sintesi afferma cose che le citazioni non sostengono.
+- **Difetti comuni.** Con entrambi tutte e tre le coppie hanno avuto bisogno del secondo tentativo, perché il modello aveva modificato il testo di una citazione. Una citazione scartata può lasciare nella sintesi una frase senza appoggio: la nota la segnala e il revisore la controlla. Entrambi hanno presentato come proposta l'aumento del Fondo sanitario di 10 miliardi già fatto dal PD al governo.
+- **Costo.** Large 4: 0,128 dollari per le tre coppie. Medium 3.5: 0,111 dollari. Large 4 ragiona a lungo: in una chiamata misurata, 9.238 dei 9.660 token in uscita erano di ragionamento.
+
+Il confronto completo è in `elezio-fonti`, in `lavoro/misure/44/`.
+
+### Documento intero per i documenti brevi (misura di #44)
+
+La proposta di #42 era questa: sotto le 6000 parole il modello di sintesi riceve tutto il documento invece dei passaggi classificati, e la regola vale se dà almeno le stesse posizioni dichiarate senza materiale fuori tema. Misura del 26 novembre 2026 su accordo di centrodestra e M5S 2022, 12 temi, Large 4 e `bozza-v2.md`, 0,50 dollari di tetto per modalità.
+
+| | Coppie scritte | Costo | Citazioni in passaggi di un altro tema | Citazioni non trovate in un solo passaggio |
+| --- | --- | --- | --- | --- |
+| Documento intero | 18 su 24 (le altre ferme al tetto) | 0,516 dollari | 15 su 169 | 2 |
+| Passaggi classificati | 22 su 24 | 0,517 dollari | 0 su 231 | 10 |
+
+Le 18 coppie comuni sono `dichiarata` in tutte e due le modalità. Il documento intero però porta materiale di altri temi. Il caso più grave è Immigrazione del centrodestra: 8 citazioni su sicurezza urbana, droghe, carceri e antisemitismo, che sono Giustizia. Altri esempi: Famiglia del centrodestra prende le pensioni minime, che sono Lavoro; Lavoro di M5S prende il riscatto della laurea, che è Scuola. Il conteggio cerca ogni citazione nei passaggi e guarda i temi del classificatore; le citazioni a cavallo di due passaggi, o con apostrofi diversi, non si trovano in un solo passaggio e restano fuori dal conteggio, in tutte e due le modalità. I conteggi sono su tutte le schede scritte, cioè 18 coppie con il documento intero e 22 con i passaggi classificati, contando una volta sola l'accordo di centrodestra. Il costo per coppia è più alto con il documento intero.
+
+Il confronto però poteva vedere solo lo svantaggio. Lo scopo del documento intero era evitare le false assenze, e nessuna delle 40 coppie scritte nelle due modalità è `assente`: su queste coppie i passaggi classificati non hanno perso nessuna posizione, ma il vantaggio non è misurato.
+
+Esito: la regola non si adotta. `pipeline bozze` manda al modello solo i passaggi classificati del tema, per tutti i documenti. Il rischio di falsa assenza resta da misurare: si controlla a mano ogni assenza che uscirà sugli altri temi (#46), a partire dai documenti brevi. Dati grezzi in `elezio-fonti`, in `lavoro/misure/44/`.
+
+### Sanità 2022 (#44)
+
+Lancio del 26 novembre 2026: 6 fonti, 9 partiti, Large 4, `bozza-v2.md`, 0,172 dollari. Tutte le schede sono `dichiarata`, e `pipeline verifica` passa. Le fonti condivise hanno scritto la stessa bozza per ogni partito (FdI, FI e Lega; Azione e IV).
+
+| Fonte | Testo | Chiamate | Citazioni scartate dopo il secondo tentativo | Citazioni valide |
+| --- | --- | --- | --- | --- |
+| `2022-cdx-accordo` | Mistral OCR | 1 | 0 | 8 |
+| `2022-m5s-programma` | nativo | 1 | 0 | 6 |
+| `2022-pd-programma` | Mistral OCR | 2 | 0 | 12 |
+| `2022-avs-programma` | Mistral OCR | 2 | 2 | 15 |
+| `2022-azione-iv-programma` | nativo | 1 | 0 | 12 |
+| `2022-piu-europa-programma` | Mistral OCR | 1 | 0 | 15 |
+
+Le due citazioni scartate di AVS non sono errori OCR: il testo estratto è giusto, è il modello che ha scritto "territoriales" e "indispensable". Il log registra ogni chiamata, ma il record conserva solo la risposta finale, quindi le citazioni scartate al primo tentativo non si contano: due chiamate vogliono dire che la prima risposta aveva almeno un difetto, una citazione non trovata o un errore di struttura. Per questo la tenuta della verifica sulle fonti da OCR è dimostrata solo dopo il secondo tentativo: PD e AVS, entrambe da OCR, l'hanno usato. Nessuna posizione assente: il controllo a mano delle assenze previsto da #44 non ha avuto niente da controllare, e il rischio di falsa assenza si misura sugli altri temi (#46).
+
 ## Verifica delle citazioni
 
 Sottostringa esatta dopo normalizzazione di entrambi i lati: spazi e a capo collassati, virgolette e apostrofi tipografici unificati, trattini di sillabazione a fine riga rimossi, trattini unificati. Maiuscole e accenti restano come sono. Una citazione è un passaggio contiguo: niente `[...]`; due pezzi sono due citazioni. La ricerca avviene nella pagina indicata, con tolleranza di una pagina in più o in meno per gli errori di impaginazione dell'OCR: in quel caso la pagina viene corretta. Il revisore corregge a mano gli errori OCR dentro le citazioni, non nell'intero testo estratto.
 
 ## Revisione
 
-Per il 2022, una PR per documento fonte (7 PR, fino a 36 schede per l'accordo di centrodestra). Dal 2027, una PR per tema con tutti i partiti disponibili e le 2 affermazioni del quiz del tema (vedi [playbook-fase-2.md](playbook-fase-2.md)). Per ogni scheda il revisore:
+Per il 2022, una PR per documento fonte (6 PR, fino a 36 schede per l'accordo di centrodestra). Dal 2027, una PR per tema con tutti i partiti disponibili e le 2 affermazioni del quiz del tema (vedi [playbook-fase-2.md](playbook-fase-2.md)). Per ogni scheda il revisore:
 
 1. apre il PDF alla pagina citata e conferma che la citazione esiste e non è fuori contesto;
 2. conferma che la sintesi non aggiunge nulla oltre le citazioni;
@@ -250,7 +290,7 @@ Per il 2022, una PR per documento fonte (7 PR, fino a 36 schede per l'accordo di
 4. se la posizione è assente, controlla con `pipeline passaggi` i passaggi assegnati e quelli scartati, cerca il tema nel testo estratto e segna quanto tempo ci mette;
 5. porta `stato` a `verificata`, oppure lascia bozza con una nota.
 
-Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 120 schede, circa 20 ore. Il tempo del controllo delle posizioni assenti non è ancora misurato ([#61](https://github.com/simones99/elezio/issues/61)): si misura in #47.
+Non corregge lo stile della sintesi a meno che sia sbagliata. Budget: circa 10 minuti per scheda, 108 schede 2022, circa 18 ore. Il tempo del controllo delle posizioni assenti non è ancora misurato ([#61](https://github.com/simones99/elezio/issues/61)): si misura in #47.
 
 ## Fase 2 (programmi 2027)
 
@@ -262,7 +302,9 @@ La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i p
 
 Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-14b-2512`, prompt v3 e schema a 12 chiavi 0,006 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata. AVS 2022 (#61): classificazione di 494 passaggi 0,025 dollari, con 4 o 5 ripetizioni per i passaggi saltati dal modello.
 
-Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento dell'uso: non sono riportati qui per non invecchiare.
+Misurato sulle 6 fonti 2022 (#44, 26 novembre 2026): classificazione di tutte le fonti con `ministral-14b-2512` 0,088 dollari; bozze di Sanità con `mistral-large-4-0` 0,172 dollari per 6 coppie, da 0,013 a 0,047 dollari a coppia, con una o due chiamate. Nelle prove di #44 su 12 temi una coppia è costata in media 0,024 dollari con i passaggi classificati.
+
+Stima per il 2022, rifatta con le misure: 72 coppie, 6 fonti per 12 temi, tra 1,5 e 3,5 dollari di bozze; classificazione sotto il dollaro anche rilanciata; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni. Siamo sotto i 10 dollari per elezione, come stimato, spesa una tantum. La stima precedente diceva "pochi dollari" per le bozze: la misura lo conferma. I prezzi dei modelli su OpenRouter vanno letti su openrouter.ai/models al momento dell'uso: non sono riportati qui per non invecchiare.
 
 `pipeline classifica` e `pipeline bozze` registrano `usage` di ogni chiamata nel repo privato, in `lavoro/log/<momento>-classifica-<fonte>.jsonl` e `lavoro/log/<momento>-bozze-<fonte>-<tema>.jsonl`; l'OCR lo registra in `lavoro/<fonte>/ocr-log.jsonl`. Ogni comando si ferma oltre il tetto di spesa, che per `pipeline bozze` vale per l'intero lancio. Il tetto funziona solo dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
 
@@ -284,4 +326,4 @@ elezio-fonti/
 
 Il repo pubblico tiene solo `contenuti/fonti/<fonte>.yaml` con URL, hash e percorso relativo (`testo_estratto`, `copie_equivalenti`, `ocr`). La CI pubblica clona `elezio-fonti` con un token di sola lettura per `pipeline verifica`.
 
-`pipeline acquisisci` registra in `archivio` la prima copia su Wayback identica al byte al PDF scaricato (confronto del digest SHA-1 dell'API CDX), così l'archivio prova anche che il documento non è cambiato. Una fonte riceve `ocr` quando il PDF non ha testo nativo: più di un quarto delle pagine coperte da un'immagine, oppure meno di 50 parole a pagina. Le pagine OCR già salvate non si rifanno, quindi `pipeline estrai` si può rilanciare senza ripagarle. Per il 2022 le fonti sono 7, di cui 4 da OCR (accordo di centrodestra, PD, AVS, +Europa); la scelta della copia canonica dell'accordo è motivata in testa al suo YAML.
+`pipeline acquisisci` registra in `archivio` la prima copia su Wayback identica al byte al PDF scaricato (confronto del digest SHA-1 dell'API CDX), così l'archivio prova anche che il documento non è cambiato. Una fonte riceve `ocr` quando il PDF non ha testo nativo: più di un quarto delle pagine coperte da un'immagine, oppure meno di 50 parole a pagina. Le pagine OCR già salvate non si rifanno, quindi `pipeline estrai` si può rilanciare senza ripagarle. Per il 2022 le fonti sono 6, di cui 4 da OCR (accordo di centrodestra, PD, AVS, +Europa); la scelta della copia canonica dell'accordo è motivata in testa al suo YAML.

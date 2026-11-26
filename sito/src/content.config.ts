@@ -105,6 +105,8 @@ const citazione = z.strictObject({
   id: slug.optional(),
   fonte: slug,
   pagina,
+  // Che sia una sotto-questione del tema lo controlla `pipeline verifica` (incrocio con temi.yaml).
+  sotto_questione: unaRiga.optional(),
   testo: z.string().trim().min(1),
 });
 

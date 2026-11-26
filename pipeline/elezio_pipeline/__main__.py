@@ -247,7 +247,7 @@ def _verifica(args, cfg):
             print(f"{nome}: {e}")
     controllo = f"con elezio-fonti in {fonti_dir}" if fonti_dir else "senza elezio-fonti (solo schema)"
     print(f"fonti: {'errori' if esito else 'ok'}, {controllo}")
-    temi = {t["id"] for t in classifica.carica_temi()}
+    temi = {t["id"]: t["sotto_questioni"] for t in classifica.carica_temi()}
     tutte = {p.stem: yaml.safe_load(p.read_text(encoding="utf-8")) for p in sorted(fonti.contenuti_fonti().glob("*.yaml"))}
     errori_schede = schede.verifica(temi, tutte, fonti_dir)
     for nome, errori in errori_schede.items():

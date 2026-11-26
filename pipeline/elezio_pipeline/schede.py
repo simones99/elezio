@@ -89,11 +89,14 @@ def _errori_percorso(f, p, temi):
     return e
 
 
-def _errori_citazioni(f, fonti_yaml, testi):
+def _errori_citazioni(f, fonti_yaml, testi, sotto_questioni):
     e = []
     parole = 0
     visti = set()
     for c in f.get("citazioni") or []:
+        sq = c.get("sotto_questione")
+        if sq is not None and sq not in sotto_questioni:
+            e.append(f"sotto-questione «{sq}» non è del tema {f.get('tema')}")
         id_ = c.get("id")
         if id_ is not None:
             if id_ in visti:
@@ -125,6 +128,8 @@ def _errori_citazioni(f, fonti_yaml, testi):
 def verifica(temi, fonti_yaml, fonti_dir):
     """Errori delle schede, {percorso relativo: [errori]}; vuoto se va tutto bene.
 
+    `temi` è {id del tema: sotto-questioni}, come in `contenuti/temi.yaml`.
+
     Senza il repo privato (`fonti_dir` None) non controlla il testo delle citazioni.
     """
     base = cartella()
@@ -145,7 +150,8 @@ def verifica(temi, fonti_yaml, fonti_dir):
         except (ValueError, yaml.YAMLError) as ex:
             esito[p.relative_to(base).as_posix()] = [str(ex)]
             continue
-        e = _errori_campi(f, corpo) + _errori_percorso(f, p, temi) + _errori_citazioni(f, fonti_yaml, testi)
+        e = (_errori_campi(f, corpo) + _errori_percorso(f, p, temi)
+             + _errori_citazioni(f, fonti_yaml, testi, temi.get(f.get("tema"), [])))
         if e:
             esito[p.relative_to(base).as_posix()] = e
     return esito

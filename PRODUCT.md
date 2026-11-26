@@ -14,9 +14,9 @@ Seconda ondata, non bersaglio di v1: giornalisti, insegnanti, ricercatori.
 
 ## Product Purpose
 
-Rendere fruibili i programmi elettorali italiani: per tema, in linguaggio semplice, sempre con la citazione testuale e la pagina del documento originale. Tre funzioni in v1: schede per tema (10 partiti per 12 temi, 120 schede), confronto tematico tra due o tre partiti, quiz di orientamento.
+Rendere fruibili i programmi elettorali italiani: per tema, in linguaggio semplice, sempre con la citazione testuale e la pagina del documento originale. Tre funzioni in v1: schede per tema (10 partiti per 12 temi, 120 schede; la beta 2022 ne ha 108, senza Futuro Nazionale), confronto tematico tra due o tre partiti, quiz di orientamento.
 
-Successo: sito online entro il 28 febbraio 2027 con 120 schede verificate e un quiz funzionante; almeno 500 quiz completati entro il giorno del voto.
+Successo: sito online entro il 28 febbraio 2027 con le 108 schede 2022 verificate e un quiz funzionante; almeno 500 quiz completati entro il giorno del voto.
 
 ## Positioning
 

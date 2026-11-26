@@ -15,24 +15,33 @@ from .citazioni import pagine_del_testo, verifica_citazione
 from .config import PIPELINE
 from .llm import ClienteLLM
 
-PROMPT = "bozza-v1.md"
+PROMPT = "bozza-v2.md"
 CORPO_ASSENTE = "Il documento fonte di questo partito non tratta il tema."
-SCHEMA = {
-    "type": "object",
-    "properties": {
-        "posizione": {"type": "string", "enum": ["dichiarata", "assente"]},
-        "titolo": {"type": "string"},
-        "sintesi": {"type": "string"},
-        "citazioni": {"type": "array", "items": {
-            "type": "object",
-            "properties": {"pagina": {"type": "integer"}, "testo": {"type": "string"}},
-            "required": ["pagina", "testo"],
-            "additionalProperties": False,
-        }},
-    },
-    "required": ["posizione", "titolo", "sintesi", "citazioni"],
-    "additionalProperties": False,
-}
+# Il valore che il modello usa per una citazione fuori dalle sotto-questioni del tema: l'output
+# strutturato vuole tutti i campi, nella scheda diventa campo assente (riga "Altro nel tema").
+ALTRO = "altro"
+
+
+def _schema(tema):
+    """Lo schema JSON della risposta, con le sotto-questioni del tema come valori ammessi."""
+    return {
+        "type": "object",
+        "properties": {
+            "posizione": {"type": "string", "enum": ["dichiarata", "assente"]},
+            "titolo": {"type": "string"},
+            "sintesi": {"type": "string"},
+            "citazioni": {"type": "array", "items": {
+                "type": "object",
+                "properties": {"pagina": {"type": "integer"},
+                               "sotto_questione": {"type": "string", "enum": [*tema["sotto_questioni"], ALTRO]},
+                               "testo": {"type": "string"}},
+                "required": ["pagina", "sotto_questione", "testo"],
+                "additionalProperties": False,
+            }},
+        },
+        "required": ["posizione", "titolo", "sintesi", "citazioni"],
+        "additionalProperties": False,
+    }
 
 
 class BozzaImpossibile(RuntimeError):
@@ -73,7 +82,7 @@ def _controlla_citazioni(risposta, pagine):
     for c in risposta.get("citazioni") or []:
         esito = verifica_citazione(pagine, c.get("pagina"), str(c.get("testo") or ""))
         if esito.ok:
-            valide.append({"pagina": esito.pagina, "testo": c["testo"]})
+            valide.append({"pagina": esito.pagina, "sotto_questione": c.get("sotto_questione"), "testo": c["testo"]})
         else:
             problemi.append(f"citazione scartata, {esito.motivo}: «{c.get('testo')}»")
     parole = sum(len(c["testo"].split()) for c in valide)
@@ -84,10 +93,10 @@ def _controlla_citazioni(risposta, pagine):
     return valide, problemi
 
 
-def _chiedi(llm, messaggi):
+def _chiedi(llm, messaggi, tema):
     """La risposta del modello; None se non è JSON."""
     try:
-        return llm.completa(messaggi, "bozza", SCHEMA)
+        return llm.completa(messaggi, "bozza", _schema(tema))
     except json.JSONDecodeError:
         return None
 
@@ -113,11 +122,11 @@ def _esamina(risposta, pagine):
 def _genera(llm, tema, passaggi, pagine):
     """(risposta finale, citazioni valide, note): con un solo nuovo tentativo."""
     messaggi = _messaggi(tema, passaggi)
-    risposta = _chiedi(llm, messaggi)
+    risposta = _chiedi(llm, messaggi, tema)
     difetti, valide = _esamina(risposta, pagine)
     if not difetti:
         return risposta, valide, []
-    risposta = _chiedi(llm, messaggi + _correzione(risposta, difetti))
+    risposta = _chiedi(llm, messaggi + _correzione(risposta, difetti), tema)
     difetti, valide = _esamina(risposta, pagine)
     if risposta is None or _difetto_struttura(risposta):
         raise BozzaImpossibile(f"risposta del modello non valida anche al secondo tentativo: {difetti[0]}")
@@ -128,11 +137,35 @@ def _genera(llm, tema, passaggi, pagine):
     return risposta, valide, note
 
 
+def _sotto_questioni(citazioni, tema):
+    """(citazioni con la sotto-questione solo se è del tema, note sui valori scartati).
+
+    "altro" e un valore mancante lasciano la citazione senza sotto-questione; un valore che
+    il tema non ha si toglie e lo si dice al revisore, senza far riprovare il modello."""
+    pulite, note = [], []
+    for c in citazioni:
+        sq = c.get("sotto_questione")
+        if sq not in (None, ALTRO) and sq not in tema["sotto_questioni"]:
+            note.append(f"sotto-questione «{sq}» non è del tema, tolta dalla citazione: «{c['testo']}»")
+        pulite.append({k: v for k, v in c.items()
+                       if k != "sotto_questione" or v in tema["sotto_questioni"]})
+    return pulite, note
+
+
+def _citazione(y, c):
+    """La citazione della scheda, nell'ordine dei campi di docs/schema-scheda.md."""
+    d = {"fonte": y["id"], "pagina": c["pagina"]}
+    if c.get("sotto_questione"):
+        d["sotto_questione"] = c["sotto_questione"]
+    d["testo"] = c["testo"]
+    return d
+
+
 def _fronte(partito, tema, y, posizione, titolo, citazioni, note, bozza_da):
     f = {"partito": partito, "tema": tema["id"], "elezione": y["elezione"], "posizione": posizione}
     if posizione == "dichiarata":
         f["titolo"] = titolo
-    f["citazioni"] = [{"fonte": y["id"], "pagina": c["pagina"], "testo": c["testo"]} for c in citazioni]
+    f["citazioni"] = [_citazione(y, c) for c in citazioni]
     f["stato"] = "bozza"
     f["aggiornata_il"] = datetime.date.today()
     if bozza_da:
@@ -278,6 +311,8 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     pagine = pagine_del_testo((base / y["testo_estratto"]).read_text(encoding="utf-8"))
     llm = lancio.llm
     risposta, valide, note = _genera(llm, tema, del_tema, pagine)
+    valide, note_sq = _sotto_questioni(valide, tema)
+    note += note_sq
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}

@@ -39,8 +39,10 @@ def _togli_punteggio(progetto, numero, tema):
 
 
 def _dichiarata(*citazioni, sintesi="Il partito propone più psicologi nei distretti."):
+    """Citazioni come (pagina, testo) o (pagina, testo, sotto-questione); senza, la sotto-questione è "altro"."""
     return {"posizione": "dichiarata", "titolo": "Più psicologi nei distretti", "sintesi": sintesi,
-            "citazioni": [{"pagina": p, "testo": t} for p, t in citazioni]}
+            "citazioni": [{"pagina": c[0], "sotto_questione": c[2] if len(c) > 2 else "altro", "testo": c[1]}
+                          for c in citazioni]}
 
 
 ASSENTE = {"posizione": "assente", "titolo": "", "sintesi": "", "citazioni": []}
@@ -63,9 +65,40 @@ def test_bozza_scrive_la_scheda_con_citazioni_verificate(progetto, modello):
     assert fronte["stato"] == "bozza"
     assert fronte["citazioni"] == [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}]
     assert fronte["aggiornata_il"] == datetime.date.today()
-    assert fronte["bozza_da"] == {"modello": "finto/sintesi", "prompt": "bozza-v1.md"}
+    assert fronte["bozza_da"] == {"modello": "finto/sintesi", "prompt": "bozza-v2.md"}
     assert "note" not in fronte
     assert corpo == "Il partito propone più psicologi nei distretti."
+
+
+def test_lo_schema_chiede_una_sotto_questione_del_tema_o_altro(progetto, modello):
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
+    assert not _bozze()
+    schema = modello.richieste[0]["response_format"]["json_schema"]["schema"]
+    citazione = schema["properties"]["citazioni"]["items"]
+    assert citazione["properties"]["sotto_questione"]["enum"] == ["Personale sanitario", "Salute mentale", "altro"]
+    assert "sotto_questione" in citazione["required"]
+
+
+def test_la_sotto_questione_entra_nella_citazione_e_altro_resta_fuori(progetto, modello):
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA, "Salute mentale"), (2, CITAZIONE_VERA_2)))
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["citazioni"] == [
+        {"fonte": FONTE, "pagina": 2, "sotto_questione": "Salute mentale", "testo": CITAZIONE_VERA},
+        {"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA_2}]
+    assert list(fronte["citazioni"][0]) == ["fonte", "pagina", "sotto_questione", "testo"]
+    assert "note" not in fronte
+
+
+def test_sotto_questione_sconosciuta_si_toglie_con_una_nota(progetto, modello):
+    _classificati(progetto)
+    modello.risposte.append(_dichiarata((2, CITAZIONE_VERA, "Imposte sul reddito")))
+    assert not _bozze()
+    fronte, _ = progetto.leggi_scheda()
+    assert fronte["citazioni"] == [{"fonte": FONTE, "pagina": 2, "testo": CITAZIONE_VERA}]
+    assert "sotto-questione «Imposte sul reddito» non è del tema" in fronte["note"]
 
 
 def test_al_modello_arrivano_solo_i_passaggi_del_tema_con_la_pagina(progetto, modello):
