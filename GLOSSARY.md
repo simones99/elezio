@@ -116,6 +116,18 @@ _Avoid_: soglia, lista dei partiti, eccezione
 Un paragrafo del testo estratto, con la sua pagina, a cui la pipeline assegna zero o più temi. Un passaggio può contenere più proposte; la regola "ogni proposta un solo tema" si applica alla sintesi, non al passaggio.
 _Avoid_: chunk, frammento, segmento
 
+**Lancio**:
+Un'esecuzione della generazione delle bozze su una o più coppie di documento fonte e tema, con un solo tetto di spesa per tutte e un riepilogo finale degli esiti. Non tocca mai le schede verificate o contestate.
+_Avoid_: run, batch, job
+
+**Registro della classificazione**:
+La descrizione di come sono stati classificati i passaggi di un documento fonte: modello, prompt, soglia e data, con il riferimento a una copia dei passaggi classificati che non si cancella mai. È un documento di lavoro, non pubblico, e non va confuso con il registro delle correzioni, che è pubblico e riguarda le schede.
+_Avoid_: metadata, manifest, log della classificazione
+
+**Record**:
+Ciò che la pipeline conserva per ogni scheda generata: la risposta del modello, modello e prompt della sintesi e il registro della classificazione da cui la bozza è nata. Serve a risalire da una scheda alla generazione che l'ha prodotta. Non è pubblico.
+_Avoid_: log, traccia
+
 **Verifica delle citazioni**:
 Il controllo che ogni citazione esista alla lettera, come sequenza contigua, nel testo estratto della fonte indicata e alla pagina indicata. Una citazione che non passa non entra in una scheda. Non dipende da nessun modello.
 _Avoid_: validazione, fact-check
@@ -125,5 +137,5 @@ La persona che verifica una scheda prima della pubblicazione. In v1 è il mainta
 _Avoid_: editor, moderatore
 
 **Registro delle correzioni**:
-L'elenco pubblico delle modifiche fatte alle schede dopo la pubblicazione, con data e motivo.
+L'elenco pubblico delle modifiche fatte alle schede dopo la pubblicazione, con data e motivo. Da non confondere con il registro della classificazione, che è un documento di lavoro della pipeline.
 _Avoid_: changelog, errata

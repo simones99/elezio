@@ -53,7 +53,7 @@ def _leggi_passaggi(percorso):
 
 
 def _registra(cfg, nome, log):
-    """Uso e costo di ogni chiamata in lavoro/log/<run>.jsonl (docs/pipeline.md)."""
+    """Uso e costo di ogni chiamata in lavoro/log/<momento>-<nome>.jsonl (docs/pipeline.md)."""
     if not log:
         return
     cartella = fonti.cartella_fonti(cfg) / "lavoro" / "log"

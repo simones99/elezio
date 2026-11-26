@@ -30,7 +30,7 @@ La preparazione è finita quando è tutta spuntata, prima di T-44.
 - [ ] Action di monitoraggio deployata e testata sul JSON di Elezioni trasparenti 2022.
 - [ ] `pipeline acquisisci --elezione 2022` funzionante end-to-end dal JSON del Ministero.
 - [ ] `alias` aggiornati in tutti i file partito, Futuro Nazionale compreso.
-- [ ] Credito API caricato, tetto per run impostato.
+- [ ] Credito API caricato, tetto di spesa impostato in `pipeline.toml`.
 - [ ] Template della PR per tema (sotto).
 - [ ] Striscia di copertura in home, avviso "programmi 2027 in revisione" sui temi e avviso del quiz 2022 già nel sito, spenti.
 - [ ] Prova generale fatta, tempi misurati riportati in questo file.
