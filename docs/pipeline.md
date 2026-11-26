@@ -224,7 +224,9 @@ Casi limite. Se il classificatore non assegna al tema nessun passaggio, la sched
 
 ### Classificazione accanto alla bozza
 
-`pipeline classifica` scrive accanto a `passaggi.jsonl` il registro `classificazione.json`: id (data e ora), modello, prompt, soglia, data, numero di passaggi, passaggi incompleti e `copia`, il percorso di una copia dei passaggi classificati in `lavoro/<fonte>/classificazioni/<id>.jsonl`. La copia si scrive a ogni classificazione e non si cancella mai. `pipeline bozze` mette il registro dentro `lavoro/<fonte>/bozze/<tema>.json`, insieme a `bozza_da` e alla risposta del modello (`null` se la scheda è assente senza chiamarlo).
+`pipeline classifica` scrive accanto a `passaggi.jsonl` il registro `classificazione.json`: id (data e ora), modello, prompt, soglia, data, numero di passaggi, passaggi incompleti e `copia`, il percorso di una copia dei passaggi classificati in `lavoro/<fonte>/classificazioni/<id>.jsonl`. La copia si scrive a ogni classificazione e non si cancella mai. `pipeline bozze` mette il registro dentro `lavoro/<fonte>/bozze/<tema>/<partito>.json`, insieme a `bozza_da` e alla risposta del modello (`null` se la scheda è assente senza chiamarlo).
+
+Il record è uno per partito, non uno per fonte e tema (#77). Su una fonte condivisa (accordo di centrodestra, programma Azione-IV) le schede dello stesso tema possono nascere in lanci diversi, perché un lancio senza `--rigenera` scrive solo quelle che mancano. Un file unico per fonte e tema sarebbe stato riscritto dal secondo lancio, e la bozza scritta prima avrebbe perso la classificazione da cui è nata. Così ogni lancio scrive il record solo dei partiti di cui scrive la scheda, e dalla scheda si risale al suo record senza ambiguità: partito e tema vengono dal percorso della scheda, la cartella dalla fonte delle citazioni. Si è scartato uno storico `<tema>.jsonl` con una riga per lancio, che obbligherebbe a cercare l'ultima riga che nomina il partito. Il record di Sanità di M5S (#37) è nel formato precedente, `lavoro/2022-m5s-programma/bozze/sanita.json`, e resta lì senza migrazione. Se la scheda si rigenera, il record nuovo si scrive nel formato per partito.
 
 Si è scelta la copia e non un avviso prima di riscrivere `passaggi.jsonl`: rilanciare `pipeline classifica` è un'operazione normale (punteggi incompleti, nuovo prompt), e un avviso si ignora. Con la copia ogni bozza ritrova i punteggi da cui è nata anche dopo una nuova classificazione, e la pagina metodologia può pubblicare modello, prompt e soglia di ogni bozza. Il costo è un file di qualche centinaio di kB per classificazione, nel repo privato.
 
@@ -276,7 +278,7 @@ elezio-fonti/
 ├── lavoro/<fonte>/passaggi.jsonl    # passaggi segmentati, poi classificati
 ├── lavoro/<fonte>/classificazione.json            # modello, prompt e soglia della classificazione in passaggi.jsonl
 ├── lavoro/<fonte>/classificazioni/<id>.jsonl      # copia di ogni classificazione, mai cancellata
-├── lavoro/<fonte>/bozze/<tema>.json               # risposta del modello, bozza_da e registro della classificazione
+├── lavoro/<fonte>/bozze/<tema>/<partito>.json     # per ogni scheda: risposta del modello, bozza_da e registro della classificazione
 └── lavoro/log/<run>.jsonl
 ```
 

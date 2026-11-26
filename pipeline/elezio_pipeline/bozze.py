@@ -213,12 +213,23 @@ class Lancio:
         return self._llm.costo if self._llm else 0.0
 
 
-def _salva(base, fonte, tema_id, reg, risposta, bozza_da):
-    """Accanto alla bozza, nel repo privato: la risposta del modello e la classificazione da cui nasce."""
-    salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
-    salvata.parent.mkdir(parents=True, exist_ok=True)
-    dati = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
-    salvata.write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+def percorso_record(base, fonte, tema_id, partito):
+    """Il record accanto alla scheda `<partito>/<tema>` nata da `fonte`, nel repo privato."""
+    return base / "lavoro" / fonte / "bozze" / tema_id / f"{partito}.json"
+
+
+def _salva(base, fonte, tema_id, partiti, reg, risposta, bozza_da):
+    """Accanto a ogni bozza scritta: la risposta del modello e la classificazione da cui nasce.
+
+    Un record per partito, così su una fonte condivisa la scheda di un partito generata
+    dopo non cancella il record di quelle già scritte (#77).
+    """
+    dati = json.dumps({"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta},
+                      ensure_ascii=False, indent=2) + "\n"
+    for partito in partiti:
+        salvata = percorso_record(base, fonte, tema_id, partito)
+        salvata.parent.mkdir(parents=True, exist_ok=True)
+        salvata.write_text(dati, encoding="utf-8")
 
 
 def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
@@ -262,7 +273,7 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
                                    + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
-        _salva(base, fonte, tema_id, reg, None, None)
+        _salva(base, fonte, tema_id, partiti, reg, None, None)
         for partito in partiti:
             schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
                           _fronte(partito, tema, y, "assente", "", [],
@@ -275,7 +286,7 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}
-    _salva(base, fonte, tema_id, reg, risposta, bozza_da)
+    _salva(base, fonte, tema_id, partiti, reg, risposta, bozza_da)
     assente = risposta["posizione"] == "assente"
     for partito in partiti:
         schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
