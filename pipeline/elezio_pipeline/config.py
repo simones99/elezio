@@ -18,7 +18,6 @@ CHIAVI_TOML = {
     "classificatore": "ELEZIO_CLASSIFICATORE",
     "tetto_dollari_per_run": "ELEZIO_TETTO_DOLLARI",
     "soglia_classificazione": "ELEZIO_SOGLIA_CLASSIFICAZIONE",
-    "documento_intero_sotto_parole": "ELEZIO_DOCUMENTO_INTERO_SOTTO_PAROLE",
     "fonti": "ELEZIO_FONTI",
     "contenuti": "ELEZIO_CONTENUTI",
 }

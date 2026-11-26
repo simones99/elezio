@@ -174,7 +174,6 @@ def progetto(tmp_path, monkeypatch, modello):
         "ELEZIO_LLM_BASE_URL": modello.url, "ELEZIO_LLM_API_KEY": "finta",
         "ELEZIO_MODELLO_CLASSIFICAZIONE": "finto/classifica", "ELEZIO_MODELLO_SINTESI": "finto/sintesi",
         "ELEZIO_TETTO_DOLLARI": "30", "ELEZIO_SOGLIA_CLASSIFICAZIONE": "0.2",
-        "ELEZIO_DOCUMENTO_INTERO_SOTTO_PAROLE": "0",  # spento: il documento di prova è cortissimo
         "NO_PROXY": "127.0.0.1",
     }.items():
         monkeypatch.setenv(k, v)

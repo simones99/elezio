@@ -10,8 +10,6 @@ ocr = "mistral-ocr"
 classificatore = "llm"
 tetto_dollari_per_run = 30
 soglia_classificazione = 0.1
-# Sotto questo numero di parole del testo estratto la bozza legge il documento intero (#42).
-documento_intero_sotto_parole = 6000
 # Percorsi relativi alla radice del repo.
 fonti = "../elezio-fonti"
 contenuti = "contenuti"
