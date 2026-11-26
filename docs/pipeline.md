@@ -262,9 +262,9 @@ La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i p
 
 Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-14b-2512`, prompt v3 e schema a 12 chiavi 0,006 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata. AVS 2022 (#61): classificazione di 494 passaggi 0,025 dollari, con 4 o 5 ripetizioni per i passaggi saltati dal modello.
 
-Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento della run: non sono riportati qui per non invecchiare.
+Stima per il 2022 (7 fonti depositate, circa 250k token di testo): classificazione, una lettura del testo più i prompt, qualche decina di centesimi con un modello Flash e circa un centesimo con JEV; bozze, 84 chiamate con i soli passaggi del tema, pochi dollari con un modello Pro; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni; Tesseract gratis. Ordine di grandezza sotto i 10 dollari per elezione, spesa una tantum. I prezzi effettivi dei modelli Gemini su OpenRouter vanno letti su openrouter.ai/models al momento dell'uso: non sono riportati qui per non invecchiare.
 
-La pipeline registra `usage` di ogni chiamata in `lavoro/log/<run>.jsonl` nel repo privato e si ferma oltre il tetto per run (per `pipeline bozze`, l'intero lancio), dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
+La pipeline registra `usage` di ogni chiamata in `lavoro/log/<momento>-<passo>.jsonl` nel repo privato e si ferma oltre il tetto, che vale per ogni comando (per `pipeline bozze`, l'intero lancio), dove l'endpoint restituisce il costo (vedi [Configurazione](#configurazione)). La pagina metodologia pubblica il costo reale di generazione per elezione.
 
 ## Repo privato `elezio-fonti`
 
@@ -279,7 +279,7 @@ elezio-fonti/
 ├── lavoro/<fonte>/classificazione.json            # modello, prompt e soglia della classificazione in passaggi.jsonl
 ├── lavoro/<fonte>/classificazioni/<id>.jsonl      # copia di ogni classificazione, mai cancellata
 ├── lavoro/<fonte>/bozze/<tema>/<partito>.json     # per ogni scheda: risposta del modello, bozza_da e registro della classificazione
-└── lavoro/log/<run>.jsonl
+└── lavoro/log/<momento>-<passo>.jsonl             # uso e costo di ogni chiamata, un file per comando o per coppia del lancio
 ```
 
 Il repo pubblico tiene solo `contenuti/fonti/<fonte>.yaml` con URL, hash e percorso relativo (`testo_estratto`, `copie_equivalenti`, `ocr`). La CI pubblica clona `elezio-fonti` con un token di sola lettura per `pipeline verifica`.

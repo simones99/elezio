@@ -1,7 +1,8 @@
 """Client unico per i passi con un modello, su un endpoint compatibile OpenAI.
 
 Tiene in un punto solo il blocco del provider per la residenza dell'inferenza,
-il conteggio dei costi e il tetto di spesa per run (docs/pipeline.md). Il tetto
+il conteggio dei costi e il tetto di spesa per comando, o per lancio di `pipeline bozze`
+(docs/pipeline.md). Il tetto
 vale solo dove l'endpoint restituisce il costo della chiamata: altrove si avvisa.
 """
 
@@ -49,7 +50,7 @@ class ClienteLLM:
         """Il JSON della risposta. Si ferma prima della chiamata se il tetto è raggiunto."""
         if self.costo >= self.tetto:
             raise TettoSuperato(f"tetto di {self.tetto} dollari raggiunto")
-        for attesa in (15, 30, 60, None):  # il provider risponde 429 anche a metà run
+        for attesa in (15, 30, 60, None):  # il provider risponde 429 anche a metà comando
             try:
                 risposta = self._crea(messaggi, nome, schema)
                 break
