@@ -238,10 +238,10 @@ Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modi
 
 ### Modello di sintesi (misura di #44)
 
-Misura del 26 novembre 2026 sul programma PD 2022, temi Sanità, Lavoro e Ambiente, con `bozza-v2.md`. Due modelli Mistral della fascia richiesta: `mistralai/mistral-large-4-0` e `mistralai/mistral-medium-3-5`. Tutte e tre le coppie sono `dichiarata` con entrambi.
+Misura del 26 novembre 2026 sul programma PD 2022, temi Sanità, Lavoro e Ambiente, con `bozza-v2.md`. Due modelli Mistral: `mistralai/mistral-large-4-0`, della fascia Large/Pro chiesta dal criterio, e `mistralai/mistral-medium-3-5`, un gradino sotto, provato per vedere se un modello più economico bastava. Tutte e tre le coppie sono `dichiarata` con entrambi.
 
 - **Large 4 resta il default.** Cita pezzi più corti e precisi (Sanità: 10 citazioni, 228 parole) e assegna meglio le sotto-questioni. Medium 3.5 cita pezzi lunghi, a volte fuori tema (Ambiente: 299 parole, quasi al tetto di 300), e la sintesi afferma cose che le citazioni non sostengono.
-- **Difetti comuni.** Con entrambi quasi ogni coppia ha avuto bisogno del secondo tentativo, perché il modello aveva modificato il testo di una citazione. Una citazione scartata può lasciare nella sintesi una frase senza appoggio: la nota la segnala e il revisore la controlla. Entrambi hanno presentato come proposta l'aumento del Fondo sanitario di 10 miliardi già fatto dal PD al governo.
+- **Difetti comuni.** Con entrambi tutte e tre le coppie hanno avuto bisogno del secondo tentativo, perché il modello aveva modificato il testo di una citazione. Una citazione scartata può lasciare nella sintesi una frase senza appoggio: la nota la segnala e il revisore la controlla. Entrambi hanno presentato come proposta l'aumento del Fondo sanitario di 10 miliardi già fatto dal PD al governo.
 - **Costo.** Large 4: 0,128 dollari per le tre coppie. Medium 3.5: 0,111 dollari. Large 4 ragiona a lungo: in una chiamata misurata, 9.238 dei 9.660 token in uscita erano di ragionamento.
 
 Il confronto completo è in `elezio-fonti`, in `lavoro/misure/44/`.
@@ -250,12 +250,12 @@ Il confronto completo è in `elezio-fonti`, in `lavoro/misure/44/`.
 
 La proposta di #42 era questa: sotto le 6000 parole il modello di sintesi riceve tutto il documento invece dei passaggi classificati, e la regola vale se dà almeno le stesse posizioni dichiarate senza materiale fuori tema. Misura del 26 novembre 2026 su accordo di centrodestra e M5S 2022, 12 temi, Large 4 e `bozza-v2.md`, 0,50 dollari di tetto per modalità.
 
-| | Coppie scritte | Costo | Citazioni in passaggi di un altro tema |
-| --- | --- | --- | --- |
-| Documento intero | 18 su 24 (le altre ferme al tetto) | 0,516 dollari | 17 su 169 |
-| Passaggi classificati | 22 su 24 | 0,517 dollari | nessuna |
+| | Coppie scritte | Costo | Citazioni in passaggi di un altro tema | Citazioni non trovate in un solo passaggio |
+| --- | --- | --- | --- | --- |
+| Documento intero | 18 su 24 (le altre ferme al tetto) | 0,516 dollari | 15 su 169 | 2 |
+| Passaggi classificati | 22 su 24 | 0,517 dollari | 0 su 231 | 10 |
 
-Le 18 coppie comuni sono `dichiarata` in tutte e due le modalità. Il documento intero però porta materiale di altri temi. Il caso più grave è Immigrazione del centrodestra: 8 citazioni su sicurezza urbana, droghe, carceri e antisemitismo, che sono Giustizia. Altri esempi: Famiglia del centrodestra prende le pensioni minime, che sono Lavoro; Lavoro di M5S prende il riscatto della laurea, che è Scuola. Il conteggio cerca ogni citazione nei passaggi e guarda i temi del classificatore. In modalità classificati le 10 citazioni che il conteggio non trova in un solo passaggio stanno a cavallo di due, o hanno apostrofi diversi: nessuna è di un altro tema. Il costo per coppia è più alto con il documento intero.
+Le 18 coppie comuni sono `dichiarata` in tutte e due le modalità. Il documento intero però porta materiale di altri temi. Il caso più grave è Immigrazione del centrodestra: 8 citazioni su sicurezza urbana, droghe, carceri e antisemitismo, che sono Giustizia. Altri esempi: Famiglia del centrodestra prende le pensioni minime, che sono Lavoro; Lavoro di M5S prende il riscatto della laurea, che è Scuola. Il conteggio cerca ogni citazione nei passaggi e guarda i temi del classificatore; le citazioni a cavallo di due passaggi, o con apostrofi diversi, non si trovano in un solo passaggio e restano fuori dal conteggio, in tutte e due le modalità. I conteggi sono su tutte le schede scritte, cioè 18 coppie con il documento intero e 22 con i passaggi classificati, contando una volta sola l'accordo di centrodestra. Il costo per coppia è più alto con il documento intero.
 
 Il confronto però poteva vedere solo lo svantaggio. Lo scopo del documento intero era evitare le false assenze, e nessuna delle 40 coppie scritte nelle due modalità è `assente`: su queste coppie i passaggi classificati non hanno perso nessuna posizione, ma il vantaggio non è misurato.
 
@@ -274,7 +274,7 @@ Lancio del 26 novembre 2026: 6 fonti, 9 partiti, Large 4, `bozza-v2.md`, 0,172 d
 | `2022-azione-iv-programma` | nativo | 1 | 0 | 12 |
 | `2022-piu-europa-programma` | Mistral OCR | 1 | 0 | 15 |
 
-Le due citazioni scartate di AVS non sono errori OCR: il testo estratto è giusto, è il modello che ha scritto "territoriales" e "indispensable". Le chiamate al primo tentativo non sono registrate una per una, quindi le citazioni scartate al primo tentativo non si contano: due chiamate vogliono dire che la prima risposta aveva almeno un difetto, una citazione non trovata o un errore di struttura. Nessuna posizione assente: il controllo a mano delle assenze previsto da #44 non ha avuto niente da controllare, e il rischio di falsa assenza si misura sugli altri temi (#46).
+Le due citazioni scartate di AVS non sono errori OCR: il testo estratto è giusto, è il modello che ha scritto "territoriales" e "indispensable". Il log registra ogni chiamata, ma il record conserva solo la risposta finale, quindi le citazioni scartate al primo tentativo non si contano: due chiamate vogliono dire che la prima risposta aveva almeno un difetto, una citazione non trovata o un errore di struttura. Per questo la tenuta della verifica sulle fonti da OCR è dimostrata solo dopo il secondo tentativo: PD e AVS, entrambe da OCR, l'hanno usato. Nessuna posizione assente: il controllo a mano delle assenze previsto da #44 non ha avuto niente da controllare, e il rischio di falsa assenza si misura sugli altri temi (#46).
 
 ## Verifica delle citazioni
 
