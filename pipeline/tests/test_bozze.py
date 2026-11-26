@@ -86,7 +86,7 @@ def test_salva_il_json_della_bozza_e_il_log_nel_repo_privato(progetto, modello):
     risposta = _dichiarata((2, CITAZIONE_VERA))
     modello.risposte.append(risposta)
     assert not _bozze()
-    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita.json"
+    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json"
     assert json.loads(salvato.read_text(encoding="utf-8"))["risposta"] == risposta
     log = list((progetto.fonti_dir / "lavoro" / "log").glob("*bozze*.jsonl"))
     assert len(log) == 1

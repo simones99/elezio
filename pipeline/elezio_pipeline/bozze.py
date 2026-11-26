@@ -213,12 +213,18 @@ class Lancio:
         return self._llm.costo if self._llm else 0.0
 
 
-def _salva(base, fonte, tema_id, reg, risposta, bozza_da):
-    """Accanto alla bozza, nel repo privato: la risposta del modello e la classificazione da cui nasce."""
-    salvata = base / "lavoro" / fonte / "bozze" / f"{tema_id}.json"
-    salvata.parent.mkdir(parents=True, exist_ok=True)
-    dati = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
-    salvata.write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+def _scrivi(base, fonte, y, tema_id, partito, fronte, corpo, record):
+    """Scrive la scheda del partito e subito dopo, nel repo privato, il suo record: risposta
+    del modello, `bozza_da` e registro della classificazione da cui nasce.
+
+    Il record è uno per partito, in `lavoro/<fonte>/bozze/<tema>/<partito>.json`: su una fonte
+    condivisa la scheda di un partito generata dopo non tocca il record di quelle già
+    scritte, e un errore a metà dei partiti non lascia record di schede non scritte (#77).
+    """
+    schede.scrivi(schede.percorso(y["elezione"], partito, tema_id), fronte, corpo)
+    salvato = base / "lavoro" / fonte / "bozze" / tema_id / f"{partito}.json"
+    salvato.parent.mkdir(parents=True, exist_ok=True)
+    salvato.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
@@ -262,12 +268,12 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
             raise BozzaImpossibile("nessun passaggio assegnato, ma questi non hanno il punteggio del tema: "
                                    + ", ".join(id_senza_punteggio)
                                    + "; scheda non scritta, rilancia pipeline classifica")
-        _salva(base, fonte, tema_id, reg, None, None)
+        record = {"bozza_da": None, "classificazione": reg, "risposta": None}
         for partito in partiti:
-            schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
-                          _fronte(partito, tema, y, "assente", "", [],
-                                  ["il classificatore non ha assegnato al tema nessun passaggio"], None),
-                          CORPO_ASSENTE)
+            _scrivi(base, fonte, y, tema_id, partito,
+                    _fronte(partito, tema, y, "assente", "", [],
+                            ["il classificatore non ha assegnato al tema nessun passaggio"], None),
+                    CORPO_ASSENTE, record)
         return "assente"
     pagine = pagine_del_testo((base / y["testo_estratto"]).read_text(encoding="utf-8"))
     llm = lancio.llm
@@ -275,10 +281,10 @@ def genera(lancio, fonte, tema_id, passaggi, rigenera=False):
     if id_senza_punteggio:
         note.append("passaggi senza il punteggio del tema, da controllare: " + ", ".join(id_senza_punteggio))
     bozza_da = {"modello": llm.modello, "prompt": PROMPT}
-    _salva(base, fonte, tema_id, reg, risposta, bozza_da)
+    record = {"bozza_da": bozza_da, "classificazione": reg, "risposta": risposta}
     assente = risposta["posizione"] == "assente"
     for partito in partiti:
-        schede.scrivi(schede.percorso(y["elezione"], partito, tema_id),
-                      _fronte(partito, tema, y, risposta["posizione"], risposta.get("titolo"), valide, note, bozza_da),
-                      CORPO_ASSENTE if assente else risposta["sintesi"].strip())
+        _scrivi(base, fonte, y, tema_id, partito,
+                _fronte(partito, tema, y, risposta["posizione"], risposta.get("titolo"), valide, note, bozza_da),
+                CORPO_ASSENTE if assente else risposta["sintesi"].strip(), record)
     return risposta["posizione"]

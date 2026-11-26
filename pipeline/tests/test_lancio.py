@@ -5,6 +5,7 @@ import json
 
 from conftest import FONTE
 
+from elezio_pipeline import schede
 from elezio_pipeline.__main__ import main
 
 ALTRA = "2022-altra-programma"
@@ -45,6 +46,15 @@ def _due_fonti(progetto):
     progetto.aggiungi_fonte(ALTRA, ["altra"])
     _classifica(progetto, FONTE)
     _classifica(progetto, ALTRA)
+
+
+def _record(progetto, fonte, partito, tema="sanita"):
+    """Il record accanto alla bozza: uno per partito, lavoro/<fonte>/bozze/<tema>/<partito>.json (#77)."""
+    return _lavoro(progetto, fonte) / "bozze" / tema / f"{partito}.json"
+
+
+def _letto(progetto, fonte, partito, tema="sanita"):
+    return json.loads(_record(progetto, fonte, partito, tema).read_text(encoding="utf-8"))
 
 
 def _bozze(fonte, tema, *opzioni):
@@ -173,7 +183,7 @@ def test_la_bozza_salva_la_classificazione_da_cui_nasce(progetto, modello):
     _due_fonti(progetto)
     modello.risposte += [SU_SANITA]
     assert not _bozze(FONTE, "sanita")
-    salvata = json.loads((_lavoro(progetto, FONTE) / "bozze" / "sanita.json").read_text(encoding="utf-8"))
+    salvata = _letto(progetto, FONTE, "prova")
     assert salvata["classificazione"]["modello"] == "finto/classifica"
     assert salvata["classificazione"]["prompt"] == "classificazione-v3.md"
     assert salvata["classificazione"]["soglia"] == 0.2
@@ -191,7 +201,7 @@ def test_anche_l_assenza_senza_modello_salva_la_classificazione(progetto, modell
     percorso.write_text("".join(json.dumps(p) + "\n" for p in passaggi), encoding="utf-8")
     assert not _bozze(FONTE, "sanita")
     assert modello.richieste == []
-    salvata = json.loads((_lavoro(progetto, FONTE) / "bozze" / "sanita.json").read_text(encoding="utf-8"))
+    salvata = _letto(progetto, FONTE, "prova")
     assert salvata["classificazione"]["soglia"] == 0.2
     assert salvata["bozza_da"] is None and salvata["risposta"] is None
 
@@ -318,6 +328,94 @@ def test_fonte_condivisa_con_una_verificata_e_una_bozza_non_genera_nulla(progett
     assert "saltate perché già scritte" in capsys.readouterr().out
 
 
+# Record accanto alla bozza: uno per partito, anche su una fonte condivisa (#77)
+
+def _condivisa_scritta(progetto, modello):
+    """Fonte condivisa da due partiti, le due schede di Sanità scritte in un primo lancio."""
+    progetto.aggiungi_fonte(ALTRA, ["altra", "terza"])
+    _classifica(progetto, ALTRA)
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita")
+
+
+def _cambia_id_del_registro(progetto, fonte, id_):
+    """Basta l'id per riconoscere il registro di un nuovo `pipeline classifica`."""
+    percorso = _lavoro(progetto, fonte) / "classificazione.json"
+    percorso.write_text(json.dumps(json.loads(percorso.read_text(encoding="utf-8")) | {"id": id_}),
+                        encoding="utf-8")
+
+
+def test_un_record_per_partito_della_fonte_condivisa(progetto, modello):
+    _condivisa_scritta(progetto, modello)
+    for partito in ("altra", "terza"):
+        salvata = _letto(progetto, ALTRA, partito)
+        assert salvata["risposta"] == SU_SANITA
+        assert salvata["classificazione"]["id"] == "20261113-120000"
+    assert not (_lavoro(progetto, ALTRA) / "bozze" / "sanita.json").exists()
+
+
+def test_la_scheda_mancante_non_tocca_il_record_delle_altre(progetto, modello):
+    progetto.aggiungi_fonte(ALTRA, ["altra", "terza"])
+    _classifica(progetto, ALTRA)
+    progetto.scrivi_scheda({  # terza c'è già, scritta a mano: il primo lancio scrive solo altra
+        "partito": "terza", "tema": "sanita", "elezione": 2022, "posizione": "dichiarata",
+        "titolo": "A mano", "citazioni": [{"fonte": ALTRA, "pagina": 2, "testo": SANITA}],
+        "stato": "bozza", "aggiornata_il": datetime.date(2026, 11, 2)})
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita")
+    assert not _record(progetto, ALTRA, "terza").exists()
+    prima = _record(progetto, ALTRA, "altra").read_bytes()
+    progetto.scheda("terza").unlink()
+    _cambia_id_del_registro(progetto, ALTRA, "20261120-090000")
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita")  # secondo lancio: scrive solo terza
+    assert _record(progetto, ALTRA, "altra").read_bytes() == prima
+    assert _letto(progetto, ALTRA, "terza")["classificazione"]["id"] == "20261120-090000"
+
+
+def test_scheda_non_scritta_non_lascia_il_suo_record(progetto, modello, monkeypatch):
+    progetto.aggiungi_fonte(ALTRA, ["altra", "terza"])
+    _classifica(progetto, ALTRA)
+    vera = schede.scrivi
+
+    def rompe_terza(percorso, *a):
+        if percorso.parent.name == "terza":
+            raise OSError("disco pieno")
+        vera(percorso, *a)
+
+    monkeypatch.setattr(schede, "scrivi", rompe_terza)
+    modello.risposte += [SU_SANITA]
+    assert _bozze(ALTRA, "sanita")
+    assert _record(progetto, ALTRA, "altra").exists()
+    assert not _record(progetto, ALTRA, "terza").exists()
+
+
+def test_con_rigenera_ogni_record_riscritto_e_del_nuovo_lancio(progetto, modello):
+    _condivisa_scritta(progetto, modello)
+    _cambia_id_del_registro(progetto, ALTRA, "20261120-090000")
+    modello.risposte += [SU_SANITA]
+    assert not _bozze(ALTRA, "sanita", "--rigenera")
+    for partito in ("altra", "terza"):
+        salvata = _letto(progetto, ALTRA, partito)
+        assert salvata["classificazione"]["id"] == "20261120-090000"
+
+
+def test_assenza_scrive_il_record_solo_dei_partiti_scritti(progetto, modello):
+    progetto.aggiungi_fonte(ALTRA, ["altra", "terza"])
+    _classifica(progetto, ALTRA)
+    progetto.scrivi_scheda({
+        "partito": "altra", "tema": "fisco", "elezione": 2022, "posizione": "assente",
+        "stato": "bozza", "aggiornata_il": datetime.date(2026, 11, 2)})
+    percorso = _lavoro(progetto, ALTRA) / "passaggi.jsonl"
+    passaggi = [json.loads(r) for r in percorso.read_text(encoding="utf-8").splitlines()]
+    for p in passaggi:
+        p["punteggi"], p["temi"] = {"sanita": 0, "fisco": 0}, []
+    percorso.write_text("".join(json.dumps(p) + "\n" for p in passaggi), encoding="utf-8")
+    assert not _bozze(ALTRA, "fisco")
+    assert not _record(progetto, ALTRA, "altra", "fisco").exists()
+    assert _letto(progetto, ALTRA, "terza", "fisco")["risposta"] is None
+
+
 # `pipeline classifica`: registro e copia di ogni classificazione
 
 def _risposta_classifica(fonte):
@@ -344,7 +442,7 @@ def test_riclassificare_non_cancella_la_classificazione_di_una_bozza(progetto, m
     modello.risposte.append(SU_SANITA)
     assert not _bozze(FONTE, "sanita")
     lavoro = _lavoro(progetto, FONTE)
-    nata_da = json.loads((lavoro / "bozze" / "sanita.json").read_text(encoding="utf-8"))["classificazione"]
+    nata_da = _letto(progetto, FONTE, "prova")["classificazione"]
     prima = (lavoro / nata_da["copia"]).read_text(encoding="utf-8")
     modello.risposte.append({"passaggi": [{"id": f"{FONTE}-{i:04d}", "punteggi": {"sanita": 0, "fisco": 0.9}}
                                           for i in range(1, 5)]})
