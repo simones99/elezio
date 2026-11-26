@@ -11,6 +11,12 @@ import time
 from openai import OpenAI, RateLimitError
 
 
+# Tetto ai token in uscita, ragionamento compreso. Senza, un ciclo di ragionamento arriva al
+# massimo del modello (131.072 token, 0,28 dollari) senza risposta; troncata, la risposta vale
+# come JSON rotto. Il massimo misurato su una bozza normale è 17.032, sulla classificazione 6.745 (#46).
+MAX_TOKEN_RISPOSTA = 20_000
+
+
 class TettoSuperato(RuntimeError):
     pass
 
@@ -39,6 +45,7 @@ class ClienteLLM:
         return self.client.chat.completions.create(
             model=self.modello,
             temperature=0,
+            max_tokens=MAX_TOKEN_RISPOSTA,
             messages=messaggi,
             response_format={"type": "json_schema", "json_schema": {
                 "name": nome, "strict": True, "schema": schema}},
