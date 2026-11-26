@@ -277,6 +277,26 @@ Lancio del 26 novembre 2026: 6 fonti, 9 partiti, Large 4, `bozza-v2.md`, 0,172 d
 
 Le due citazioni scartate di AVS non sono errori OCR: il testo estratto è giusto, è il modello che ha scritto "territoriales" e "indispensable". Il log registra ogni chiamata, ma il record di Sanità conserva solo la risposta finale (la prima risposta si salva da #46), quindi le citazioni scartate al primo tentativo non si contano: due chiamate vogliono dire che la prima risposta aveva almeno un difetto, una citazione non trovata o un errore di struttura. Per questo la tenuta della verifica sulle fonti da OCR è dimostrata solo dopo il secondo tentativo: PD e AVS, entrambe da OCR, l'hanno usato. Nessuna posizione assente: il controllo a mano delle assenze previsto da #44 non ha avuto niente da controllare, e il rischio di falsa assenza si misura sugli altri temi (#46).
 
+### Gli altri 11 temi 2022 (#46)
+
+Lancio del 26 novembre 2026: 6 fonti, 11 temi oltre Sanità, Large 4, `bozza-v2.md`, soglia 0.1, 2,55 dollari. Su 66 coppie ne sono uscite 63. Sono fallite Casa del centrodestra, per il ciclo di ragionamento descritto in [Lancio su più coppie](#lancio-su-più-coppie), e Europa e Istituzioni di AVS, perché il credito OpenRouter dell'account era finito (errore 402). Le tre coppie si rifanno con il tetto di 32.000 token.
+
+| Fonte | Coppie scritte | Due chiamate | Citazioni scartate al 1° tentativo | Scartate dopo il 2° | Citazioni valide |
+| --- | --- | --- | --- | --- | --- |
+| `2022-cdx-accordo` (OCR) | 10 | 1 | 1 | 1 | 111 |
+| `2022-m5s-programma` | 11 | 0 | 0 | 0 | 108 |
+| `2022-pd-programma` (OCR) | 11 | 8 | 13 | 9 | 115 |
+| `2022-avs-programma` (OCR) | 9 | 8 | 7 | 5 | 116 |
+| `2022-azione-iv-programma` | 11 | 6 | 8 | 4 | 137 |
+| `2022-piu-europa-programma` (OCR) | 11 | 4 | 4 | 2 | 104 |
+
+- **Nessuna scheda assente.** Tutte le 63 coppie sono `dichiarata`, quindi il controllo a mano delle assenze non ha avuto niente da controllare, come per Sanità in #44. Su 72 coppie non è uscita nessuna assenza, né falsa né vera: il rischio che il documento intero doveva ridurre (#42, punto 3.3) non si è presentato.
+- **Il modello mescola parole straniere nelle citazioni.** Delle 54 citazioni scartate, 32 contengono una parola che nel testo estratto non c'è: «proposons», «emploi», «régulation» (francese), «territoriales», «favorecer», «irá», «psíquiche» (spagnolo), «protagonist», «adequate» (inglese). Succede anche con Azione-IV, che ha il testo nativo, quindi la causa è il modello e non l'OCR. Il secondo tentativo quasi sempre ripete la stessa parola, perché la correzione dice "non trovata" ma non indica la parola sbagliata. Le altre 22 sono citazioni ritoccate o tagliate dal modello. Su M5S non c'è stato nessuno scarto.
+- **Le parole straniere passano anche nelle sintesi, che nessuno confronta con la fonte.** Si sono cercate in titoli e sintesi di tutte le schede 2022 le parole che non compaiono in nessuno dei sei testi estratti. Ne sono uscite due, «territoriales» in `pd/casa` e «territories» in `avs/famiglia`, e le due schede hanno una nota per il revisore. Le altre parole trovate sono italiane.
+- **La sintesi racconta anche le citazioni scartate.** In `pd/casa`, `pd/istituzioni` e `avs/famiglia` la sintesi parla di punti che restano senza una citazione valida. Le note lo segnalano; nelle altre schede con una citazione scartata va controllato in revisione.
+- **Istituzioni e passaggi fuori tema.** Il tema riceve molti passaggi: 17 per il centrodestra, 21 per M5S, 32 per il PD, 73 per Azione-IV e 103 per +Europa, molti di argomento generale. Le citazioni scelte dal modello sono pertinenti. L'unica sintesi sbagliata è quella del PD, per la citazione scartata sulle autonomie. Nessuna falsa assenza. I passaggi con punteggio tra 0,1 e 0,3, cioè quelli che la soglia 0.1 aggiunge rispetto a una soglia più alta, non hanno dato nessuna citazione su Istituzioni e 11 su 760 in tutti i 12 temi. Sono 202 dei 2.687 passaggi assegnati. I passaggi fuori tema hanno invece punteggi alti: nel PD un paragrafo sugli investimenti infrastrutturali ha 0,9 su Istituzioni. Alzare la soglia non li toglierebbe, quindi la soglia 0.1 resta.
+- **Due schede superavano le 300 parole di citazioni**: Lavoro del PD (329) e Istituzioni di +Europa (307). Per far passare `pipeline verifica` sono state accorciate a mano. Nel PD è stata tolta una citazione che descrive il problema senza proporre niente ed è stata accorciata un'altra; in +Europa è stata accorciata una citazione. Le note delle schede dicono cosa è stato tolto.
+
 ## Verifica delle citazioni
 
 Sottostringa esatta dopo normalizzazione di entrambi i lati: spazi e a capo collassati, virgolette e apostrofi tipografici unificati, trattini di sillabazione a fine riga rimossi, trattini unificati. Maiuscole e accenti restano come sono. Una citazione è un passaggio contiguo: niente `[...]`; due pezzi sono due citazioni. La ricerca avviene nella pagina indicata, con tolleranza di una pagina in più o in meno per gli errori di impaginazione dell'OCR: in quel caso la pagina viene corretta. Il revisore corregge a mano gli errori OCR dentro le citazioni, non nell'intero testo estratto.
@@ -303,7 +323,7 @@ La pubblicazione è incrementale per tema, nell'ordine di `temi.yaml`, tutti i p
 
 Misurato su M5S 2022 (#37, #58): classificazione di 124 passaggi con `ministral-14b-2512`, prompt v3 e schema a 12 chiavi 0,006 dollari, bozza di Sanità con `mistral-large-4-0` 0,015 dollari, una chiamata. AVS 2022 (#61): classificazione di 494 passaggi 0,025 dollari, con 4 o 5 ripetizioni per i passaggi saltati dal modello.
 
-Misurato sulle 6 fonti 2022 (#44, 26 novembre 2026): classificazione di tutte le fonti con `ministral-14b-2512` 0,088 dollari; bozze di Sanità con `mistral-large-4-0` 0,172 dollari per 6 coppie, da 0,013 a 0,047 dollari a coppia, con una o due chiamate. Nelle prove di #44 su 12 temi una coppia è costata in media 0,024 dollari con i passaggi classificati.
+Misurato sulle 6 fonti 2022 (#44, 26 novembre 2026): classificazione di tutte le fonti con `ministral-14b-2512` 0,088 dollari; bozze di Sanità con `mistral-large-4-0` 0,172 dollari per 6 coppie, da 0,013 a 0,047 dollari a coppia, con una o due chiamate. Nelle prove di #44 su 12 temi una coppia è costata in media 0,024 dollari con i passaggi classificati. Bozze degli altri 11 temi (#46): 2,55 dollari per 63 coppie scritte e 3 fallite. Di questi, 0,28 dollari sono andati in un solo ciclo di ragionamento senza risposta. Senza quel ciclo una coppia costa in media 0,036 dollari, da 0,011 a 0,070.
 
 Stima per il 2022, rifatta con le misure: 72 coppie, 6 fonti per 12 temi, tra 1,5 e 3,5 dollari di bozze; classificazione sotto il dollaro anche rilanciata; OCR con Mistral OCR a circa 0,002 dollari a pagina, sotto il dollaro per tutte le scansioni. Siamo sotto i 10 dollari per elezione, come stimato, spesa una tantum. La stima precedente diceva "pochi dollari" per le bozze: la misura lo conferma. I prezzi dei modelli su OpenRouter vanno letti su openrouter.ai/models al momento dell'uso: non sono riportati qui per non invecchiare.
 
