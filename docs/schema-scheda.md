@@ -42,6 +42,7 @@ Corpo del file: la sintesi, da 2 a 5 frasi in prosa semplice. Se la posizione è
 | `id` | se citata dal quiz | Slug stabile, unico nella scheda. Le risposte del partito nel quiz puntano a questo `id` (vedi `docs/quiz.md`). |
 | `fonte` | sì | Slug di un documento fonte che elenca questo partito tra i `partiti` e ha la stessa `elezione` della scheda. |
 | `pagina` | sì | Numero di pagina del PDF ufficiale (intero, oppure intervallo `12-13`). |
+| `sotto_questione` | no | Una delle `sotto_questioni` del tema della scheda in `contenuti/temi.yaml`, scritta identica. Una sola per citazione: un pezzo che ne tocca due si divide in due citazioni. Assente se la citazione appartiene al tema ma a nessuna sotto-questione: il sito la mette nella riga "Altro nel tema" della mappa. La propone la pipeline, la conferma il revisore. `pipeline verifica` controlla che il valore sia del tema (#42). |
 | `testo` | sì | Testo alla lettera dal documento. La pipeline verifica che esista nel testo estratto della fonte. |
 
 Regola sulle fonti multiple: se il partito ha un programma depositato che copre il tema, si cita quello. Il programma esteso si cita solo per i temi che il depositato non copre.
@@ -51,6 +52,7 @@ Regola sulle fonti multiple: se il partito ha un programma depositato che copre 
 - **Livello della posizione**: `coalizione` se la fonte citata elenca più di un partito, altrimenti `partito`. Il sito lo mostra al lettore.
 - **Tipo di documento della posizione**: il `tipo` della fonte citata (programma, programma esteso, accordo di coalizione, documento programmatico). Il sito lo mostra al lettore.
 - **Superata**: vera se esiste una scheda dello stesso partito e tema per una elezione successiva. Il sito la mostra con il link alla scheda più recente.
+- **Punto della mappa "chi parla di cosa"**: pieno per un partito e una sotto-questione se almeno una citazione della scheda ha quella `sotto_questione`.
 
 ## Partito (`partiti/<partito>.yaml`)
 

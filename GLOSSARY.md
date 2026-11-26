@@ -45,7 +45,7 @@ Una delle 12 aree di policy fisse in cui v1 organizza i contenuti, con un nome c
 _Avoid_: argomento, categoria, topic, area
 
 **Sotto-questione**:
-Una delle 3-6 questioni fisse in cui un tema si articola, uguale per tutti i partiti e per tutte le elezioni. Guida l'ordine della sintesi, la scelta del titolo della scheda e le affermazioni del quiz. Non è una scheda: per ogni partito, tema ed elezione la scheda resta una sola. Può restare vuota per una elezione se nessun documento fonte la tratta.
+Una delle 3-6 questioni fisse in cui un tema si articola, uguale per tutti i partiti e per tutte le elezioni. Guida l'ordine della sintesi, la scelta del titolo della scheda e le affermazioni del quiz. Non è una scheda: per ogni partito, tema ed elezione la scheda resta una sola. Ogni citazione di una scheda appartiene al più a una sotto-questione; quelle che non ne hanno nessuna stanno sotto "Altro nel tema". Può restare vuota per una elezione se nessun documento fonte la tratta.
 _Avoid_: sottotema, sezione, punto, sotto-tema
 
 **Scheda**:

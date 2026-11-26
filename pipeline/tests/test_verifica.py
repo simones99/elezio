@@ -124,6 +124,21 @@ def test_id_di_citazione_duplicato_fa_fallire(progetto, capsys):
     assert "uno" in uscita
 
 
+def test_sotto_questione_del_tema_passa(progetto, capsys):
+    progetto.scrivi_scheda(scheda(citazioni=[
+        {"fonte": FONTE, "pagina": 2, "sotto_questione": "Salute mentale", "testo": CITAZIONE}]))
+    codice, uscita = _verifica(capsys)
+    assert codice == 0, uscita
+
+
+def test_sotto_questione_che_il_tema_non_ha_fa_fallire(progetto, capsys):
+    progetto.scrivi_scheda(scheda(citazioni=[
+        {"fonte": FONTE, "pagina": 2, "sotto_questione": "Imposte sul reddito", "testo": CITAZIONE}]))
+    codice, uscita = _verifica(capsys)
+    assert codice == 1
+    assert "sotto-questione «Imposte sul reddito» non è del tema sanita" in uscita
+
+
 def test_corpo_vuoto_fa_fallire(progetto, capsys):
     progetto.scrivi_scheda(scheda(), corpo="")
     codice, uscita = _verifica(capsys)
