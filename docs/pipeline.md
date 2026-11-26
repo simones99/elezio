@@ -230,6 +230,8 @@ Si è scelta la copia e non un avviso prima di riscrivere `passaggi.jsonl`: rila
 
 Una classificazione fatta prima del registro (M5S e AVS 2022, ticket #37, #58 e #61) non dice modello, prompt e soglia: `pipeline bozze` fallisce su quella fonte e chiede di rilanciare `pipeline classifica`, che costa pochi centesimi per fonte. Prima di riscriverla, `pipeline classifica` ne salva comunque una copia in `classificazioni/<data del file>-senza-registro.jsonl`, perché una bozza già scritta può venire da lì (Sanità di M5S, #37).
 
+Vale anche per `pipeline estrai`, che riscrive `passaggi.jsonl` da capo e senza temi (#78). Se i passaggi erano classificati, prima di riscriverli si assicura che la copia esista: quella indicata dal registro, ricreata se manca, oppure la `-senza-registro`. Poi toglie `classificazione.json`, che non descriverebbe più i passaggi nuovi. Dopo `estrai`, `pipeline bozze` rifiuta la fonte finché non si rilancia `pipeline classifica`. Non c'è un'opzione per forzare né un blocco: rilanciare `estrai` è già una scelta esplicita, e con la copia non si perde nulla. La vecchia classificazione non si riapplica ai passaggi nuovi, perché gli id possono cambiare.
+
 Prompt in `pipeline/prompts/<nome>-v<N>.md`, mai modificati dopo l'uso: una modifica è un nuovo file. `bozza_da.modello` è l'id completo del modello, `bozza_da.prompt` il nome del file. La pagina metodologia pubblica i prompt.
 
 ## Verifica delle citazioni

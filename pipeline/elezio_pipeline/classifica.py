@@ -72,6 +72,29 @@ def registro(lavoro):
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
 
 
+def conserva(lavoro):
+    """Garantisce una copia in `classificazioni/` della classificazione in `passaggi.jsonl`.
+
+    Si chiama prima di riscrivere i passaggi, da `pipeline classifica` e da `pipeline estrai`:
+    una bozza può essere nata da quella classificazione. Restituisce il percorso della copia,
+    o None se i passaggi non sono classificati.
+    """
+    passaggi = lavoro / "passaggi.jsonl"
+    if not passaggi.exists() or '"temi"' not in passaggi.read_text(encoding="utf-8"):
+        return None
+    reg = registro(lavoro)
+    if reg is None:
+        # classificazione precedente al registro: si conserva comunque
+        momento = datetime.datetime.fromtimestamp(passaggi.stat().st_mtime).strftime("%Y%m%d-%H%M%S")
+        copia = lavoro / ARCHIVIO / f"{momento}-senza-registro.jsonl"
+    else:
+        copia = lavoro / reg["copia"]  # di norma c'è già: la scrive `salva`
+    if not copia.exists():
+        copia.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(passaggi, copia)
+    return copia
+
+
 def salva(lavoro, righe, modello, soglia, incompleti):
     """Scrive i passaggi classificati e il loro registro, con una copia in `classificazioni/`.
 
@@ -81,10 +104,7 @@ def salva(lavoro, righe, modello, soglia, incompleti):
     passaggi = lavoro / "passaggi.jsonl"
     archivio = lavoro / ARCHIVIO
     archivio.mkdir(parents=True, exist_ok=True)
-    if registro(lavoro) is None and passaggi.exists() and '"temi"' in passaggi.read_text(encoding="utf-8"):
-        # classificazione precedente al registro: si conserva comunque, una bozza può venire da lì
-        momento = datetime.datetime.fromtimestamp(passaggi.stat().st_mtime).strftime("%Y%m%d-%H%M%S")
-        shutil.copyfile(passaggi, archivio / f"{momento}-senza-registro.jsonl")
+    conserva(lavoro)
     momento = base = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     n = 1
     while (archivio / f"{momento}.jsonl").exists():  # due classificazioni nello stesso secondo
