@@ -226,6 +226,13 @@ def _estrai(args, cfg):
     uscita.parent.mkdir(parents=True, exist_ok=True)
     uscita.write_text(testo, encoding="utf-8")
     lavoro.mkdir(parents=True, exist_ok=True)
+    # i nuovi passaggi non sono classificati: la classificazione vecchia resta solo come copia
+    # e il registro, che non li descrive più, si toglie (#78)
+    copia = classifica.conserva(lavoro)
+    (lavoro / classifica.REGISTRO).unlink(missing_ok=True)
+    if copia:
+        print(f"classificazione precedente conservata in {copia.relative_to(lavoro).as_posix()}; "
+              "rilancia pipeline classifica")
     with open(lavoro / "passaggi.jsonl", "w", encoding="utf-8") as f:
         for p in passaggi:
             f.write(json.dumps({"id": p.id, "pagina": p.pagina, "pagina_fine": p.pagina_fine,
