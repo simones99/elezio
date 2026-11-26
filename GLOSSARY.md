@@ -117,16 +117,16 @@ Un paragrafo del testo estratto, con la sua pagina, a cui la pipeline assegna ze
 _Avoid_: chunk, frammento, segmento
 
 **Lancio**:
-Un'esecuzione della generazione delle bozze su una o più coppie di documento fonte e tema, con un solo tetto di spesa per tutte e un riepilogo finale degli esiti. Un lancio scrive solo le schede che mancano, salvo richiesta esplicita di rigenerare le bozze; schede verificate e contestate non si toccano mai.
+Un'esecuzione della generazione delle bozze su una o più coppie di documento fonte e tema, con un solo tetto di spesa per tutte e un riepilogo finale degli esiti. Non tocca mai le schede verificate o contestate.
 _Avoid_: run, batch, job
 
 **Registro della classificazione**:
-La descrizione di come sono stati classificati i passaggi di un documento fonte: modello, prompt, soglia e data, con una copia dei passaggi classificati che non si cancella mai. Una nuova classificazione lo sostituisce e una nuova estrazione del testo lo toglie, ma le copie restano. È un documento di lavoro, non pubblico: non va confuso con il registro delle correzioni, che è pubblico e riguarda le schede.
+La descrizione di come sono stati classificati i passaggi di un documento fonte: modello, prompt, soglia e data, con il riferimento a una copia dei passaggi classificati che non si cancella mai. È un documento di lavoro, non pubblico, e non va confuso con il registro delle correzioni, che è pubblico e riguarda le schede.
 _Avoid_: metadata, manifest, log della classificazione
 
 **Record**:
-Quello che resta accanto a ogni scheda generata, uno per scheda: la risposta del modello, il modello e il prompt della sintesi e il registro della classificazione da cui la bozza è nata. Serve a risalire dalla scheda alla generazione che l'ha prodotta. Il record resta nel repo privato; la pagina metodologia ne pubblica modello, prompt e soglia.
-_Avoid_: log, traccia, metadata
+Ciò che la pipeline conserva per ogni scheda generata: la risposta del modello, modello e prompt della sintesi e il registro della classificazione da cui la bozza è nata. Serve a risalire da una scheda alla generazione che l'ha prodotta. Non è pubblico.
+_Avoid_: log, traccia
 
 **Verifica delle citazioni**:
 Il controllo che ogni citazione esista alla lettera, come sequenza contigua, nel testo estratto della fonte indicata e alla pagina indicata. Una citazione che non passa non entra in una scheda. Non dipende da nessun modello.

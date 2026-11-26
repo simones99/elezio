@@ -1,9 +1,8 @@
 """Client unico per i passi con un modello, su un endpoint compatibile OpenAI.
 
 Tiene in un punto solo il blocco del provider per la residenza dell'inferenza,
-il conteggio dei costi e il tetto di spesa per comando, o per lancio di `pipeline bozze`
-(docs/pipeline.md). Il tetto
-vale solo dove l'endpoint restituisce il costo della chiamata: altrove si avvisa.
+il conteggio dei costi e il tetto di spesa, uno per istanza del client (docs/pipeline.md).
+Il tetto vale solo dove l'endpoint restituisce il costo della chiamata: altrove si avvisa.
 """
 
 import json
