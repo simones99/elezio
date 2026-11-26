@@ -54,7 +54,7 @@ Cinque ticket (#28, #37, #58, #59, #61) sono andati sulla classificazione. Il ri
 
 Due conseguenze pratiche:
 
-- **Per i documenti corti la classificazione è inutile e dannosa.** Accordo di centrodestra e M5S stanno interi in una chiamata. Passarli interi al modello di sintesi azzera il rischio di falsa assenza proprio dove è più alto (36 schede dell'accordo). ADR 0005 ha scartato il documento intero per i contesti da 140k token e l'hardware locale: non vale per 3.000 parole. Proposta: sotto una soglia di parole `pipeline bozze` salta il filtro. Tocca un ADR, quindi serve il sì del maintainer.
+- **Per i documenti corti la classificazione è inutile e dannosa.** Accordo di centrodestra e M5S stanno interi in una chiamata. Passarli interi al modello di sintesi azzera il rischio di falsa assenza proprio dove è più alto (36 schede dell'accordo). ADR 0005 ha scartato il documento intero per i contesti da 140k token e l'hardware locale: non vale per 3.000 parole. Proposta: sotto una soglia di parole `pipeline bozze` salta il filtro. Tocca un ADR, quindi serve il sì del maintainer. Esito (#44, 26 novembre 2026): il maintainer l'ha approvata a condizione che il confronto la confermasse, e il confronto non l'ha confermata. Il documento intero porta citazioni fuori tema, che i passaggi classificati non portano. Il vantaggio cercato, meno false assenze, non si è potuto vedere: nessuna scheda provata è uscita assente, e il rischio resta da misurare in #46 ([pipeline.md](pipeline.md#documento-intero-per-i-documenti-brevi-misura-di-44)).
 - **Basta misurare il classificatore.** Il giudizio ora si dà sulle bozze (#44), non su altre run del campione.
 
 ### 3.4 Quindici giorni, 67 commit, zero pagine
