@@ -13,7 +13,7 @@ from openai import OpenAI, RateLimitError
 
 # Tetto ai token in uscita, ragionamento compreso. Senza, un ciclo di ragionamento arriva al
 # massimo del modello (131.072 token, 0,28 dollari) senza risposta; troncata, la risposta vale
-# come JSON rotto. Il massimo misurato su una bozza normale è 17.032, sulla classificazione 6.745:
+# come JSON rotto. Il massimo misurato su una bozza normale è 19.494, sulla classificazione 6.745:
 # 20.000 lasciava troppo poco margine (#46).
 MAX_TOKEN_RISPOSTA = 32_000
 

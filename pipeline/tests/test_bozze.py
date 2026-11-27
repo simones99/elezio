@@ -6,6 +6,7 @@ import json
 from conftest import FONTE, SENZA_CONTENUTO
 
 from elezio_pipeline.__main__ import main
+from elezio_pipeline.llm import MAX_TOKEN_RISPOSTA
 
 CITAZIONE_VERA = "Uno psicologo di base in ogni distretto."
 CITAZIONE_VERA_2 = "AUMENTO DELLE RETRIBUZIONI PER IL PERSONALE SANITARIO"
@@ -114,12 +115,12 @@ def test_al_modello_arrivano_solo_i_passaggi_del_tema_con_la_pagina(progetto, mo
     assert "Salute mentale" in testo
 
 
-def test_la_risposta_del_modello_ha_un_tetto_di_32000_token(progetto, modello):
+def test_la_risposta_del_modello_ha_un_tetto_ai_token(progetto, modello):
     # un ciclo di ragionamento ha prodotto 131.072 token senza risposta: 0,28 dollari e 18 minuti (#46)
     _classificati(progetto)
     modello.risposte.append(_dichiarata((2, CITAZIONE_VERA)))
     assert not _bozze()
-    assert modello.richieste[0]["max_tokens"] == 32000
+    assert modello.richieste[0]["max_tokens"] == MAX_TOKEN_RISPOSTA
 
 
 def test_salva_il_json_della_bozza_e_il_log_nel_repo_privato(progetto, modello):
@@ -164,6 +165,23 @@ def test_il_record_conserva_la_risposta_scartata_al_primo_tentativo(progetto, mo
     record = json.loads(salvato.read_text(encoding="utf-8"))
     assert [c["testo"] for c in record["risposta_scartata"]["citazioni"]] == [CITAZIONE_VERA, INVENTATA]
     assert [c["testo"] for c in record["risposta"]["citazioni"]] == [CITAZIONE_VERA]
+
+
+def test_il_record_conserva_il_testo_della_prima_risposta_non_json(progetto, modello):
+    _classificati(progetto)
+    modello.risposte += ["non è json", _dichiarata((2, CITAZIONE_VERA))]
+    assert not _bozze()
+    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json"
+    assert json.loads(salvato.read_text(encoding="utf-8"))["risposta_scartata"] == "non è json"
+
+
+def test_il_record_distingue_una_prima_risposta_vuota_da_una_chiamata_sola(progetto, modello):
+    # contenuto nullo: rifiuto o risposta troncata dal tetto ai token
+    _classificati(progetto)
+    modello.risposte += [SENZA_CONTENUTO, _dichiarata((2, CITAZIONE_VERA))]
+    assert not _bozze()
+    salvato = progetto.fonti_dir / "lavoro" / FONTE / "bozze" / "sanita" / "prova.json"
+    assert json.loads(salvato.read_text(encoding="utf-8"))["risposta_scartata"] == ""
 
 
 def test_senza_secondo_tentativo_il_record_non_ha_risposta_scartata(progetto, modello):

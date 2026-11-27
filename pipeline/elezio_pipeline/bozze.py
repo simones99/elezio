@@ -94,11 +94,12 @@ def _controlla_citazioni(risposta, pagine):
 
 
 def _chiedi(llm, messaggi, tema):
-    """La risposta del modello; None se non è JSON."""
+    """(risposta, da registrare): se non è JSON la risposta è None e si registra il testo grezzo."""
     try:
-        return llm.completa(messaggi, "bozza", _schema(tema))
-    except json.JSONDecodeError:
-        return None
+        risposta = llm.completa(messaggi, "bozza", _schema(tema))
+    except json.JSONDecodeError as e:
+        return None, e.doc  # "" se il contenuto era nullo (rifiuto, risposta troncata)
+    return risposta, risposta
 
 
 def _correzione(risposta, difetti):
@@ -120,14 +121,15 @@ def _esamina(risposta, pagine):
 
 
 def _genera(llm, tema, passaggi, pagine):
-    """(risposta finale, risposta scartata o None, citazioni valide, note): con un solo nuovo tentativo."""
+    """(risposta finale, risposta scartata o None, citazioni valide, note): con un solo nuovo tentativo.
+
+    La risposta scartata è il JSON della prima risposta, o il suo testo grezzo se non era JSON."""
     messaggi = _messaggi(tema, passaggi)
-    risposta = _chiedi(llm, messaggi, tema)
+    risposta, scartata = _chiedi(llm, messaggi, tema)
     difetti, valide = _esamina(risposta, pagine)
     if not difetti:
         return risposta, None, valide, []
-    scartata = risposta
-    risposta = _chiedi(llm, messaggi + _correzione(scartata, difetti), tema)
+    risposta, _ = _chiedi(llm, messaggi + _correzione(risposta, difetti), tema)
     difetti, valide = _esamina(risposta, pagine)
     if risposta is None or _difetto_struttura(risposta):
         raise BozzaImpossibile(f"risposta del modello non valida anche al secondo tentativo: {difetti[0]}")
