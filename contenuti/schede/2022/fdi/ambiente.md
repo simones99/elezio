@@ -28,6 +28,10 @@ citazioni:
 - fonte: 2022-cdx-accordo
   pagina: 13
   sotto_questione: Gas, bollette e autosufficienza energetica
+  testo: Pieno utilizzo delle risorse nazionali, anche attraverso la riattivazione e nuova realizzazione di pozzi di gas naturale in un'ottica di utilizzo sostenibile delle fonti
+- fonte: 2022-cdx-accordo
+  pagina: 13
+  sotto_questione: Gas, bollette e autosufficienza energetica
   testo: Sostegno alle politiche di price-cap a livello europeo
 - fonte: 2022-cdx-accordo
   pagina: 4
@@ -62,7 +66,7 @@ aggiornata_il: 2026-11-26
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 13 né nelle adiacenti: «Pieno utilizzo delle risorse nazionali, anche attraverso la riattivazione e nuova realizzazione di pozzi di gas naturale in un ottica di utilizzo sostenibile delle fonti»'
+note: 'Citazione di pagina 13 sui pozzi di gas naturale rimessa a mano (#46): il modello l''aveva copiata scrivendo «un ottica» al posto di «un''ottica», la verifica l''aveva scartata e la sintesi ne parlava comunque. Il testo ora è quello del testo estratto.'
 ---
 
 Il documento propone di aumentare la produzione di energia rinnovabile e di trasformare i rifiuti in energia rinnovabile. Valuta il ricorso al nucleare pulito e sicuro. Sul fronte dell'autosufficienza e dei costi energetici, chiede la riduzione dell'IVA sui prodotti energetici, la diversificazione degli approvvigionamenti, l'utilizzo di pozzi di gas naturale, il sostegno a politiche di price-cap a livello europeo e l'efficientamento dell'utilizzo dei fondi europei per l'aumento dei costi dell'energia. In materia di clima, intende tutelare gli interessi nazionali nei dossier legislativi europei sulla transizione ecologica e rispettare gli impegni internazionali contro i cambiamenti climatici. Per il territorio, prevede un piano per la qualità delle acque, un programma contro il dissesto idrogeologico, il rimboschimento e un piano nazionale invasi.
