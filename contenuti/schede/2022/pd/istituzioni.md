@@ -38,7 +38,7 @@ citazioni:
   sotto_questione: Pubblica amministrazione e digitalizzazione
   testo: Vogliamo rimuovere gli ostacoli che frenano le famiglie e le imprese a migrare verso le reti di connettività a banda ultra-larga, attuali e future, e al pieno dispiego delle competenze e dei servizi digitali, ivi inclusi quelli offerti dalla Pubblica Amministrazione.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md

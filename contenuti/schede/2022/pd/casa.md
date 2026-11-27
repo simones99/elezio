@@ -34,7 +34,7 @@ citazioni:
   sotto_questione: Mezzogiorno e aree interne
   testo: Centrale nella nostra proposta è l'idea di territori in 30 minuti. I servizi di prossimità devono essere assicurati su tutto il territorio nazionale, ricorrendo a soluzioni diverse da quelle delle città metropolitane. Per questo, sosterremo l'apertura di 1.000 bar e edicole multifunzione in 1.000 piccoli comuni, che offrano funzioni base affinché tutta Italia abbia accesso ai servizi di cittadinanza più importanti, integrando con il progetto "Polis - Case dei servizi di cittadinanza" finanziato dal PNRR.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md

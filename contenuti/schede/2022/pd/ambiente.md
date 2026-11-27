@@ -58,7 +58,7 @@ citazioni:
   sotto_questione: Suolo, acqua e dissesto idrogeologico
   testo: il monitoraggio e la messa in sicurezza delle infrastrutture esistenti – in particolare ponti, viadotti e gallerie – attraverso azioni programmate di manutenzione e adattamento alle pressioni indotte dai cambiamenti climatici.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md

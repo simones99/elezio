@@ -51,7 +51,7 @@ citazioni:
   sotto_questione: Formazione professionale e ITS
   testo: Vogliamo investire nella scuola e nell'istruzione universitaria e professionale
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md

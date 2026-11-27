@@ -58,7 +58,7 @@ citazioni:
   sotto_questione: Terzo settore
   testo: di riconoscere contributi a fondo perduto agli enti del terzo settore
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
