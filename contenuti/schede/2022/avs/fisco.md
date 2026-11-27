@@ -58,11 +58,11 @@ citazioni:
   sotto_questione: Debito e regole UE di bilancio
   testo: Occorre mettere a regime la solidarizzazione del debito, come elemento di base per contenere gli attacchi speculativi e favorire politiche economiche espansive
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il documento propone di riformare l'IRPEF cumulando tutte le fonti di reddito in un'unica imposta progressiva, con una quota esente di 1.000 euro e aliquote crescenti fino al 65% per i redditi oltre i 10 milioni. Sul fronte dell'evasione, che supera i 100 miliardi all'anno, si propone la tracciabilità assoluta dei pagamenti tramite moneta elettronica, l'incrocio dei dati tramite banche dati, il rifiuto di condoni e la certezza della pena, oltre a misure contro l'elusione delle multinazionali come la rendicontazione pubblica paese per paese e il raddoppio dell'aliquota al 15%. In materia patrimoniale, si chiede di abolire IMU e imposta di bollo sugli investimenti per introdurre un'imposta patrimoniale progressiva unica, con tassazione fino al 2% oltre i 50 milioni, dato che i grandi patrimoni sono quasi esenti anche sulle successioni. Sul debito pubblico, si propone di escludere il debito verde dal calcolo del debito pregresso e di mettere a regime la solidarizzazione del debito a livello europeo.

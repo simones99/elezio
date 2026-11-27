@@ -46,11 +46,11 @@ citazioni:
   sotto_questione: Parità e violenza di genere
   testo: in caso di violenza maschile contro le donne, riconoscimento del pericolo che non comporti l’isolamento della vittima ma che preveda l’allontanamento del maltrattante.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il documento propone di seguire l’attuazione della delega al governo nel campo della giustizia riparativa. Sulle carceri, adotta cinque proposte di Antigone per ridurre il sovraffollamento e un nuovo regolamento penitenziario che preveda più contatti telefonici e visivi e riduca l’uso dell’isolamento. Sull’antimafia, propone una legge che legalizzi la coltivazione della cannabis per uso personale per colpire gli interessi della criminalità organizzata, sostiene la confisca facilitata dei beni mafiosi per riutilizzo sociale e chiede leggi contro le agromafie e il saccheggio del patrimonio culturale. Sul fine vita chiede una legge che consenta di mettere fine alla propria vita con dignità, mentre sui diritti LGBT+ propone una legge contro l’omolesbobitransfobia e l’abilismo. Sulla parità e la violenza di genere, difende la legge sull’interruzione volontaria di gravidanza e propone che in caso di violenza maschile contro le donne si preveda l’allontanamento del maltrattante anziché l’isolamento della vittima.

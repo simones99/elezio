@@ -50,7 +50,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione di pagina 12 rimessa a mano dal testo estratto (#46): il modello aveva scritto «proposons» al posto di «proponiamo»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Citazione di pagina 12 rimessa a mano dal testo estratto (#46): il modello aveva scritto «proposons» al posto di «proponiamo». Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il documento propone l'introduzione di un salario minimo di 10 euro all'ora, pari a 1.200 euro al mese, e l'estensione a tutti i lavoratori delle tabelle retributive sindacali. Vuole cancellare le varie forme di precarietà tornando al contratto a tempo indeterminato come norma, limitando il tempo determinato a causali specifiche e intervenendo sul Codice degli Appalti per tutelare salari e diritti. Propone un Piano Nazionale per la Prevenzione Infortuni con più controlli e assunzioni nelle ASL per triplicare le ispezioni. Suggerisce di uscire dal lavoro a 62 anni o con 41 anni di contributi, riconoscendo anche periodi di disoccupazione, lavoro di cura non retribuito e maternità. Fissa la pensione minima a 1.000 euro.

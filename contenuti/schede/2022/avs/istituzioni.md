@@ -38,7 +38,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il documento rifiuta ogni forma di presidenzialismo e si schiera a difesa della Costituzione repubblicana. Si oppone all'autonomia differenziata, chiedendo in particolare di escludere la sanità dalla sua attuazione e denunciando i rischi di frantumazione del sistema scolastico. Propone di riformare la rappresentanza parlamentare e consultiva degli italiani all'estero. Sul fronte della pubblica amministrazione, chiede di rafforzare i ministeri con nuovo personale, completare la riforma del MITE integrando industria e infrastrutture, istituire una cabina di regia a Palazzo Chigi e creare strutture amministrative uniformi sul territorio nazionale.

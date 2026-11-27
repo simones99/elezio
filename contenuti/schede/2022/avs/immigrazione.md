@@ -66,7 +66,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione di pagina 22 rimessa a mano dal testo estratto (#46): il modello aveva scritto «l''emploi» al posto di «l''impiego»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Citazione di pagina 22 rimessa a mano dal testo estratto (#46): il modello aveva scritto «l''emploi» al posto di «l''impiego». Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il partito propone di creare canali di migrazione legali e sicuri e di facilitare i permessi di soggiorno per lavoro e ricongiungimento familiare. Sul diritto d'asilo chiede il rispetto del principio di non respingimento, la fine degli accordi con la Libia e dei CPR, il superamento del sistema di Dublino, missioni pubbliche di salvataggio in mare e l'estensione della protezione ai rifugiati climatici. Vuole una nuova legge sulla cittadinanza con ius soli e ius scholae. Per l'integrazione propone parità di diritti, figure professionali dedicate e consulte comunali per stranieri. Infine chiede l'abrogazione dell'aggravante di clandestinità.

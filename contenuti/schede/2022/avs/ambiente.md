@@ -66,11 +66,11 @@ citazioni:
   sotto_questione: Suolo, acqua e dissesto idrogeologico
   testo: conservazione ed estensione di aree umide sono fondamentali per rendere la città resiliente e resistente a possibili alluvioni lampo
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il partito propone di accelerare la produzione di energia rinnovabile fino a 15 GW all'anno e di raggiungere l'80% di energia elettrica da fonti pulite entro il 2030, riorganizzando la rete per gestire il 100% di energia rinnovabile e promuovendo le comunità energetiche. Si oppone al nucleare in base al mandato dei referendum. Propone l'abbandono definitivo del gas metano entro il 2035, un tetto temporaneo al prezzo del gas, l'abolizione dei sussidi fossili entro il 2025 e la tassazione al 100% degli extraprofitti delle società energetiche. Fissa l'obiettivo di ridurre le emissioni del 70% entro il 2030 e raggiungere la neutralità climatica entro il 2045, con una legge per il clima e un Green Deal più ambizioso. Prevede di arrestare il consumo di suolo, difendere il territorio dal dissesto idrogeologico e tutelare foreste e aree umide.

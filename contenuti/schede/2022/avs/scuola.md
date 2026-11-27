@@ -74,11 +74,11 @@ citazioni:
   sotto_questione: Formazione professionale e ITS
   testo: occorre, invece, considerare ogni indirizzo della scuola secondaria superiore come occasione di formazione e crescita umana e civile
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
 ---
 
 Il documento propone di assumere un numero molto più ampio di docenti a tempo indeterminato e stabilizzare i precari, riducendo il numero di alunni per classe a un massimo di 15 e abrogando le norme che hanno aumentato il rapporto alunni/docente. Chiede di estendere il tempo pieno in tutte le scuole e di recuperare spazi pubblici per nuove aule. Sul diritto allo studio, propone la gratuità dell'istruzione dal nido all'università e l'abolizione del numero chiuso nelle facoltà mediche. Per la ricerca, chiede di rilanciare gli investimenti fino al 3% del PIL, chiudere la precarizzazione dei ricercatori e garantire un governo democratico della ricerca pubblica. Infine, sulla formazione professionale, propone di cancellare la legislazione sui PCTO e di ripensare gli istituti tecnici e professionali al di là delle esigenze del mercato.
