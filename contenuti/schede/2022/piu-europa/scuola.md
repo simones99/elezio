@@ -26,6 +26,10 @@ citazioni:
   sotto_questione: Diritto allo studio e tasse universitarie
   testo: di aumentare l'attrattività verso i percorsi universitari attraverso il sostegno alla residenzialità per gli studenti fuori sede
 - fonte: 2022-piu-europa-programma
+  pagina: 2-3
+  sotto_questione: Ricerca
+  testo: investimento sulla ricerca aperta e ibrida tra università, centri di ricerca, incubatori e imprese attraverso un forte aumento degli investimenti in ricerca di base e applicata fino a raggiungere l'1,5% del PIL
+- fonte: 2022-piu-europa-programma
   pagina: 2
   sotto_questione: Formazione professionale e ITS
   testo: di ridurre il disallineamento tra domanda e offerta di competenze di Scuola, Università e mondo del Lavoro attraverso la creazione di un canale unico di Istruzione e Formazione Professionale (IeFP), trasformando i corsi di istruzione professionale statale in corsi di formazione professionale regionale per semplificare l'offerta formativa e rispondere meglio alle esigenze dei territori, rafforzando e qualificando maggiormente i programmi di Alternanza Scuola/Lavoro coinvolgendo nell'offerta anche le piccole-medie imprese.
@@ -40,7 +44,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 2 né nelle adiacenti: «una maggiore flessibilità nella formazione del livello terziario e investimento sulla ricerca aperta e ibrida tra università, centri di ricerca, incubatori e imprese attraverso un forte aumento degli investimenti in ricerca di base e applicata fino a raggiungere l''1,5% del PIL da ripartirsi su finanziamento a progetti e ricerca, finanziamento a strutture di ricerca e promozione dei dottorati di ricerca»; Da controllare (#46): la sintesi racconta l''aumento degli investimenti in ricerca fino all''1,5% del PIL, che resta senza citazione valida. La citazione di pagina 2 è copiata alla lettera, ma passa da pagina 2 a 3 e la verifica non la trova (#90).'
+note: 'citazione delle pagine 2-3 sugli investimenti in ricerca rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 2 e la citazione continua a pagina 3 (#90). Intera avrebbe portato le citazioni a 327 parole, oltre il massimo di 300, quindi è accorciata: cominciava con «una maggiore flessibilità nella formazione del livello terziario e» e continuava con «da ripartirsi su finanziamento a progetti e ricerca, finanziamento a strutture di ricerca e promozione dei dottorati di ricerca».'
 ---
 
 Il documento propone di ridurre i compiti burocratici degli insegnanti e di riformare il loro percorso retributivo legandolo al merito, oltre a ridurre il precariato. Suggerisce di estendere il tempo pieno a tutte le scuole primarie e di sostenere la residenzialità degli studenti universitari fuori sede. Chiede di aumentare gli investimenti in ricerca fino all'1,5% del PIL e di creare un canale unico di formazione professionale. Propone inoltre di aumentare la spesa per la pubblica istruzione di almeno l'1% del PIL e di ridurre il ciclo scolastico da 13 a 12 anni portando l'obbligo a 18 anni.

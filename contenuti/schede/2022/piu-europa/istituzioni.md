@@ -42,11 +42,11 @@ citazioni:
   sotto_questione: Pubblica amministrazione e digitalizzazione
   testo: che le competenze sulla sicurezza digitale diventino diffuse e trasversali a tutti i livelli del personale pubblico e degli utenti dei servizi, potenziando programmi e strutture in materia di cybersecurity per le amministrazioni pubbliche.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'Le citazioni facevano 307 parole, il massimo è 300 (#46): accorciata quella di pagina 4 sul voto dei fuori sede, che continuava con «– che attualmente sono circa cinque milioni di italiani – innanzitutto prevedendo la possibilità che gli stessi possano votare per i candidati dei collegi nei quali si trovano».'
+note: 'Le citazioni facevano 307 parole, il massimo è 300 (#46): accorciata quella di pagina 4 sul voto dei fuori sede, che continuava con «– che attualmente sono circa cinque milioni di italiani – innanzitutto prevedendo la possibilità che gli stessi possano votare per i candidati dei collegi nei quali si trovano». Da correggere (#46): la sintesi dice il contrario del documento. Nel PDF, a pagina 4, il partito chiede la firma digitale per le liste elettorali «per evitare che la competizione politica sia riservata alle forze politiche già rappresentati in Parlamento». Dove passa il timbro l''OCR ha letto «per contro» al posto di «per evitare», la citazione comincia subito dopo e la sintesi ne ricava che il partito vuole «riservare la competizione politica alle forze già rappresentate in Parlamento». Nella stessa citazione «Parlamentà» è un errore OCR per «Parlamento», e in quella sul voto dei fuori sede «ed.» lo è per «cd.» (#91).'
 ---
 
 Il documento propone di riformare l'autonomia regionale differenziata adottando il modello sanitario, con risorse fornite dallo Stato ma gestite dalle regioni sotto il vincolo di livelli essenziali di qualità dei servizi. Sul fronte elettorale, chiede di riformare la normativa su referendum e proposte di legge di iniziativa popolare, di riservare la competizione politica alle forze già rappresentate in Parlamento con una legge sui partiti, e di garantire il voto ai lavoratori e studenti fuori sede. Riguardo alla pubblica amministrazione, propone di fissare obiettivi quinquennali per i ministri e misurare sistematicamente i risultati, di ridurre a meno della metà le ore di lavoro necessarie per completare procedure e obblighi entro il 2027, e di rafforzare la digitalizzazione facendo aderire le amministrazioni alle piattaforme nazionali come SPID e al cloud nazionale potenziando la cybersecurity.
