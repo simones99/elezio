@@ -36,11 +36,11 @@ citazioni:
   pagina: 3
   testo: una ottimizzazione del programma formativo e dell'organizzazione scolastica per agevolare l'inserimento più precoce dei giovani nel mercato del lavoro allineandosi alle best practices internazionali, attraverso la riduzione del ciclo scolastico da 13 a 12 anni, a parità di giorni di frequenza, e portando la scuola dell'obbligo a 18 anni per diminuire le disparità nelle conoscenze e ridurre il numero dei NEET
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 2 né nelle adiacenti: «una maggiore flessibilità nella formazione del livello terziario e investimento sulla ricerca aperta e ibrida tra università, centri di ricerca, incubatori e imprese attraverso un forte aumento degli investimenti in ricerca di base e applicata fino a raggiungere l''1,5% del PIL da ripartirsi su finanziamento a progetti e ricerca, finanziamento a strutture di ricerca e promozione dei dottorati di ricerca»'
+note: 'citazione scartata, non trovata a pagina 2 né nelle adiacenti: «una maggiore flessibilità nella formazione del livello terziario e investimento sulla ricerca aperta e ibrida tra università, centri di ricerca, incubatori e imprese attraverso un forte aumento degli investimenti in ricerca di base e applicata fino a raggiungere l''1,5% del PIL da ripartirsi su finanziamento a progetti e ricerca, finanziamento a strutture di ricerca e promozione dei dottorati di ricerca»; Da controllare (#46): la sintesi racconta l''aumento degli investimenti in ricerca fino all''1,5% del PIL, che resta senza citazione valida. La citazione di pagina 2 è copiata alla lettera, ma passa da pagina 2 a 3 e la verifica non la trova (#90).'
 ---
 
 Il documento propone di ridurre i compiti burocratici degli insegnanti e di riformare il loro percorso retributivo legandolo al merito, oltre a ridurre il precariato. Suggerisce di estendere il tempo pieno a tutte le scuole primarie e di sostenere la residenzialità degli studenti universitari fuori sede. Chiede di aumentare gli investimenti in ricerca fino all'1,5% del PIL e di creare un canale unico di formazione professionale. Propone inoltre di aumentare la spesa per la pubblica istruzione di almeno l'1% del PIL e di ridurre il ciclo scolastico da 13 a 12 anni portando l'obbligo a 18 anni.
