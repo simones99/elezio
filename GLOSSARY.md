@@ -125,7 +125,7 @@ La descrizione di come sono stati classificati i passaggi di un documento fonte:
 _Avoid_: metadata, manifest, log della classificazione
 
 **Record**:
-Ciò che la pipeline conserva per ogni scheda generata: la risposta del modello, modello e prompt della sintesi e il registro della classificazione da cui la bozza è nata. Serve a risalire da una scheda alla generazione che l'ha prodotta. Non è pubblico.
+Ciò che la pipeline conserva per ogni scheda generata: la risposta del modello, la risposta scartata al primo tentativo se ce n'è stato un secondo, modello e prompt della sintesi e il registro della classificazione da cui la bozza è nata. Serve a risalire da una scheda alla generazione che l'ha prodotta. Non è pubblico.
 _Avoid_: log, traccia
 
 **Verifica delle citazioni**:
