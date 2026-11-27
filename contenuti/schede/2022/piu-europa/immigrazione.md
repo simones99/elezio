@@ -32,10 +32,11 @@ citazioni:
   pagina: 8
   testo: di mettere l'Africa in agenda come priorità. Gli strumenti del multilateralismo devono essere messi al servizio del continente africano per affrontare le questioni legate al terrorismo jihadista, alla demografia, ai massicci movimenti di persone, a un più efficace impiego delle rimesse, all'accesso ai servizi sanitari e sociali, all'istruzione
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
+note: 'Da controllare (#46): la sintesi dice che il partito chiede di estendere il voto a maggioranza qualificata nell''Unione alla politica migratoria e dell''asilo, ma le citazioni sono solo i frammenti «alla politica migratoria» e «e dell''asilo»: la frase del documento sul voto a maggioranza, a pagina 9, non è citata.'
 ---
 
 Il documento propone l'introduzione di canali di accesso legali per i cittadini extra-UE, la reintroduzione del sistema dello sponsor e la regolarizzazione dei lavoratori stranieri già presenti, oltre ad accordi internazionali per certificare le competenze dei migranti nei paesi di origine secondo le esigenze del mercato del lavoro italiano. Chiede inoltre di estendere il voto a maggioranza qualificata nell'Unione Europea alla politica migratoria e dell'asilo. In materia di cittadinanza, propone una riforma organica che dia seguito alla proposta di legge "Ius Scholae" per garantire la cittadinanza ai minori che hanno intrapreso un percorso scolastico in Italia. Il partito chiede infine una più ampia cooperazione con i paesi del Mediterraneo e di mettere l'Africa in agenda come priorità per affrontare i movimenti di persone attraverso il multilateralismo.
