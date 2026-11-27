@@ -34,6 +34,10 @@ citazioni:
   sotto_questione: Asilo, sbarchi e ONG
   testo: vogliamo superare il trattato di Dublino e creare un Sistema Europeo Comune di Asilo
 - fonte: 2022-azione-iv-programma
+  pagina: 45-46
+  sotto_questione: Asilo, sbarchi e ONG
+  testo: Vogliamo vie di accesso più sicure e legali attraverso un'espansione dei corridoi umanitari
+- fonte: 2022-azione-iv-programma
   pagina: 46
   sotto_questione: Asilo, sbarchi e ONG
   testo: Vogliamo sempre garantire il salvataggio in mare, coordinato e finanziato a livello europeo
@@ -65,7 +69,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 45 né nelle adiacenti: «Vogliamo vie di accesso più sicure e legali attraverso un''espansione dei corridoi umanitari»; Da controllare (#46): la sintesi racconta l''espansione dei corridoi umanitari, che resta senza citazione valida. La citazione di pagina 45 è copiata alla lettera, ma passa da pagina 45 a 46 e la verifica non la trova (#90).'
+note: 'citazione delle pagine 45-46 sui corridoi umanitari rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 45 e la citazione continua a pagina 46 (#90).'
 ---
 
 Il documento propone di governare i flussi migratori attraverso ingressi regolari e programmati, con accordi di cooperazione con i paesi di origine e programmazione dei flussi basata sulle esigenze del mercato del lavoro, inclusa la proroga dei permessi per i lavoratori agricoli e la reintroduzione dello sponsor per la ricerca di lavoro. Sul fronte dell'asilo, si propone di superare il trattato di Dublino con un Sistema Europeo Comune di Asilo, espandere i corridoi umanitari e garantire il salvataggio in mare a livello europeo. In materia di cittadinanza, sostiene lo Ius Scholae per chi ha frequentato almeno cinque anni di formazione in Italia e la concessione della cittadinanza agli studenti stranieri laureati in Italia. Per l'integrazione, prevede corsi obbligatori di lingua italiana per i neo-arrivati e la regolarizzazione dei migranti irregolari già residenti che hanno un lavoro. Infine, propone l'istituzione di un Ministero per l'Immigrazione per coordinare le politiche.

@@ -18,6 +18,10 @@ citazioni:
   sotto_questione: Rinnovabili
   testo: programmare impianti eolici offshore
 - fonte: 2022-azione-iv-programma
+  pagina: 39-40
+  sotto_questione: Rinnovabili
+  testo: l’installazione e l’utilizzo di sistemi fotovoltaici dovrà essere favorita sui tetti dei fabbricati rurali (anche al fine di sostituire l’amianto esistente), in territori marginali o attraverso sistemi c.d. “agri-voltaici”
+- fonte: 2022-azione-iv-programma
   pagina: 7
   sotto_questione: Nucleare
   testo: includere il nucleare nel mix energetico per arrivare ad “emissioni zero” nel 2050
@@ -74,7 +78,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 39 né nelle adiacenti: «l’installazione e l’utilizzo di sistemi fotovoltaici dovrà essere favorita sui tetti dei fabbricati rurali (anche al fine di sostituire l’amianto esistente), in territori marginali o attraverso sistemi c.d. “agri-voltaici”»; citazione di pagina 9 rimessa a mano dal testo estratto (#46): il modello aveva scritto «riducono» al posto di «riducano»; Da controllare (#46): la sintesi racconta il fotovoltaico sui tetti dei fabbricati rurali e l''agri-voltaico, che resta senza citazione valida. La citazione di pagina 39 è copiata alla lettera, ma passa da pagina 39 a 40 e la verifica non la trova (#90).'
+note: 'citazione delle pagine 39-40 sul fotovoltaico nei fabbricati rurali rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 39 e la citazione continua a pagina 40 (#90). Citazione di pagina 9 rimessa a mano dal testo estratto (#46): il modello aveva scritto «riducono» al posto di «riducano».'
 ---
 
 Il documento propone di rafforzare le energie rinnovabili con nuove aste, impianti idroelettrici, idrogeno, comunità energetiche, eolico offshore e fotovoltaico su tetti rurali e agri-voltaico. Include il nucleare nel mix energetico per raggiungere le emissioni zero nel 2050. Sul gas, prevede la costruzione di rigassificatori, l'aumento della produzione nazionale, un price cap europeo e incentivi per l'autoconsumo per ridurre le bollette. Sul clima, fissa l'obiettivo di ridurre le emissioni di CO2 del 55% entro il 2030 e di aumentare l'assorbimento di carbonio delle foreste. Per acqua e dissesto idrogeologico, propone un piano di prevenzione, nuovi invasi, la ristrutturazione della rete idrica, il riuso delle acque depurate e sistemi di irrigazione efficienti.
