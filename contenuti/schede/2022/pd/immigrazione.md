@@ -38,10 +38,11 @@ citazioni:
   sotto_questione: Integrazione
   testo: e dell'efficacia delle politiche di integrazione nella società e nel mondo del lavoro, attraverso il coinvolgimento delle istituzioni preposte, delle associazioni di categoria e del volontariato.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
+note: 'Da controllare (#46): nella citazione sui respingimenti «bloccchi navali» è un errore OCR per «blocchi navali», dove il timbro tocca la parola (#91). Nella citazione sui corridoi umanitari «S Egidio» e «Federazioni chiede evangeliche» non sono errori OCR: il PDF, a pagina 22, li scrive così.'
 ---
 
 Il partito propone di abolire la legge Bossi-Fini e approvare una nuova legge sull'immigrazione che permetta l'ingresso legale per ragioni di lavoro, sulla base delle richieste delle imprese e del terzo settore, e di creare un'Agenzia di Coordinamento delle politiche migratorie per gestire i flussi. Si oppone a respingimenti, chiusure dei porti e blocchi navali, sostenendo l'allargamento dei corridoi umanitari e un nuovo modello di accoglienza basato su piccoli centri diffusi e sul sistema SAI. Propone l'introduzione dello Ius Scholae, che concede la cittadinanza italiana ai figli di genitori stranieri che completano un ciclo di studi in Italia. L'Agenzia dovrà anche garantire l'efficacia delle politiche di integrazione nella società e nel mondo del lavoro.
