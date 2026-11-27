@@ -46,7 +46,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione di pagina 3 sul Buono Lavoro rimessa a mano dal testo estratto (#46): il modello aveva scritto «régulation» al posto di «regolazione».'
+note: 'Citazione di pagina 3 sul Buono Lavoro rimessa a mano dal testo estratto (#46): il modello aveva scritto «régulation» al posto di «regolazione».'
 ---
 
 Il documento propone l'introduzione di logiche di salario minimo con parametri tutelanti per i lavoratori e non penalizzanti per le imprese. Sul fronte dei contratti, prevede il potenziamento dell'apprendistato, l'introduzione del Buono Lavoro per i lavori estemporanei, un regime unico di ammortizzatori sociali per tutti i lavoratori e la creazione di un Testo Unico del Lavoro, oltre alla decriminalizzazione e regolamentazione del lavoro sessuale. Per la sicurezza sul lavoro, indica il miglioramento delle condizioni e della sicurezza del personale sanitario. In materia pensionistica, propone la possibilità di andare in pensione prima dei 67 anni e, per i giovani neoassunti fino a 35 anni, la decontribuzione per la previdenza integrativa.
