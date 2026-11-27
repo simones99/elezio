@@ -8,7 +8,11 @@ citazioni:
 - fonte: 2022-pd-programma
   pagina: 9
   sotto_questione: Premierato e presidenzialismo
-  testo: Infine, per riconciliarsi con un'opinione pubblica sempre più attonita di fronte alle continue staffette di governo, la nostra democrazia ha bisogno di meccanismi che limitino le crisi al buio, a partire dall'introduzione della sfiducia costruttiva.
+  testo: la nostra democrazia ha bisogno di meccanismi che limitino le crisi al buio, a partire dall'introduzione della sfiducia costruttiva.
+- fonte: 2022-pd-programma
+  pagina: 22-23
+  sotto_questione: Autonomia differenziata
+  testo: Ulteriori forme e condizioni particolari di autonomia alle Regioni potranno essere concesse nell'ambito di legge quadro nazionale, previa la definizione dei Livelli Essenziali di Prestazioni concernenti i diritti civili e sociali, da garantire su tutto il territorio nazionale, il superamento della spesa storica e il potenziamento dei fondi di perequazione infrastrutturale.
 - fonte: 2022-pd-programma
   pagina: 23
   sotto_questione: Autonomia differenziata
@@ -42,7 +46,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 22 né nelle adiacenti: «Ulteriori forme e condizioni particolari di autonomia alle Regioni potranno essere concesse nell''ambito di legge quadro nazionale, previa la definizione dei Livelli Essenziali di Prestazioni concernenti i diritti civili e sociali, da garantire su tutto il territorio nazionale, il superamento della spesa storica e il potenziamento dei fondi di perequazione infrastrutturale.»; citazione di pagina 14 rimessa a mano dal testo estratto (#46): il modello aveva scritto «favorecer» al posto di «favorire»; Da controllare (#46): la sintesi racconta la legge quadro per le autonomie e i Livelli Essenziali di Prestazioni, che vengono dalla citazione scartata e restano senza una citazione valida. La citazione di pagina 22 è copiata alla lettera, ma passa da pagina 22 a 23 e la verifica non la trova (#90).'
+note: 'citazione delle pagine 22-23 rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 22 e la citazione continua a pagina 23 (#90). Con questa le citazioni superavano le 300 parole, quindi è stata accorciata la citazione di pagina 9 sulla sfiducia costruttiva, che cominciava con «Infine, per riconciliarsi con un''opinione pubblica sempre più attonita di fronte alle continue staffette di governo,». Citazione di pagina 14 rimessa a mano dal testo estratto (#46): il modello aveva scritto «favorecer» al posto di «favorire». Da controllare (#46): il titolo parla di «autonomie differenziate», un''espressione che il documento non usa: le citazioni dicono «forme e condizioni particolari di autonomia alle Regioni» e «differenziazione delle competenze regionali».'
 ---
 
 Il documento propone l'introduzione della sfiducia costruttiva per limitare le crisi di governo al buio. Prevede che ulteriori forme di autonomia alle Regioni possano essere concesse in base a una legge quadro nazionale, dopo aver definito i livelli essenziali di prestazioni da garantire su tutto il territorio, escludendo dalla differenziazione i pilastri della cittadinanza come l'istruzione. Si impegna a proporre una nuova legge elettorale nei primi mesi della prossima legislatura per superare la frammentazione e il trasformismo. Mira a contrastare il trasformismo parlamentare per rimettere al centro il ruolo del Parlamento. Prevede un piano di assunzioni nella PA oltre il 2026 e l'accelerazione della trasformazione digitale con uno Sportello virtuale e uffici associati per i piccoli comuni, oltre a rimuovere gli ostacoli alla migrazione verso i servizi digitali della PA.
