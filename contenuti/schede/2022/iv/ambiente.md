@@ -78,7 +78,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione delle pagine 39-40 sul fotovoltaico nei fabbricati rurali rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 39 e la citazione continua a pagina 40 (#90). Citazione di pagina 9 rimessa a mano dal testo estratto (#46): il modello aveva scritto «riducono» al posto di «riducano».'
+note: 'Citazione delle pagine 39-40 sul fotovoltaico nei fabbricati rurali rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 39 e la citazione continua a pagina 40 (#90). Citazione di pagina 9 rimessa a mano dal testo estratto (#46): il modello aveva scritto «riducono» al posto di «riducano».'
 ---
 
 Il documento propone di rafforzare le energie rinnovabili con nuove aste, impianti idroelettrici, idrogeno, comunità energetiche, eolico offshore e fotovoltaico su tetti rurali e agri-voltaico. Include il nucleare nel mix energetico per raggiungere le emissioni zero nel 2050. Sul gas, prevede la costruzione di rigassificatori, l'aumento della produzione nazionale, un price cap europeo e incentivi per l'autoconsumo per ridurre le bollette. Sul clima, fissa l'obiettivo di ridurre le emissioni di CO2 del 55% entro il 2030 e di aumentare l'assorbimento di carbonio delle foreste. Per acqua e dissesto idrogeologico, propone un piano di prevenzione, nuovi invasi, la ristrutturazione della rete idrica, il riuso delle acque depurate e sistemi di irrigazione efficienti.

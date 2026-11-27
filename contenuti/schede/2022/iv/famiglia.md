@@ -58,7 +58,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione di pagina 28 rimessa a mano dal testo estratto (#46): il modello aveva scritto «psíquiche» al posto di «psichiche»'
+note: 'Citazione di pagina 28 rimessa a mano dal testo estratto (#46): il modello aveva scritto «psíquiche» al posto di «psichiche».'
 ---
 
 Il documento propone di potenziare l'Assegno Unico Universale aumentando la maggiorazione per il secondo percettore di reddito e rivedendo l'ISEE. Propone inoltre di attuare il piano asili nido del PNRR, rendere il nido gratuito per i nuclei con ISEE inferiore a 25.000 euro e riformare i congedi parentali aumentando il congedo di paternità obbligatorio a un mese e introducendo 4 mesi facoltativi per il padre. Sul fronte della non autosufficienza e disabilità, prevede un rimborso per le spese dei figli con disabilità, programmi di vita indipendente, il riconoscimento del caregiver con un fondo dedicato e un rimborso per i costi di cura di anziani e disabili. Riguardo alla povertà, propone modifiche al Reddito di Cittadinanza che prevedono la sospensione dopo il primo rifiuto di lavoro congruo e un limite temporale di due anni, oltre alla creazione di una tassazione negativa per i redditi bassi. Infine, per il terzo settore, propone di rendere strutturali i contributi per i centri estivi e di dotare il non profit di strumenti per crescere in economie di scala.
