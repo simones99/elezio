@@ -32,6 +32,10 @@ citazioni:
 - fonte: 2022-avs-programma
   pagina: 12
   sotto_questione: Sicurezza sul lavoro
+  testo: 'Ecco perché noi proponiamo: un Piano Nazionale per la Prevenzione Infortuni sul Lavoro con coordinamento enti preposti e valorizzazione specifiche competenze e una forte campagna di assunzioni nelle apposite funzioni delle ASL, allo scopo di arrivare entro la legislatura a triplicare il numero delle attuali ispezioni.'
+- fonte: 2022-avs-programma
+  pagina: 12
+  sotto_questione: Sicurezza sul lavoro
   testo: Allo stesso modo è indispensabile rafforzare l’operatività degli Ispettorati del Lavoro, puntando ad un coordinamento rafforzato e alla piena cooperazione fra i diversi enti interessati a legalità e sicurezza in ambito lavorativo.
 - fonte: 2022-avs-programma
   pagina: 13
@@ -42,11 +46,11 @@ citazioni:
   sotto_questione: Pensioni minime e pensioni dei giovani
   testo: La pensione minima non dovrebbe essere inferiore a 1.000 euro.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 12 né nelle adiacenti: «Ecco perché noi proposons: un Piano Nazionale per la Prevenzione Infortuni sul Lavoro con coordinamento enti preposti e valorizzazione specifiche competenze e una forte campagna di assunzioni nelle apposite funzioni delle ASL, allo scopo di arrivare entro la legislatura a triplicare il numero delle attuali ispezioni.»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'citazione di pagina 12 rimessa a mano dal testo estratto (#46): il modello aveva scritto «proposons» al posto di «proponiamo»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
 ---
 
 Il documento propone l'introduzione di un salario minimo di 10 euro all'ora, pari a 1.200 euro al mese, e l'estensione a tutti i lavoratori delle tabelle retributive sindacali. Vuole cancellare le varie forme di precarietà tornando al contratto a tempo indeterminato come norma, limitando il tempo determinato a causali specifiche e intervenendo sul Codice degli Appalti per tutelare salari e diritti. Propone un Piano Nazionale per la Prevenzione Infortuni con più controlli e assunzioni nelle ASL per triplicare le ispezioni. Suggerisce di uscire dal lavoro a 62 anni o con 41 anni di contributi, riconoscendo anche periodi di disoccupazione, lavoro di cura non retribuito e maternità. Fissa la pensione minima a 1.000 euro.

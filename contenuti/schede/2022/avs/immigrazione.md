@@ -12,6 +12,10 @@ citazioni:
 - fonte: 2022-avs-programma
   pagina: 22
   sotto_questione: Ingressi regolari e decreto flussi
+  testo: Iscrizione dei migranti ai centri per l'impiego con stp (straniero temporaneamente presente) per facilitare l'ottenimento del permesso di soggiorno per motivi lavorativi ed emersione dal lavoro nero
+- fonte: 2022-avs-programma
+  pagina: 22
+  sotto_questione: Ingressi regolari e decreto flussi
   testo: abbassamento limiti di reddito per ricongiungimento familiare
 - fonte: 2022-avs-programma
   pagina: 22
@@ -58,11 +62,11 @@ citazioni:
   sotto_questione: Forze dell'ordine e ordine pubblico
   testo: Abrogazione della aggravante di clandestinità, introdotta dalla legge 125/08 (conversione del D.L. 92/08) all'art. 61 comma 11-bis c.p.
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 22 né nelle adiacenti: «Iscrizione dei migranti ai centri per l''emploi con stp (straniero temporaneamente presente) per facilitare l''ottenimento del permesso di soggiorno per motivi lavorativi ed emersione dal lavoro nero»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'citazione di pagina 22 rimessa a mano dal testo estratto (#46): il modello aveva scritto «l''emploi» al posto di «l''impiego»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
 ---
 
 Il partito propone di creare canali di migrazione legali e sicuri e di facilitare i permessi di soggiorno per lavoro e ricongiungimento familiare. Sul diritto d'asilo chiede il rispetto del principio di non respingimento, la fine degli accordi con la Libia e dei CPR, il superamento del sistema di Dublino, missioni pubbliche di salvataggio in mare e l'estensione della protezione ai rifugiati climatici. Vuole una nuova legge sulla cittadinanza con ius soli e ius scholae. Per l'integrazione propone parità di diritti, figure professionali dedicate e consulte comunali per stranieri. Infine chiede l'abrogazione dell'aggravante di clandestinità.

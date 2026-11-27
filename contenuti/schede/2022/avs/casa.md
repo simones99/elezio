@@ -28,11 +28,19 @@ citazioni:
 - fonte: 2022-avs-programma
   pagina: 32
   sotto_questione: Affitti ed edilizia pubblica
+  testo: Per questo proponiamo che ai Comuni sia data la facoltà di individuare la soglia massima di posti letto destinabili ad affitti brevi, comunque con un limite massimo pari al 20% della popolazione residente
+- fonte: 2022-avs-programma
+  pagina: 32
+  sotto_questione: Affitti ed edilizia pubblica
   testo: Riteniamo inoltre che i locatari debbano essere in possesso di una licenza comunale, con rotazione ogni 5 anni tra i richiedenti
 - fonte: 2022-avs-programma
   pagina: 4
+  sotto_questione: Grandi opere
+  testo: Ribadiamo il nostro no al ponte sullo stretto di Messina opera inutile
+- fonte: 2022-avs-programma
+  pagina: 4
   sotto_questione: Trasporto pubblico e ferrovie
-  testo: Non ha alcun senso in aree dove, come la Val Susa, già esistono altre forme di trasporto autostradale e ferroviario sottoutilizzate per mancanza di effettiva domanda di trasporto e dove la popolazione locale ha chiaramente espresso la propria contrarietà
+  testo: Non ha alcun senso in aree dove, come la Val Susa, già esistono altre forme di trasporto autostradale e ferroviario sottoutilizzate
 - fonte: 2022-avs-programma
   pagina: 3
   sotto_questione: Trasporto pubblico e ferrovie
@@ -40,7 +48,7 @@ citazioni:
 - fonte: 2022-avs-programma
   pagina: 4
   sotto_questione: Trasporto pubblico e ferrovie
-  testo: Per raggiungere questi obiettivi si rende necessario rimodulare il fondo complementare del Pnrr pari a 30 miliardi di euro per destinarlo in via prioritaria agli investimenti sul trasporto pubblico
+  testo: rimodulare il fondo complementare del Pnrr pari a 30 miliardi di euro per destinarlo in via prioritaria agli investimenti sul trasporto pubblico
 - fonte: 2022-avs-programma
   pagina: 4
   sotto_questione: Trasporto pubblico e ferrovie
@@ -52,13 +60,14 @@ citazioni:
 - fonte: 2022-avs-programma
   pagina: 4
   sotto_questione: Trasporto pubblico e ferrovie
-  testo: ampliare e mettere in sicurezza percorsi ciclabili e pedonali; digitalizzare tutti i servizi di mobilità; offrire tariffe agevolate e incentivi all'utilizzo delle alternative all'auto
+  testo: ampliare e mettere in sicurezza percorsi ciclabili e pedonali; digitalizzare tutti i servizi di mobilità; offrire tariffe agevolate
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 32 né nelle adiacenti: «Per questo proposons che ai Comuni sia data la facoltà di individuare la soglia massima di posti letto destinabili ad affitti brevi, comunque con un limite massimo pari al 20% della popolazione residente»; citazione scartata, non trovata a pagina 3 né nelle adiacenti: «Ribadiamo il nostro no al ponte sullo stretto di Messina opera inutile, inserted in un contesto ad alto rischio sismico ed idrogeologico e che sottrarrebbe 10 miliardi di euro ad opere e infrastrutture socialmente utili»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396'
+note: 'citazione di pagina 32 rimessa a mano dal testo estratto (#46): il modello aveva scritto «proposons» al posto di «proponiamo»; citazione di pagina 4 rimessa a mano dal testo estratto (#46): il modello aveva scritto «inserted» al posto di «inserita»; passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396; Con le due citazioni rimesse le citazioni facevano 350 parole, il massimo è 300: accorciate quella sul ponte sullo Stretto, che continuava con «, inserita in un contesto ad alto rischio sismico ed idrogeologico e che sottrarrebbe 10 miliardi di euro ad opere e infrastrutture socialmente utili», quella sulla Val Susa, che continuava con «per mancanza di effettiva domanda di trasporto e dove la popolazione locale ha chiaramente espresso la propria contrarietà», quella sul fondo del Pnrr, che cominciava con «Per raggiungere questi obiettivi si rende necessario», e quella sulla mobilità, che continuava con «e incentivi all''utilizzo delle alternative all''auto».
+  La sintesi non parla di nessuna delle parti tolte.'
 ---
 
 Il partito propone il rilancio dell'edilizia residenziale pubblica attraverso un fondo per l'acquisizione di immobili dalle banche e risorse per gli enti locali, oltre a rifinanziare i fondi contro gli sfratti e limitare gli affitti brevi con licenze comunali e un tetto del 20% della popolazione residente. Si oppone al ponte sullo Stretto di Messina e all'alta velocità in Val Susa. Per i trasporti chiede un cambio radicale di investimenti sul trasporto pubblico locale con 30 miliardi del PNRR, gratuità per gli under 30, un piano per 10 milioni di veicoli elettrici e 100 mila punti di ricarica, oltre a percorsi ciclabili e tariffe agevolate.
