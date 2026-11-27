@@ -62,7 +62,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396.'
+note: 'Passaggi senza il punteggio del tema, da controllare: 2022-avs-programma-0396. Da controllare (#46): la sintesi dice cose che nessuna citazione nomina: la fiscalità europea contro la concorrenza sleale, le delocalizzazioni, le norme sugli appalti, la filiera «della canapa», la Patente del Cibo e i «settori strategici».'
 ---
 
 Il documento propone di sostenere le piccole e medie imprese impegnate nell'agricoltura ecologica della canapa. Chiede un forte intervento pubblico nell'economia, regole sulle delocalizzazioni che impongano la restituzione dei contributi pubblici e politiche industriali per la produzione di componenti di veicoli elettrici. Sul fronte della concorrenza e del credito, invoca una fiscalità europea contro la concorrenza sleale, norme sugli appalti per tutelare salari e diritti dei lavoratori e un ruolo di MPS nel modello di credito per famiglie e imprese. Per l'agricoltura, prevede la riduzione drastica di pesticidi e l'aumento della superficie a biologico, lo sviluppo della filiera della canapa e l'introduzione della Patente del Cibo per garantire i diritti socio-lavorativi. Infine, include l'informatica tra i settori strategici e invoca un governo sociale dell'innovazione che ne valuti le implicazioni sociali e ambientali.
