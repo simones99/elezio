@@ -28,6 +28,10 @@ citazioni:
 - fonte: 2022-pd-programma
   pagina: 14
   sotto_questione: Pubblica amministrazione e digitalizzazione
+  testo: Ci impegniamo a dare attuazione al grande piano di assunzione nella PA, oltre il 2026, con clausole volte favorire l'occupazione giovanile e femminile.
+- fonte: 2022-pd-programma
+  pagina: 14
+  sotto_questione: Pubblica amministrazione e digitalizzazione
   testo: Dobbiamo accelerare la costituzione di uno Sportello virtuale della PA - con la possibilità di prendere appuntamento e di collegarsi in videoconferenza con qualsiasi pubblica amministrazione - e la realizzazione di un Ufficio associato per la trasformazione digitale dei piccoli comuni.
 - fonte: 2022-pd-programma
   pagina: 5
@@ -38,7 +42,7 @@ aggiornata_il: 2026-11-26
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione scartata, non trovata a pagina 22 né nelle adiacenti: «Ulteriori forme e condizioni particolari di autonomia alle Regioni potranno essere concesse nell''ambito di legge quadro nazionale, previa la definizione dei Livelli Essenziali di Prestazioni concernenti i diritti civili e sociali, da garantire su tutto il territorio nazionale, il superamento della spesa storica e il potenziamento dei fondi di perequazione infrastrutturale.»; citazione scartata, non trovata a pagina 14 né nelle adiacenti: «Ci impegniamo a dare attuazione al grande piano di assunzione nella PA, oltre il 2026, con clausole volte favorecer l''occupazione giovanile e femminile.»; Da controllare (#46): la sintesi racconta la legge quadro per le autonomie e i Livelli Essenziali di Prestazioni, che vengono dalla citazione scartata e restano senza una citazione valida.'
+note: 'citazione scartata, non trovata a pagina 22 né nelle adiacenti: «Ulteriori forme e condizioni particolari di autonomia alle Regioni potranno essere concesse nell''ambito di legge quadro nazionale, previa la definizione dei Livelli Essenziali di Prestazioni concernenti i diritti civili e sociali, da garantire su tutto il territorio nazionale, il superamento della spesa storica e il potenziamento dei fondi di perequazione infrastrutturale.»; citazione di pagina 14 rimessa a mano dal testo estratto (#46): il modello aveva scritto «favorecer» al posto di «favorire»; Da controllare (#46): la sintesi racconta la legge quadro per le autonomie e i Livelli Essenziali di Prestazioni, che vengono dalla citazione scartata e restano senza una citazione valida. La citazione di pagina 22 è copiata alla lettera, ma passa da pagina 22 a 23 e la verifica non la trova (#90).'
 ---
 
 Il documento propone l'introduzione della sfiducia costruttiva per limitare le crisi di governo al buio. Prevede che ulteriori forme di autonomia alle Regioni possano essere concesse in base a una legge quadro nazionale, dopo aver definito i livelli essenziali di prestazioni da garantire su tutto il territorio, escludendo dalla differenziazione i pilastri della cittadinanza come l'istruzione. Si impegna a proporre una nuova legge elettorale nei primi mesi della prossima legislatura per superare la frammentazione e il trasformismo. Mira a contrastare il trasformismo parlamentare per rimettere al centro il ruolo del Parlamento. Prevede un piano di assunzioni nella PA oltre il 2026 e l'accelerazione della trasformazione digitale con uno Sportello virtuale e uffici associati per i piccoli comuni, oltre a rimuovere gli ostacoli alla migrazione verso i servizi digitali della PA.
