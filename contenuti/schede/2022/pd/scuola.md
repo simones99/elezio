@@ -59,7 +59,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione delle pagine 13-14 rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 13 e la citazione continua a pagina 14 (#90).'
+note: 'Citazione delle pagine 13-14 rimessa a mano dal testo estratto (#46): il modello l''aveva copiata alla lettera, ma aveva indicato solo pagina 13 e la citazione continua a pagina 14 (#90).'
 ---
 
 Il documento propone di riportare gli stipendi dei docenti in linea con la media europea entro cinque anni, garantendo formazione continua e aumentando i docenti di sostegno e universitari. Sul fronte delle strutture scolastiche, chiede ambienti sicuri e sostenibili con sistemi di aerazione. Per il diritto allo studio, prevede la gratuità della scuola dell'infanzia, del trasporto, dei libri e l'acquisto di computer per gli studenti, oltre a livelli essenziali per l'università e potenziamento dell'edilizia universitaria. Infine, dichiara di voler investire nell'istruzione professionale.

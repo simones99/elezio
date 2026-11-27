@@ -62,7 +62,7 @@ aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
-note: 'citazione di pagina 17 rimessa a mano dal testo estratto (#46): il modello aveva scritto «irá» al posto di «andrà»'
+note: 'Citazione di pagina 17 rimessa a mano dal testo estratto (#46): il modello aveva scritto «irá» al posto di «andrà».'
 ---
 
 Il documento propone di rendere obbligatoria e gratuita la scuola dell'infanzia e di introdurre una tassazione agevolata per il secondo percettore di reddito in famiglia, da applicare dopo il congedo di maternità obbligatorio. Per le persone con disabilità prevede l'aumento dei docenti di sostegno nelle scuole e l'approvazione della riforma della non autosufficienza con un incremento del finanziamento pubblico. Sul fronte della povertà, intende ricalibrare il Reddito di Cittadinanza per le famiglie numerose e con minori, introdurre un reddito alimentare per gli indigenti, garantire l'accesso gratuito alle mense scolastiche e un contratto luce sociale a costo zero per le famiglie con redditi medi e bassi. Infine, prevede il completamento del Registro Unico del Terzo Settore, semplificazioni per le piccole associazioni e contributi a fondo perduto per gli enti non profit.
