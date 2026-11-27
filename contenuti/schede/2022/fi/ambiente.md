@@ -62,7 +62,7 @@ citazioni:
   sotto_questione: Suolo, acqua e dissesto idrogeologico
   testo: Interventi per un "piano nazionale invasi" per l'irrigazione agricola
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
