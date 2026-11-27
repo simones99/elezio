@@ -74,10 +74,11 @@ citazioni:
   sotto_questione: Innovazione digitale
   testo: INVESTIRE NELL'ECOSISTEMA DELL'INNOVAZIONE ITALIANO Startup e imprese innovative, scuola, università, centri di ricerca, talenti e professionisti, investitori
 stato: bozza
-aggiornata_il: 2026-11-26
+aggiornata_il: 2026-11-27
 bozza_da:
   modello: mistralai/mistral-large-4-0
   prompt: bozza-v2.md
+note: 'Da controllare (#46): la sintesi contiene «反对», due caratteri cinesi che significano «contro», al posto di una parola italiana. Il no al Nutriscore inoltre non ha citazione: nel documento è la riga «NO AL SISTEMA DI ETICHETTATURA DEI PRODOTTI ALIMENTARI ‘NUTRISCORE’», a pagina 12, subito prima di quella sui prodotti DOP e IGP.'
 ---
 
 Il documento propone incentivi per l'imprenditoria giovanile e femminile, la sburocratizzazione delle startup e uno statuto per dare certezza di regole alle imprese. Sul piano industriale, prevede il salvataggio delle imprese in crisi tramite l'ingresso dello Stato nel capitale e da parte dei lavoratori, misure contro le delocalizzazioni, il sostegno alle imprese energivore, la valorizzazione dell'artigianato italiano, lo sviluppo dell'economia del mare e un piano industriale basato su tecnologie strategiche, oltre al rafforzamento del fondo di garanzia per l'accesso al credito delle PMI. Nel settore agricolo, sostiene l'uso di tecnologie satellitari, il ricambio generazionale, la filiera corta e i prodotti DOP e IGP,反对 il sistema Nutriscore. Per l'innovazione, investe nell'ecosistema delle startup e imprese innovative.
